@@ -20,6 +20,9 @@ docs/sphinx/_build/
 # Force-track branding icons (overrides LargeFiles.gitignore **/*.png rule)
 !docs/scitex-logo-banner.png
 !docs/scitex-icon-navy-inverted.png
+!docs/decision_flowchart.png
+!docs/sphinx/_static/scitex-logo-banner.png
+!docs/sphinx/_static/decision_flowchart.png
 
 
 ### Source: /home/ywatanabe/.git-templates/.gitignore-templates/Custom/Claude.gitignore ###

@@ -327,6 +327,7 @@ def test_anova_rm(  # noqa: C901
         "alpha": alpha,
         "significant": pvalue < alpha,
         "stars": p2stars(pvalue),
+        "H0": "All condition means are equal",
     }
 
     # Add sphericity results

@@ -356,6 +356,7 @@ def test_cochran_q(  # noqa: C901
         "alpha": alpha,
         "significant": pvalue < alpha,
         "stars": p2stars(pvalue),
+        "H0": "Proportions of successes are equal across conditions",
     }
 
     # Generate plot if requested

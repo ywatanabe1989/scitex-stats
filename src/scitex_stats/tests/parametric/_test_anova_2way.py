@@ -362,6 +362,7 @@ def test_anova_2way(  # noqa: C901
             "alpha": alpha,
             "significant": p_a < alpha,
             "stars": p2stars(p_a),
+            "H0": f"No main effect of {factor_a_name}",
         }
     )
 
@@ -381,6 +382,7 @@ def test_anova_2way(  # noqa: C901
             "alpha": alpha,
             "significant": p_b < alpha,
             "stars": p2stars(p_b),
+            "H0": f"No main effect of {factor_b_name}",
         }
     )
 
@@ -400,6 +402,7 @@ def test_anova_2way(  # noqa: C901
             "alpha": alpha,
             "significant": p_ab < alpha,
             "stars": p2stars(p_ab),
+            "H0": f"No interaction between {factor_a_name} and {factor_b_name}",
         }
     )
 

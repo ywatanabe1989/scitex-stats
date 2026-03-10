@@ -1,4 +1,4 @@
-# Stats (<code>scitex-stats</code>)
+# SciTeX Stats (<code>scitex-stats</code>)
 
 <p align="center">
   <a href="https://scitex.ai">
@@ -197,6 +197,14 @@ scitex-stats mcp start
 
 </details>
 
+## Choosing the Right Test
+
+<p align="center">
+  <img src="docs/decision_flowchart.png" alt="Statistical test decision flowchart" width="700">
+</p>
+
+*Figure 2. Decision flowchart for choosing a statistical test. Start with your data type, then follow the branches based on number of groups and study design. Brunner-Munzel is recommended as the default for two-group comparisons due to its robustness to unequal variances and non-normality.*
+
 ## Available Tests
 
 | Category | Tests |
@@ -211,7 +219,7 @@ scitex-stats mcp start
 
 ## Part of SciTeX
 
-Stats is part of [**SciTeX**](https://scitex.ai). When used inside the SciTeX framework, statistical testing integrates with the full pipeline:
+SciTeX Stats is part of [**SciTeX**](https://scitex.ai). When used inside the SciTeX framework, statistical testing integrates with the full pipeline:
 
 ```python
 import scitex
