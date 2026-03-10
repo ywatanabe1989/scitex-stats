@@ -42,7 +42,7 @@ async def recommend_tests(
     top_k: int = 3,
 ) -> str:
     """Recommend appropriate statistical tests based on data characteristics."""
-    from scitex.stats._mcp.handlers import recommend_tests_handler
+    from scitex_stats._mcp.handlers import recommend_tests_handler
 
     result = await recommend_tests_handler(
         n_groups=n_groups,
@@ -65,7 +65,7 @@ async def run_test(
     alternative: str = "two-sided",
 ) -> str:
     """Execute a statistical test on provided data."""
-    from scitex.stats._mcp.handlers import run_test_handler
+    from scitex_stats._mcp.handlers import run_test_handler
 
     result = await run_test_handler(
         test_name=test_name,
@@ -90,7 +90,7 @@ async def format_results(
     ci_upper: Optional[float] = None,
 ) -> str:
     """Format statistical results in journal style (APA, Nature, etc.)."""
-    from scitex.stats._mcp.handlers import format_results_handler
+    from scitex_stats._mcp.handlers import format_results_handler
 
     result = await format_results_handler(
         test_name=test_name,
@@ -117,7 +117,7 @@ async def power_analysis(
     ratio: float = 1.0,
 ) -> str:
     """Calculate statistical power or required sample size."""
-    from scitex.stats._mcp.handlers import power_analysis_handler
+    from scitex_stats._mcp.handlers import power_analysis_handler
 
     result = await power_analysis_handler(
         test_type=test_type,
@@ -138,7 +138,7 @@ async def correct_pvalues(
     alpha: float = 0.05,
 ) -> str:
     """Apply multiple comparison correction to p-values."""
-    from scitex.stats._mcp.handlers import correct_pvalues_handler
+    from scitex_stats._mcp.handlers import correct_pvalues_handler
 
     result = await correct_pvalues_handler(
         pvalues=pvalues,
@@ -154,7 +154,7 @@ async def describe(
     percentiles: Optional[List[float]] = None,
 ) -> str:
     """Calculate descriptive statistics for data."""
-    from scitex.stats._mcp.handlers import describe_handler
+    from scitex_stats._mcp.handlers import describe_handler
 
     result = await describe_handler(
         data=data,
@@ -171,7 +171,7 @@ async def effect_size(
     pooled: bool = True,
 ) -> str:
     """Calculate effect size between groups."""
-    from scitex.stats._mcp.handlers import effect_size_handler
+    from scitex_stats._mcp.handlers import effect_size_handler
 
     result = await effect_size_handler(
         group1=group1,
@@ -188,7 +188,7 @@ async def normality_test(
     method: str = "shapiro",
 ) -> str:
     """Test whether data follows a normal distribution."""
-    from scitex.stats._mcp.handlers import normality_test_handler
+    from scitex_stats._mcp.handlers import normality_test_handler
 
     result = await normality_test_handler(
         data=data,
@@ -205,7 +205,7 @@ async def posthoc_test(
     control_group: int = 0,
 ) -> str:
     """Run post-hoc pairwise comparisons after significant ANOVA/Kruskal."""
-    from scitex.stats._mcp.handlers import posthoc_test_handler
+    from scitex_stats._mcp.handlers import posthoc_test_handler
 
     result = await posthoc_test_handler(
         groups=groups,
@@ -222,7 +222,7 @@ async def p_to_stars(
     thresholds: Optional[List[float]] = None,
 ) -> str:
     """Convert p-value to significance stars (*, **, ***, ns)."""
-    from scitex.stats._mcp.handlers import p_to_stars_handler
+    from scitex_stats._mcp.handlers import p_to_stars_handler
 
     result = await p_to_stars_handler(
         p_value=p_value,
