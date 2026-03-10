@@ -17,7 +17,9 @@ venv/
 docs/sphinx/_build/
 
 ### Source: /home/ywatanabe/.git-templates/.gitignore-templates/Custom/Specific.gitignore ###
-# Please add files here
+# Force-track branding icons (overrides LargeFiles.gitignore **/*.png rule)
+!docs/scitex-logo-banner.png
+!docs/scitex-icon-navy-inverted.png
 
 ### Source: /home/ywatanabe/.git-templates/.gitignore-templates/Custom/Claude.gitignore ###
 docs/to_claude
