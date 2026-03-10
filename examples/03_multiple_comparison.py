@@ -7,18 +7,29 @@ from scitex_stats import correct
 
 def main():
     # Simulate p-values from multiple tests
-    p_values = [0.01, 0.04, 0.03, 0.20, 0.005, 0.08]
+    # correct_fdr expects a list of dicts with 'pvalue' keys
+    results = [
+        {"pvalue": 0.01, "var_x": "A", "var_y": "B"},
+        {"pvalue": 0.04, "var_x": "A", "var_y": "C"},
+        {"pvalue": 0.03, "var_x": "A", "var_y": "D"},
+        {"pvalue": 0.20, "var_x": "B", "var_y": "C"},
+        {"pvalue": 0.005, "var_x": "B", "var_y": "D"},
+        {"pvalue": 0.08, "var_x": "C", "var_y": "D"},
+    ]
 
     # Apply FDR correction (Benjamini-Hochberg)
-    adjusted = correct.fdr_bh(p_values, alpha=0.05)
+    corrected = correct.correct_fdr(results, alpha=0.05, method="bh", verbose=False)
 
     print("Multiple Comparison Correction (FDR-BH)")
     print("=" * 50)
-    print(f"{'Original':>10} {'Adjusted':>10} {'Significant':>12}")
-    print("-" * 35)
-    for orig, adj in zip(p_values, adjusted["adjusted_pvalues"]):
-        sig = "Yes" if adj < 0.05 else "No"
-        print(f"{orig:>10.4f} {adj:>10.4f} {sig:>12}")
+    print(f"{'Comparison':>10} {'Original':>10} {'Adjusted':>10} {'Rejected':>10}")
+    print("-" * 45)
+    for orig, adj in zip(results, corrected):
+        label = f"{orig['var_x']}v{orig['var_y']}"
+        sig = "Yes" if adj["rejected"] else "No"
+        print(
+            f"{label:>10} {orig['pvalue']:>10.4f} {adj['pvalue_adjusted']:>10.4f} {sig:>10}"
+        )
 
 
 if __name__ == "__main__":

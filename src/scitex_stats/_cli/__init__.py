@@ -36,6 +36,8 @@ def _cmd_help_recursive(parser: argparse.ArgumentParser) -> int:
                 print()
 
                 # Recurse into sub-subparsers
+                if subparser._subparsers is None:
+                    continue
                 for sub_action in subparser._subparsers._actions:
                     if isinstance(sub_action, argparse._SubParsersAction):
                         for sub_name, sub_subparser in sorted(

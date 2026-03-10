@@ -1,4 +1,4 @@
-<!-- File: README.md -->
+# Stats (<code>scitex-stats</code>)
 
 <p align="center">
   <a href="https://scitex.ai">
@@ -6,30 +6,56 @@
   </a>
 </p>
 
+<p align="center"><b>Publication-ready statistical testing with 23 tests, effect sizes, power analysis, and APA formatting</b></p>
+
 <p align="center">
   <a href="https://badge.fury.io/py/scitex-stats"><img src="https://badge.fury.io/py/scitex-stats.svg" alt="PyPI version"></a>
-  <a href="https://pypi.org/project/scitex-stats/"><img src="https://img.shields.io/pypi/pyversions/scitex-stats.svg" alt="Python Versions"></a>
   <a href="https://scitex-stats.readthedocs.io/"><img src="https://readthedocs.org/projects/scitex-stats/badge/?version=latest" alt="Documentation"></a>
-  <a href="https://github.com/ywatanabe1989/scitex-stats/blob/main/LICENSE"><img src="https://img.shields.io/github/license/ywatanabe1989/scitex-stats" alt="License"></a>
+  <a href="https://www.gnu.org/licenses/agpl-3.0"><img src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="License: AGPL-3.0"></a>
 </p>
 
 <p align="center">
-  <a href="https://scitex.ai">scitex.ai</a> · <a href="https://scitex-stats.readthedocs.io/">docs</a> · <code>pip install scitex-stats</code>
+  <a href="https://scitex-stats.readthedocs.io/">Full Documentation</a> · <code>pip install scitex-stats</code>
 </p>
 
 ---
 
-**Publication-ready statistical testing framework with 23 tests, effect sizes, power analysis, and APA formatting.**
+## Problem
 
-Part of the [SciTeX](https://scitex.ai) ecosystem — empowers both human researchers and AI agents.
+Statistical testing in Python is fragmented across `scipy`, `statsmodels`, and `pingouin` — each with different interfaces and output conventions. Getting publication-ready results requires substantial manual work: computing effect sizes, running power analysis, formatting to APA or journal standards. AI agents face a further barrier: they cannot call Python libraries directly and need structured, tool-based access.
+
+## Solution
+
+scitex-stats provides a unified interface that covers the full statistical workflow:
+
+- **23 statistical tests** with automatic recommendation based on data characteristics
+- **Built-in effect sizes** (Cohen's d, Cliff's delta, eta squared), **power analysis**, and **APA-formatted output**
+- **Three interfaces** — Python API, CLI, and MCP server — so human researchers and AI agents use the same engine
+
+```mermaid
+flowchart LR
+    A[Raw Data] --> B{Recommend Test}
+    B --> C[Run Test]
+    C --> D[Effect Size]
+    C --> E[Power Analysis]
+    D --> F[APA Format]
+    E --> F
+    F --> G[Publication-Ready Result]
+
+    style A fill:#e8f4f8,stroke:#2c3e50
+    style B fill:#fef9e7,stroke:#2c3e50
+    style C fill:#e8f8f5,stroke:#2c3e50
+    style G fill:#d5f5e3,stroke:#2c3e50
+```
+
+*Figure 1. Statistical testing workflow. scitex-stats automates the full pipeline from raw data to publication-ready results: test recommendation based on data characteristics, test execution with effect size and power analysis, and APA-formatted output.*
 
 ## Installation
 
+Requires Python >= 3.10.
+
 ```bash
 pip install scitex-stats
-
-# With plotting support
-pip install scitex-stats[plot]
 
 # With MCP server for AI agents
 pip install scitex-stats[mcp]
@@ -38,67 +64,59 @@ pip install scitex-stats[mcp]
 pip install scitex-stats[all]
 ```
 
-## Three Interfaces
+> **SciTeX users**: `pip install scitex` already includes Stats. Use `import scitex` then `scitex.stats`.
 
-| Interface | For | Description |
-|-----------|-----|-------------|
-| **Python API** | Human researchers | `import scitex_stats as ss` |
-| **CLI Commands** | Terminal users | `scitex-stats mcp list-tools` |
-| **MCP Tools** | AI agents | 10 tools for Claude/GPT integration |
+## Quickstart
+
+```python
+import scitex_stats as ss
+
+# Get test recommendation
+ctx = ss.StatContext(n_groups=2, paired=False)
+recs = ss.recommend_tests(ctx)
+
+# Run a test
+result = ss.run_test("ttest_ind", data=group1, data2=group2)
+
+# APA-formatted output
+print(result["formatted"])
+```
+
+## Three Interfaces
 
 <details>
 <summary><strong>Python API</strong></summary>
 
 <br>
 
-**Run Tests** — 23 statistical tests
-
 ```python
 import scitex_stats as ss
 
 # Automatic test recommendation
-recs = ss.recommend_tests(n_groups=2, paired=False, outcome_type="continuous")
+ctx = ss.StatContext(n_groups=2, paired=False)
+recs = ss.recommend_tests(ctx)
 
 # Run a test
-result = ss.run_test("ttest_ind", data=[group1, group2])
+result = ss.run_test("ttest_ind", data=group1, data2=group2)
 
-# Publication-ready formatting
-print(result["formatted"]["apa"])
-# t(48) = 2.31, p = .025, d = 0.65
-```
-
-**Effect Sizes** — Cohen's d, Cliff's delta, eta squared, and more
-
-```python
+# Effect sizes
 from scitex_stats import effect_sizes
-
 d = effect_sizes.cohens_d(group1, group2)
-delta = effect_sizes.cliffs_delta(group1, group2)
-```
 
-**Power Analysis** — Sample size calculation
-
-```python
+# Power analysis
 from scitex_stats import power
-
 n = power.sample_size_ttest(effect_size=0.5, alpha=0.05, power=0.8)
-```
 
-**Multiple Comparisons** — Bonferroni, FDR, Holm, Sidak
-
-```python
+# Multiple comparison correction
 from scitex_stats import correct
+corrected = correct.correct_fdr(results)
 
-adjusted = correct.fdr_bh(p_values, alpha=0.05)
-```
-
-**Post-hoc Tests** — Tukey HSD, Dunnett, Games-Howell
-
-```python
+# Post-hoc tests
 from scitex_stats import posthoc
-
-results = posthoc.tukey_hsd(groups, group_names=["A", "B", "C"])
+results = posthoc.tukey_hsd(groups)
 ```
+
+> **[Full API reference](https://scitex-stats.readthedocs.io/)**
 
 </details>
 
@@ -108,32 +126,24 @@ results = posthoc.tukey_hsd(groups, group_names=["A", "B", "C"])
 <br>
 
 ```bash
-scitex-stats --help                          # Show all commands
-scitex-stats --help-recursive                # Show all commands recursively
-scitex-stats -V                              # Show version
-
-# Python API introspection
-scitex-stats list-python-apis                # List all public APIs
+scitex-stats --help-recursive                # Show all commands
+scitex-stats list-python-apis                # List Python API tree
 scitex-stats list-python-apis -v             # With docstrings
-scitex-stats list-python-apis -vv            # Full documentation
-scitex-stats list-python-apis --json         # JSON output
-
-# MCP server management
-scitex-stats mcp list-tools                  # List all MCP tools
-scitex-stats mcp list-tools -v               # With signatures
-scitex-stats mcp list-tools -vv              # With descriptions
-scitex-stats mcp list-tools -vvv             # Full documentation
+scitex-stats mcp list-tools                  # List MCP tools
 scitex-stats mcp doctor                      # Check server health
-scitex-stats mcp installation                # Show Claude Desktop config
 scitex-stats mcp start                       # Start MCP server
 ```
+
+> **[Full CLI reference](https://scitex-stats.readthedocs.io/)**
 
 </details>
 
 <details>
-<summary><strong>MCP Tools — 10 tools for AI Agents</strong></summary>
+<summary><strong>MCP Server — for AI Agents</strong></summary>
 
 <br>
+
+AI agents can run statistical tests and format publication-ready results autonomously.
 
 | Tool | Description |
 |------|-------------|
@@ -148,18 +158,13 @@ scitex-stats mcp start                       # Start MCP server
 | `posthoc_test` | Run post-hoc pairwise comparisons |
 | `p_to_stars` | Convert p-value to significance stars |
 
-**Claude Desktop** (`~/.config/Claude/claude_desktop_config.json`):
+*Table 1. MCP tools available for AI agent integration via `scitex-stats mcp start`.*
 
-```json
-{
-  "mcpServers": {
-    "scitex-stats": {
-      "command": "scitex-stats",
-      "args": ["mcp", "start"]
-    }
-  }
-}
+```bash
+scitex-stats mcp start
 ```
+
+> **[Full MCP specification](https://scitex-stats.readthedocs.io/)**
 
 </details>
 
@@ -173,16 +178,38 @@ scitex-stats mcp start                       # Start MCP server
 | **Categorical** | Chi-squared, Fisher exact, McNemar, Cochran's Q |
 | **Normality** | Shapiro-Wilk, Kolmogorov-Smirnov (1-sample, 2-sample) |
 
-## Documentation
+*Table 2. All 23 statistical tests organized by category.*
 
-Full documentation at [scitex-stats.readthedocs.io](https://scitex-stats.readthedocs.io/).
+## Part of SciTeX
+
+Stats is part of [**SciTeX**](https://scitex.ai). When used inside the SciTeX framework, statistical testing integrates with the full pipeline:
+
+```python
+import scitex
+
+@scitex.session
+def main(CONFIG=scitex.INJECTED):
+    data = scitex.io.load("measurements.csv")
+    result = scitex.stats.run_test("ttest_ind", data=group1, data2=group2)
+    scitex.io.save(result, "stats_result.csv")
+    return 0
+```
+
+The SciTeX ecosystem follows the Four Freedoms for researchers:
+
+> Four Freedoms for Research
+>
+> 0. The freedom to **run** your research anywhere — your machine, your terms.
+> 1. The freedom to **study** how every step works — from raw data to final manuscript.
+> 2. The freedom to **redistribute** your workflows, not just your papers.
+> 3. The freedom to **modify** any module and share improvements with the community.
+>
+> AGPL-3.0 — because research infrastructure deserves the same freedoms as the software it runs on.
 
 ---
 
 <p align="center">
   <a href="https://scitex.ai" target="_blank"><img src="docs/scitex-icon-navy-inverted.png" alt="SciTeX" width="40"/></a>
-  <br>
-  AGPL-3.0
 </p>
 
 <!-- EOF -->
