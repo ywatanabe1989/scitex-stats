@@ -11,6 +11,7 @@
 <p align="center">
   <a href="https://badge.fury.io/py/scitex-stats"><img src="https://badge.fury.io/py/scitex-stats.svg" alt="PyPI version"></a>
   <a href="https://scitex-stats.readthedocs.io/"><img src="https://readthedocs.org/projects/scitex-stats/badge/?version=latest" alt="Documentation"></a>
+  <a href="https://github.com/ywatanabe1989/scitex-stats/actions/workflows/test.yml"><img src="https://github.com/ywatanabe1989/scitex-stats/actions/workflows/test.yml/badge.svg" alt="Tests"></a>
   <a href="https://www.gnu.org/licenses/agpl-3.0"><img src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="License: AGPL-3.0"></a>
 </p>
 
@@ -53,6 +54,26 @@ flowchart LR
 
 *Figure 1. Statistical testing workflow. scitex-stats automates the full pipeline from raw data to publication-ready results: test recommendation based on data characteristics, test execution with effect size and power analysis, and APA-formatted output.*
 
+Every test returns a **unified result dictionary** with consistent keys:
+
+```json
+{
+  "test_method": "Student's t-test (independent)",
+  "statistic": -3.210,
+  "stat_symbol": "t",
+  "pvalue": 0.0022,
+  "stars": "**",
+  "significant": true,
+  "effect_size": -0.829,
+  "effect_size_metric": "Cohen's d",
+  "effect_size_interpretation": "large",
+  "power": 0.884,
+  "formatted": "t = -3.210, p = 0.0022, Cohen's d = -0.829, **"
+}
+```
+
+*Table 3. Unified result format. All 23 tests return the same dictionary structure with test statistics, p-value, effect size with interpretation, statistical power, and APA-formatted string.*
+
 ## Installation
 
 Requires Python >= 3.10.
@@ -75,7 +96,7 @@ pip install scitex-stats[all]
 import scitex_stats as ss
 
 # Get test recommendation
-ctx = ss.StatContext(n_groups=2, paired=False)
+ctx = ss.StatContext(n_groups=2, sample_sizes=[30, 30], outcome_type="continuous", design="between", paired=False)
 recs = ss.recommend_tests(ctx)
 
 # Run a test
@@ -96,7 +117,7 @@ print(result["formatted"])
 import scitex_stats as ss
 
 # Automatic test recommendation
-ctx = ss.StatContext(n_groups=2, paired=False)
+ctx = ss.StatContext(n_groups=2, sample_sizes=[30, 30], outcome_type="continuous", design="between", paired=False)
 recs = ss.recommend_tests(ctx)
 
 # Run a test
@@ -116,7 +137,7 @@ corrected = correct.correct_fdr(results)
 
 # Post-hoc tests
 from scitex_stats import posthoc
-results = posthoc.tukey_hsd(groups)
+results = posthoc.posthoc_tukey(groups)
 ```
 
 > **[Full API reference](https://scitex-stats.readthedocs.io/)**
