@@ -2,10 +2,16 @@
 # File: examples/02_test_recommendation.py
 """Automatic test recommendation example."""
 
+from pathlib import Path
+
 import scitex_stats as ss
+
+OUT_DIR = Path(__file__).parent / "02_test_recommendation_out"
 
 
 def main():
+    OUT_DIR.mkdir(exist_ok=True)
+
     # Create a statistical context for a two-group comparison
     ctx = ss.StatContext(
         n_groups=2,
@@ -20,10 +26,14 @@ def main():
     # Get recommended tests (returns list of test name strings)
     recs = ss.recommend_tests(ctx, top_k=5)
 
-    print("Test Recommendations")
-    print("=" * 40)
+    lines = ["Test Recommendations", "=" * 40]
     for rank, test_name in enumerate(recs, 1):
-        print(f"  {rank}. {test_name}")
+        lines.append(f"  {rank}. {test_name}")
+    output = "\n".join(lines)
+    print(output)
+
+    (OUT_DIR / "results.txt").write_text(output + "\n")
+    print(f"\nSaved to {OUT_DIR / 'results.txt'}")
 
 
 if __name__ == "__main__":

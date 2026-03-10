@@ -38,8 +38,8 @@ def tool_names(mcp_server):
     """Return sorted list of registered tool names."""
 
     async def _list():
-        names = await mcp_server.get_tools()
-        return sorted(names)
+        tools = await mcp_server.list_tools()
+        return sorted(t.name for t in tools)
 
     return _run_async(_list())
 
@@ -49,11 +49,8 @@ def tools_by_name(mcp_server):
     """Return dict of tool_name -> tool object."""
 
     async def _list():
-        names = await mcp_server.get_tools()
-        result = {}
-        for name in names:
-            result[name] = await mcp_server.get_tool(name)
-        return result
+        tools = await mcp_server.list_tools()
+        return {t.name: t for t in tools}
 
     return _run_async(_list())
 

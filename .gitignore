@@ -21,6 +21,7 @@ docs/sphinx/_build/
 !docs/scitex-logo-banner.png
 !docs/scitex-icon-navy-inverted.png
 
+
 ### Source: /home/ywatanabe/.git-templates/.gitignore-templates/Custom/Claude.gitignore ###
 docs/to_claude
 docs/from_agents
@@ -676,3 +677,7 @@ flycheck_*.el
 
 ### Source: /home/ywatanabe/.git-templates/.gitignore-templates/Custom/SLURM.gitignore ###
 slurm_logs
+
+# Force-track example output artifacts (must be after **/*.txt rule)
+!examples/*_out/
+!examples/*_out/*.txt
