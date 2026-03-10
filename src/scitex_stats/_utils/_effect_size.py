@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Timestamp: "2025-10-01 14:50:00 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex_repo/src/scitex/stats/utils/_effect_size.py
+# File: scitex_stats/utils/_effect_size.py
 
 """
 Functionalities:

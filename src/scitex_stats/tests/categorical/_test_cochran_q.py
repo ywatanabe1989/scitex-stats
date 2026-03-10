@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2026-02-12 02:21:50 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex-python/src/scitex/stats/tests/categorical/_test_cochran_q.py
+# File: scitex_stats/tests/categorical/_test_cochran_q.py
 
 r"""Cochran's Q test for binary repeated measures.
 
@@ -462,6 +462,6 @@ def _plot_cochran_q(data, result, condition_names):
     return fig
 
 
-# Demo: python -m scitex.stats.tests.categorical._demo_cochran_q
+# Demo: python -m scitex_stats.tests.categorical._demo_cochran_q
 
 # EOF

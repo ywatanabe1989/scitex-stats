@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Timestamp: "2025-12-10 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex-code/src/scitex/stats/auto/_formatting.py
+# File: scitex_stats/auto/_formatting.py
 
 """
 Statistical Formatting - Publication-ready output generation.

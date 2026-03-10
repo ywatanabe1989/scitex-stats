@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# File: ./scitex_repo/src/scitex/stats/utils/__init__.py
+# File: scitex_stats/utils/__init__.py
 
 """
 Statistical utilities.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 17:30:00 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/parametric/_test_anova_2way.py
+# File: scitex_stats/tests/parametric/_test_anova_2way.py
 # ----------------------------------------
 from __future__ import annotations
 
@@ -451,6 +451,6 @@ def test_anova_2way(  # noqa: C901
         return results
 
 
-# Demo: python -m scitex.stats.tests.parametric._demo_anova_2way
+# Demo: python -m scitex_stats.tests.parametric._demo_anova_2way
 
 # EOF

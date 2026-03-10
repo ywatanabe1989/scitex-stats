@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# File: ./scitex_repo/src/scitex/stats/tests/categorical/__init__.py
+# File: scitex_stats/tests/categorical/__init__.py
 
 """
 Categorical data tests.

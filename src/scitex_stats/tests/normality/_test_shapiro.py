@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 15:30:00 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/normality/_test_shapiro.py
+# File: scitex_stats/tests/normality/_test_shapiro.py
 # ----------------------------------------
 from __future__ import annotations
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# File: ./scitex_repo/src/scitex/stats/tests/correlation/_test_theilsen.py
+# File: scitex_stats/tests/correlation/_test_theilsen.py
 from __future__ import annotations
 
 """

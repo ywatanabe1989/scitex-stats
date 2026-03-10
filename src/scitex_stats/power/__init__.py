@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# File: ./scitex_repo/src/scitex/stats/power/__init__.py
+# File: scitex_stats/power/__init__.py
 
 """
 Statistical power analysis.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 15:00:00 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/_test_ttest_rel.py
+# File: scitex_stats/tests/_test_ttest_rel.py
 # ----------------------------------------
 from __future__ import annotations
 

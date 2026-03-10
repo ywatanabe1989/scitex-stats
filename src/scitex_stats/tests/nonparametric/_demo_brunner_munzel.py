@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 22:40:43 (ywatanabe)"
-# File: /ssh:sp:/home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/nonparametric/_demo_brunner_munzel.py
+# File: scitex_stats/tests/nonparametric/_demo_brunner_munzel.py
 
 """
 Demo script for Brunner-Munzel test.

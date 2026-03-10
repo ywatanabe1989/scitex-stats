@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2026-01-12 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex-code/src/scitex/stats/_figrecipe_integration.py
+# File: scitex_stats/_figrecipe_integration.py
 """Figrecipe integration for statistical annotations on plots."""
 
 from typing import Any, Dict, List, Optional, Union

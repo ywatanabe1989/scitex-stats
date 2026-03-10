@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# File: ./scitex_repo/src/scitex/stats/correct/__init__.py
+# File: scitex_stats/correct/__init__.py
 
 """
 Multiple comparison correction methods.

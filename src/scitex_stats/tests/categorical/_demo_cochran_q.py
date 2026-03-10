@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 19:00:00 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/categorical/_demo_cochran_q.py
+# File: scitex_stats/tests/categorical/_demo_cochran_q.py
 # ----------------------------------------
 
 """
 Demo script for Cochran's Q test examples.
 
-Run with: python -m scitex.stats.tests.categorical._demo_cochran_q
+Run with: python -m scitex_stats.tests.categorical._demo_cochran_q
 """
 
 from __future__ import annotations

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# File: ./scitex_repo/src/scitex/stats/tests/nonparametric/__init__.py
+# File: scitex_stats/tests/nonparametric/__init__.py
 
 """
 Non-parametric statistical tests.

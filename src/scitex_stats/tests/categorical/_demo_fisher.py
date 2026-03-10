@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # Time-stamp: "2025-01-15 00:00:00 (ywatanabe)"
-# File: ./scitex_repo/src/scitex/stats/tests/categorical/_demo_fisher.py
+# File: scitex_stats/tests/categorical/_demo_fisher.py
 # ----------------------------------------
 
 """
 Demo script for Fisher's exact test examples.
 
-Run with: python -m scitex.stats.tests.categorical._demo_fisher
+Run with: python -m scitex_stats.tests.categorical._demo_fisher
 """
 
 from __future__ import annotations

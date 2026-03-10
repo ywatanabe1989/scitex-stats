@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# File: /home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/normality/__init__.py
+# File: scitex_stats/tests/normality/__init__.py
 
 """Normality tests for checking distributional assumptions."""
 

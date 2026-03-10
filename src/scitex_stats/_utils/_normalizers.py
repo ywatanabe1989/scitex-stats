@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Timestamp: "2025-10-01 20:28:19 (ywatanabe)"
-# File: /ssh:sp:/home/ywatanabe/proj/scitex_repo/src/scitex/stats/utils/_normalizers.py
+# File: scitex_stats/utils/_normalizers.py
 # ----------------------------------------
 from __future__ import annotations
 

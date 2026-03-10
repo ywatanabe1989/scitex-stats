@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 17:45:00 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/nonparametric/_test_mannwhitneyu.py
+# File: scitex_stats/tests/nonparametric/_test_mannwhitneyu.py
 
 r"""
 Mann-Whitney U test (Wilcoxon rank-sum test).

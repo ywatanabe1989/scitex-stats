@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Timestamp: "2025-10-01 20:29:45 (ywatanabe)"
-# File: /ssh:sp:/home/ywatanabe/proj/scitex_repo/src/scitex/stats/correct/_correct_sidak.py
+# File: scitex_stats/correct/_correct_sidak.py
 # ----------------------------------------
 from __future__ import annotations
 

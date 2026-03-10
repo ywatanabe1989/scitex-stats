@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: 2026-01-26
-# File: /home/ywatanabe/proj/scitex-python/src/scitex/stats/descriptive/_ci.py
+# File: scitex_stats/descriptive/_ci.py
 
 """Confidence interval computation."""
 

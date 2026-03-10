@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 18:53:25 (ywatanabe)"
-# File: /ssh:sp:/home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/categorical/_demo_chi2.py
+# File: scitex_stats/tests/categorical/_demo_chi2.py
 # ----------------------------------------
 
 """
 Demo script for chi-square test examples.
 
-Run with: python -m scitex.stats.tests.categorical._demo_chi2
+Run with: python -m scitex_stats.tests.categorical._demo_chi2
 """
 
 from __future__ import annotations

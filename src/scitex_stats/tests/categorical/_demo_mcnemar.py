@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 16:30:00 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/categorical/_demo_mcnemar.py
+# File: scitex_stats/tests/categorical/_demo_mcnemar.py
 # ----------------------------------------
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ __DIR__ = os.path.dirname(__FILE__)
 """
 Demo script for McNemar's test examples.
 
-Run with: python -m scitex.stats.tests.categorical._demo_mcnemar
+Run with: python -m scitex_stats.tests.categorical._demo_mcnemar
 """
 
 import argparse

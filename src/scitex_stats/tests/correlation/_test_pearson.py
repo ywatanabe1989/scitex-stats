@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 21:47:27 (ywatanabe)"
-# File: /ssh:sp:/home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/correlation/_test_pearson.py
+# File: scitex_stats/tests/correlation/_test_pearson.py
 # ----------------------------------------
 from __future__ import annotations
 

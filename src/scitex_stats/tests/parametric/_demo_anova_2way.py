@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 17:30:00 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/parametric/_demo_anova_2way.py
+# File: scitex_stats/tests/parametric/_demo_anova_2way.py
 # ----------------------------------------
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ __DIR__ = os.path.dirname(__FILE__)
 """
 Demo script for two-way ANOVA examples.
 
-Run with: python -m scitex.stats.tests.parametric._demo_anova_2way
+Run with: python -m scitex_stats.tests.parametric._demo_anova_2way
 """
 
 import argparse
