@@ -13,15 +13,15 @@ def main():
     group1 = rng.normal(loc=0.0, scale=1.0, size=30)
     group2 = rng.normal(loc=0.5, scale=1.0, size=30)
 
-    # Run independent t-test
-    result = ss.run_test("ttest_ind", data=[group1.tolist(), group2.tolist()])
+    # Run independent t-test via dispatcher
+    result = ss.run_test("ttest_ind", data=group1, data2=group2)
 
     print("Independent t-test")
     print("=" * 40)
     print(f"t-statistic: {result['statistic']:.4f}")
     print(f"p-value: {result['p_value']:.4f}")
-    print(f"Effect size (Cohen's d): {result['effect_size']['value']:.4f}")
-    print(f"APA: {result['formatted']['apa']}")
+    print(f"Effect size (Cohen's d): {result['effect_size']:.4f}")
+    print(f"Formatted: {result['formatted']}")
 
 
 if __name__ == "__main__":
