@@ -34,7 +34,18 @@ def main():
     print(output)
 
     (OUT_DIR / "results.txt").write_text(output + "\n")
-    print(f"\nSaved to {OUT_DIR / 'results.txt'}")
+
+    # Save full result as JSON
+    import json
+
+    json_safe = {k: (float(v) if hasattr(v, "item") else v) for k, v in result.items()}
+    (OUT_DIR / "results.json").write_text(
+        json.dumps(json_safe, indent=2, default=str) + "\n"
+    )
+
+    print(f"\nSaved to {OUT_DIR}/")
+    print("  results.txt  — human-readable summary")
+    print("  results.json — full unified result dict")
 
 
 if __name__ == "__main__":
