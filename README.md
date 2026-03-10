@@ -32,6 +32,24 @@ scitex-stats provides a unified interface that covers the full statistical workf
 - **Built-in effect sizes** (Cohen's d, Cliff's delta, eta squared), **power analysis**, and **APA-formatted output**
 - **Three interfaces** — Python API, CLI, and MCP server — so human researchers and AI agents use the same engine
 
+```mermaid
+flowchart LR
+    A[Raw Data] --> B{Recommend Test}
+    B --> C[Run Test]
+    C --> D[Effect Size]
+    C --> E[Power Analysis]
+    D --> F[APA Format]
+    E --> F
+    F --> G[Publication-Ready Result]
+
+    style A fill:#e8f4f8,stroke:#2c3e50
+    style B fill:#fef9e7,stroke:#2c3e50
+    style C fill:#e8f8f5,stroke:#2c3e50
+    style G fill:#d5f5e3,stroke:#2c3e50
+```
+
+*Figure 1. Statistical testing workflow. scitex-stats automates the full pipeline from raw data to publication-ready results: test recommendation based on data characteristics, test execution with effect size and power analysis, and APA-formatted output.*
+
 ## Installation
 
 Requires Python >= 3.10.
