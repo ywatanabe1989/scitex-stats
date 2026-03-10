@@ -99,7 +99,7 @@ packages = ["src/scitex_stats"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
-addopts = "-v --tb=short"
+addopts = "-v --tb=short --cov=scitex_stats --cov-report=term-missing"
 
 [tool.ruff]
 line-length = 88

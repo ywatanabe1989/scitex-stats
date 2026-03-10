@@ -2,10 +2,16 @@
 # File: examples/03_multiple_comparison.py
 """Multiple comparison correction example."""
 
+from pathlib import Path
+
 from scitex_stats import correct
+
+OUT_DIR = Path(__file__).parent / "03_multiple_comparison_out"
 
 
 def main():
+    OUT_DIR.mkdir(exist_ok=True)
+
     # Simulate p-values from multiple tests
     # correct_fdr expects a list of dicts with 'pvalue' keys
     results = [
@@ -20,16 +26,23 @@ def main():
     # Apply FDR correction (Benjamini-Hochberg)
     corrected = correct.correct_fdr(results, alpha=0.05, method="bh", verbose=False)
 
-    print("Multiple Comparison Correction (FDR-BH)")
-    print("=" * 50)
-    print(f"{'Comparison':>10} {'Original':>10} {'Adjusted':>10} {'Rejected':>10}")
-    print("-" * 45)
+    lines = [
+        "Multiple Comparison Correction (FDR-BH)",
+        "=" * 50,
+        f"{'Comparison':>10} {'Original':>10} {'Adjusted':>10} {'Rejected':>10}",
+        "-" * 45,
+    ]
     for orig, adj in zip(results, corrected):
         label = f"{orig['var_x']}v{orig['var_y']}"
         sig = "Yes" if adj["rejected"] else "No"
-        print(
+        lines.append(
             f"{label:>10} {orig['pvalue']:>10.4f} {adj['pvalue_adjusted']:>10.4f} {sig:>10}"
         )
+    output = "\n".join(lines)
+    print(output)
+
+    (OUT_DIR / "results.txt").write_text(output + "\n")
+    print(f"\nSaved to {OUT_DIR / 'results.txt'}")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,5 @@
+Test Recommendations
+========================================
+  1. brunner_munzel
+  2. ttest_ind
+  3. mannwhitneyu

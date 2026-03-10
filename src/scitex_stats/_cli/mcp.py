@@ -127,6 +127,8 @@ def _get_tool_module(name: str) -> str:
 
 def cmd_list_tools(args: argparse.Namespace) -> int:
     """List all available MCP tools."""
+    import asyncio
+
     from .._mcp import mcp
 
     verbose = getattr(args, "verbose", 0)
@@ -134,7 +136,9 @@ def cmd_list_tools(args: argparse.Namespace) -> int:
     module_filter = getattr(args, "module", None)
     as_json = getattr(args, "json", False)
 
-    tools = list(mcp._tool_manager._tools.keys())
+    tool_objects = asyncio.run(mcp.list_tools())
+    tools_by_name = {t.name: t for t in tool_objects}
+    tools = list(tools_by_name.keys())
     total = len(tools)
 
     # Group by logical module
@@ -176,7 +180,7 @@ def cmd_list_tools(args: argparse.Namespace) -> int:
         mod_tools = sorted(modules[module])
         print(_style(f"{module}: {len(mod_tools)} tools", "green", bold=True))
         for tool_name in mod_tools:
-            tool_obj = mcp._tool_manager._tools.get(tool_name)
+            tool_obj = tools_by_name.get(tool_name)
 
             if verbose == 0:
                 print(f"  {tool_name}")
@@ -230,9 +234,11 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         checks.append(("fastmcp", False, "not installed"))
 
     try:
+        import asyncio
+
         from .._mcp import mcp
 
-        tool_count = len(mcp._tool_manager._tools)
+        tool_count = len(asyncio.run(mcp.list_tools()))
         checks.append(("MCP server", True, f"{tool_count} tools"))
     except Exception as e:
         checks.append(("MCP server", False, str(e)))
