@@ -38,34 +38,24 @@ except _PackageNotFoundError:
 # ---------------------------------------------------------------------------
 # Core imports — these are the public Python API
 # ---------------------------------------------------------------------------
-# NOTE: Currently delegates to scitex.stats until code is fully extracted.
-# After extraction, these become direct imports from scitex_stats submodules.
-# ---------------------------------------------------------------------------
 
-try:
-    from scitex.stats import (
-        auto,
-        available_tests,
-        correct,
-        describe,
-        descriptive,
-        effect_sizes,
-        posthoc,
-        power,
-        run_test,
-        tests,
-    )
-    from scitex.stats.auto import (
-        StatContext,
-        TestRule,
-        p_to_stars,
-        recommend_tests,
-    )
-
-    _SCITEX_STATS_AVAILABLE = True
-except ImportError:
-    _SCITEX_STATS_AVAILABLE = False
-
+from scitex_stats import (
+    auto,
+    correct,
+    descriptive,
+    effect_sizes,
+    posthoc,
+    power,
+    tests,
+)
+from scitex_stats._dispatch import available_tests, run_test
+from scitex_stats.auto import (
+    StatContext,
+    TestRule,
+    p_to_stars,
+    recommend_tests,
+)
+from scitex_stats.descriptive import describe
 
 __all__ = [
     "__version__",

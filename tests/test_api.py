@@ -49,10 +49,12 @@ class TestPublicAPIImports:
         assert isinstance(scitex_stats.__version__, str)
         assert len(scitex_stats.__version__) > 0
 
-    def test_scitex_stats_available_flag(self):
+    def test_scitex_stats_imports_work(self):
         import scitex_stats
 
-        assert scitex_stats._SCITEX_STATS_AVAILABLE is True
+        assert hasattr(scitex_stats, "run_test")
+        assert hasattr(scitex_stats, "available_tests")
+        assert callable(scitex_stats.run_test)
 
     @pytest.mark.parametrize(
         "name",
