@@ -142,6 +142,7 @@ def test_theilsen(
         "high_slope": result.high_slope,
         "var_x": var_x,
         "var_y": var_y,
+        "H0": f"No linear association between {var_x} and {var_y} (slope = 0)",
     }
 
     # Print results if verbose

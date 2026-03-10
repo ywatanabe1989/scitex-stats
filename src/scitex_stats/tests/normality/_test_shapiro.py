@@ -32,9 +32,9 @@ from typing import Literal, Optional, Union  # noqa: E402
 import matplotlib.axes  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
+import scitex as stx  # noqa: E402
 from scipy import stats  # noqa: E402
 
-import scitex as stx  # noqa: E402
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._formatters import fmt_stat, fmt_sym  # noqa: E402
 
@@ -204,6 +204,7 @@ def test_shapiro(  # noqa: C901
         "significant": rejected,
         "normal": normal,
         "recommendation": recommendation,
+        "H0": "Data are normally distributed",
     }
 
     # Log results if verbose

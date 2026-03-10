@@ -27,9 +27,9 @@ from typing import Literal, Optional, Union
 import matplotlib.axes
 import numpy as np
 import pandas as pd
+import scitex as stx
 from scipy import stats
 
-import scitex as stx
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._formatters import p2stars
 from scitex_stats._utils._normalizers import convert_results, force_dataframe
@@ -309,6 +309,7 @@ def test_mcnemar(  # noqa: C901
         "alpha": alpha,
         "significant": pvalue < alpha,
         "stars": p2stars(pvalue),
+        "H0": "Marginal proportions are equal (no change)",
     }
 
     # Log results if verbose

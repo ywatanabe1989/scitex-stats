@@ -1,4 +1,4 @@
-# Stats (<code>scitex-stats</code>)
+# SciTeX Stats (<code>scitex-stats</code>)
 
 <p align="center">
   <a href="https://scitex.ai">
@@ -197,6 +197,14 @@ scitex-stats mcp start
 
 </details>
 
+## Choosing the Right Test
+
+<p align="center">
+  <img src="docs/decision_flowchart.png" alt="Statistical test decision flowchart" width="700">
+</p>
+
+*Figure 2. Decision flowchart for choosing a statistical test. Start with your data type, then follow the branches based on number of groups and study design. Brunner-Munzel is recommended as the default for two-group comparisons due to its robustness to unequal variances and non-normality.*
+
 ## Available Tests
 
 | Category | Tests |
@@ -211,18 +219,43 @@ scitex-stats mcp start
 
 ## Part of SciTeX
 
-Stats is part of [**SciTeX**](https://scitex.ai). When used inside the SciTeX framework, statistical testing integrates with the full pipeline:
+SciTeX Stats is part of [**SciTeX**](https://scitex.ai). When used inside the SciTeX framework, statistical testing integrates with the full pipeline — from data loading through analysis to publication-ready figures:
 
 ```python
 import scitex
 
 @scitex.session
-def main(CONFIG=scitex.INJECTED):
+def main(CONFIG=scitex.INJECTED, plt=scitex.INJECTED):
+    # Load data
     data = scitex.io.load("measurements.csv")
+
+    # Run statistical test
     result = scitex.stats.run_test("ttest_ind", data=group1, data2=group2)
     scitex.io.save(result, "stats_result.csv")
+
+    # Visualize with figrecipe (scitex.plt)
+    fig, ax = scitex.plt.subplots()
+    ax.plot_box([group1, group2], labels=["Control", "Treatment"])
+    ax.set_xyt("Group", "Value", f"p = {result['pvalue']:.4f} {result['stars']}")
+    scitex.io.save(fig, "comparison.png")  # Saves plot + CSV data
+
     return 0
 ```
+
+<p align="center">
+  <img src="docs/example_ttest_figure.png" alt="Example t-test visualization" width="450">
+</p>
+
+*Figure 3. Example output combining scitex.stats (statistical test) with scitex.plt (publication-ready figure). The box plot shows group comparison with individual data points, significance bracket, p-value, and effect size — all generated from the unified result dictionary.*
+
+The ecosystem modules work together:
+
+| Module | Package | Role |
+|--------|---------|------|
+| `scitex.stats` | [scitex-stats](https://github.com/ywatanabe1989/scitex-stats) | Statistical testing, effect sizes, power analysis |
+| `scitex.plt` | [figrecipe](https://github.com/ywatanabe1989/figrecipe) | Publication-ready figures with auto CSV export |
+| `scitex.io` | [scitex-io](https://github.com/ywatanabe1989/scitex-io) | Universal file I/O (30+ formats) |
+| `scitex.clew` | [scitex-clew](https://github.com/ywatanabe1989/scitex-clew) | Reproducibility verification via hash DAGs |
 
 The SciTeX ecosystem follows the Four Freedoms for researchers:
 

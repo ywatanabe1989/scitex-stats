@@ -26,9 +26,9 @@ from typing import Literal, Optional, Union
 import matplotlib.axes
 import numpy as np
 import pandas as pd
+import scitex as stx
 from scipy import stats
 
-import scitex as stx
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._formatters import fmt_stat, fmt_sym, p2stars
 from scitex_stats._utils._normalizers import convert_results, force_dataframe
@@ -304,6 +304,7 @@ def test_kendall(  # noqa: C901
         "alpha": alpha,
         "significant": pvalue < alpha,
         "stars": p2stars(pvalue),
+        "H0": f"No monotonic association between {var_x} and {var_y}",
     }
 
     # Log results if verbose

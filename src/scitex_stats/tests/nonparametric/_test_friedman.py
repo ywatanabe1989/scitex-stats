@@ -27,9 +27,9 @@ from typing import List, Literal, Optional, Union
 import matplotlib.axes
 import numpy as np
 import pandas as pd
+import scitex as stx
 from scipy import stats
 
-import scitex as stx
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._formatters import fmt_stat, p2stars
 
@@ -319,6 +319,7 @@ def test_friedman(  # noqa: C901
         "alpha": alpha,
         "significant": pvalue < alpha,
         "stars": p2stars(pvalue),
+        "H0": "All conditions have the same distribution",
     }
 
     # Log results if verbose

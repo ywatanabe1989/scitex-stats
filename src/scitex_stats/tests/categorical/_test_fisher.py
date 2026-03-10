@@ -17,9 +17,9 @@ from typing import Literal, Optional, Tuple, Union
 import matplotlib.axes
 import numpy as np
 import pandas as pd
+import scitex as stx
 from scipy import stats
 
-import scitex as stx
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._formatters import p2stars
 from scitex_stats._utils._normalizers import convert_results, force_dataframe
@@ -318,6 +318,7 @@ def test_fisher(  # noqa: C901
         "n": n,
         "var_row": var_row,
         "var_col": var_col,
+        "H0": f"{var_row} and {var_col} are independent (OR = 1)",
     }
 
     # Log results if verbose
