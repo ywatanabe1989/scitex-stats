@@ -33,7 +33,17 @@ def main():
     print(output)
 
     (OUT_DIR / "results.txt").write_text(output + "\n")
-    print(f"\nSaved to {OUT_DIR / 'results.txt'}")
+
+    # Save as JSON
+    import json
+
+    (OUT_DIR / "results.json").write_text(
+        json.dumps({"context": str(ctx), "recommendations": recs}, indent=2) + "\n"
+    )
+
+    print(f"\nSaved to {OUT_DIR}/")
+    print("  results.txt  — human-readable summary")
+    print("  results.json — structured data")
 
 
 if __name__ == "__main__":

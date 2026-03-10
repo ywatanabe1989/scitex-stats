@@ -61,13 +61,18 @@ Every test returns a **unified result dictionary** with consistent keys:
   "test_method": "Student's t-test (independent)",
   "statistic": -3.210,
   "stat_symbol": "t",
+  "alternative": "two-sided",
+  "n_x": 30,
+  "n_y": 30,
   "pvalue": 0.0022,
   "stars": "**",
+  "alpha": 0.05,
   "significant": true,
   "effect_size": -0.829,
   "effect_size_metric": "Cohen's d",
   "effect_size_interpretation": "large",
   "power": 0.884,
+  "H0": "μ(x) = μ(y)",
   "formatted": "t = -3.210, p = 0.0022, Cohen's d = -0.829, **"
 }
 ```

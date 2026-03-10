@@ -1,0 +1,42 @@
+{
+  "method": "FDR (Benjamini-Hochberg)",
+  "alpha": 0.05,
+  "results": [
+    {
+      "comparison": "AvB",
+      "pvalue_original": 0.01,
+      "pvalue_adjusted": 0.03,
+      "rejected": true
+    },
+    {
+      "comparison": "AvC",
+      "pvalue_original": 0.04,
+      "pvalue_adjusted": 0.06,
+      "rejected": false
+    },
+    {
+      "comparison": "AvD",
+      "pvalue_original": 0.03,
+      "pvalue_adjusted": 0.06,
+      "rejected": false
+    },
+    {
+      "comparison": "BvC",
+      "pvalue_original": 0.2,
+      "pvalue_adjusted": 0.20000000000000004,
+      "rejected": false
+    },
+    {
+      "comparison": "BvD",
+      "pvalue_original": 0.005,
+      "pvalue_adjusted": 0.03,
+      "rejected": true
+    },
+    {
+      "comparison": "CvD",
+      "pvalue_original": 0.08,
+      "pvalue_adjusted": 0.096,
+      "rejected": false
+    }
+  ]
+}

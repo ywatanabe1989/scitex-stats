@@ -42,7 +42,28 @@ def main():
     print(output)
 
     (OUT_DIR / "results.txt").write_text(output + "\n")
-    print(f"\nSaved to {OUT_DIR / 'results.txt'}")
+
+    # Save as JSON
+    import json
+
+    json_data = {
+        "method": "FDR (Benjamini-Hochberg)",
+        "alpha": 0.05,
+        "results": [
+            {
+                "comparison": f"{orig['var_x']}v{orig['var_y']}",
+                "pvalue_original": orig["pvalue"],
+                "pvalue_adjusted": adj["pvalue_adjusted"],
+                "rejected": adj["rejected"],
+            }
+            for orig, adj in zip(results, corrected)
+        ],
+    }
+    (OUT_DIR / "results.json").write_text(json.dumps(json_data, indent=2) + "\n")
+
+    print(f"\nSaved to {OUT_DIR}/")
+    print("  results.txt  — human-readable summary")
+    print("  results.json — structured data")
 
 
 if __name__ == "__main__":
