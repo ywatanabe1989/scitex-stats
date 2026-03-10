@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 18:14:34 (ywatanabe)"
-# File: /ssh:sp:/home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/nonparametric/_test_kruskal.py
+# File: scitex_stats/tests/nonparametric/_test_kruskal.py
 
 r"""
 Kruskal-Wallis H test for independent samples.

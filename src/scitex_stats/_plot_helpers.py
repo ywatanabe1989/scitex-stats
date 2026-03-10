@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2026-02-12 02:25:42 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex-python/src/scitex/stats/_plot_helpers.py
+# File: scitex_stats/_plot_helpers.py
 
 """Shared plotting helpers for scitex.stats test visualization.
 

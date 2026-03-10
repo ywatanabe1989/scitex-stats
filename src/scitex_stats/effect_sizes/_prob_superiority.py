@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Timestamp: "2025-10-01 21:00:00 (ywatanabe)"
-# File: ./src/scitex/stats/effect_sizes/_prob_superiority.py
+# File: scitex_stats/effect_sizes/_prob_superiority.py
 # ----------------------------------------
 from __future__ import annotations
 

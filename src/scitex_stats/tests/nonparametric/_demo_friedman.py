@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 22:43:58 (ywatanabe)"
-# File: /ssh:sp:/home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/nonparametric/_demo_friedman.py
+# File: scitex_stats/tests/nonparametric/_demo_friedman.py
 
 """
 Demo script for Friedman test.

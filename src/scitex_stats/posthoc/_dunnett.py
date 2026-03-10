@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Timestamp: "2025-10-01 20:30:00 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex_repo/src/scitex/stats/posthoc/_dunnett.py
+# File: scitex_stats/posthoc/_dunnett.py
 # ----------------------------------------
 from __future__ import annotations
 

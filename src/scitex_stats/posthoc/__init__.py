@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# File: ./scitex_repo/src/scitex/stats/posthoc/__init__.py
+# File: scitex_stats/posthoc/__init__.py
 
 """
 Post-hoc tests for pairwise comparisons after ANOVA.

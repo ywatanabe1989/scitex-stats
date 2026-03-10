@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 15:45:00 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/nonparametric/_test_wilcoxon.py
+# File: scitex_stats/tests/nonparametric/_test_wilcoxon.py
 
 r"""
 Wilcoxon signed-rank test (non-parametric paired test).

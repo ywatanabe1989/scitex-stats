@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Timestamp: "2025-10-01 21:00:01 (ywatanabe)"
-# File: /ssh:sp:/home/ywatanabe/proj/scitex_repo/src/scitex/stats/correct/_correct_holm.py
+# File: scitex_stats/correct/_correct_holm.py
 # ----------------------------------------
 from __future__ import annotations
 

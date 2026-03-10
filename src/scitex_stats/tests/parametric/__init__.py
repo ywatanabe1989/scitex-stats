@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# File: ./scitex_repo/src/scitex/stats/tests/parametric/__init__.py
+# File: scitex_stats/tests/parametric/__init__.py
 
 """
 Parametric statistical tests.

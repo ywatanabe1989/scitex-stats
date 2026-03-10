@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 14:45:00 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex_repo/src/scitex/stats/utils/_formatters.py
+# File: scitex_stats/utils/_formatters.py
 
 """Statistical result formatters.
 

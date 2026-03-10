@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 18:53:25 (ywatanabe)"
-# File: /ssh:sp:/home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/categorical/_test_chi2.py
+# File: scitex_stats/tests/categorical/_test_chi2.py
 # ----------------------------------------
 
 r"""
@@ -498,6 +498,6 @@ def _plot_chi2_simple(observed, expected, chi2_stat, pvalue, v, var_row, var_col
     )
 
 
-# Demo: python -m scitex.stats.tests.categorical._demo_chi2
+# Demo: python -m scitex_stats.tests.categorical._demo_chi2
 
 # EOF

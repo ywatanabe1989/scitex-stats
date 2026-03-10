@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-12-10 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex-code/src/scitex/stats/auto/__init__.py
+# File: scitex_stats/auto/__init__.py
 
 """
 Automatic Statistical Test Selection Module.

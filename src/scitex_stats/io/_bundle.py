@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-12-13 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex-code/src/scitex/stats/io/_bundle.py
+# File: scitex_stats/io/_bundle.py
 
 """
 SciTeX .stats Bundle I/O - Statistics-specific bundle operations.

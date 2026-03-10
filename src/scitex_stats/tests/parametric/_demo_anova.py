@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 16:30:00 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/parametric/_demo_anova.py
+# File: scitex_stats/tests/parametric/_demo_anova.py
 # ----------------------------------------
 from __future__ import annotations
 

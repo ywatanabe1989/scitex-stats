@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-12-10 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex-code/src/scitex/stats/auto/_context.py
+# File: scitex_stats/auto/_context.py
 
 """
 Statistical Context - Data structure for automatic test selection.

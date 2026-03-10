@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Timestamp: "2025-10-01 21:00:00 (ywatanabe)"
-# File: /ssh:sp:/home/ywatanabe/proj/scitex_repo/src/scitex/stats/effect_sizes/_cliffs_delta.py
+# File: scitex_stats/effect_sizes/_cliffs_delta.py
 # ----------------------------------------
 from __future__ import annotations
 

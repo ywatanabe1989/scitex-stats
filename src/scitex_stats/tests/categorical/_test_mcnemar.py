@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 16:30:00 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/categorical/_test_mcnemar.py
+# File: scitex_stats/tests/categorical/_test_mcnemar.py
 # ----------------------------------------
 
 r"""McNemar's test for paired categorical data.
@@ -475,6 +475,6 @@ def _plot_mcnemar_simple(observed, result, var_before, var_after, ax):
     )
 
 
-# Demo: python -m scitex.stats.tests.categorical._demo_mcnemar
+# Demo: python -m scitex_stats.tests.categorical._demo_mcnemar
 
 # EOF

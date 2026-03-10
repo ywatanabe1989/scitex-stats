@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2026-01-24 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex-python/src/scitex/stats/auto/_styles.py
+# File: scitex_stats/auto/_styles.py
 
 """Journal Style Presets - Publication-ready statistical formatting.
 

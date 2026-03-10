@@ -3,8 +3,7 @@
 
 """Tests for scitex_stats public Python API.
 
-Verifies that the thin wrapper correctly delegates to scitex.stats
-and that all advertised public names are importable and functional.
+Verifies that all advertised public names are importable and functional.
 """
 
 import numpy as np

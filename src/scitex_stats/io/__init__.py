@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-12-13 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex-code/src/scitex/stats/io/__init__.py
+# File: scitex_stats/io/__init__.py
 
 """
 I/O operations for scitex.stats - Statistical results bundles (.stats).

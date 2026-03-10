@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 17:00:00 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex_repo/src/scitex/stats/tests/parametric/_test_anova_rm.py
+# File: scitex_stats/tests/parametric/_test_anova_rm.py
 # ----------------------------------------
 from __future__ import annotations
 
@@ -507,6 +507,6 @@ def _plot_anova_rm(data, condition_names, result):
     return fig
 
 
-# Demo: python -m scitex.stats.tests.parametric._demo_anova_rm
+# Demo: python -m scitex_stats.tests.parametric._demo_anova_rm
 
 # EOF

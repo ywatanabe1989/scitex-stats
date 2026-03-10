@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2026-02-11 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex-python/src/scitex/stats/auto/_decision_tree.py
+# File: scitex_stats/auto/_decision_tree.py
 
 """
 Decision Tree for Statistical Test Selection.

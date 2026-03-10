@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Timestamp: "2025-12-10 (ywatanabe)"
-# File: /home/ywatanabe/proj/scitex-code/src/scitex/stats/auto/_rules.py
+# File: scitex_stats/auto/_rules.py
 
 """
 Test Rules - Applicability rules for statistical tests.

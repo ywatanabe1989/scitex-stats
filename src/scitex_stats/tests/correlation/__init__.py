@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# File: ./scitex_repo/src/scitex/stats/tests/correlation/__init__.py
+# File: scitex_stats/tests/correlation/__init__.py
 
 """
 Correlation tests.
