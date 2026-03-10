@@ -140,6 +140,8 @@ AI agents can run statistical tests and format publication-ready results autonom
 | `posthoc_test` | Run post-hoc pairwise comparisons |
 | `p_to_stars` | Convert p-value to significance stars |
 
+*Table 1. MCP tools available for AI agent integration via `scitex-stats mcp start`.*
+
 ```bash
 scitex-stats mcp start
 ```
@@ -157,6 +159,8 @@ scitex-stats mcp start
 | **Correlation** | Pearson, Spearman, Kendall, Theil-Sen |
 | **Categorical** | Chi-squared, Fisher exact, McNemar, Cochran's Q |
 | **Normality** | Shapiro-Wilk, Kolmogorov-Smirnov (1-sample, 2-sample) |
+
+*Table 2. All 23 statistical tests organized by category.*
 
 ## Part of SciTeX
 
