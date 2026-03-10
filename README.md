@@ -42,10 +42,13 @@ flowchart LR
     E --> F
     F --> G[Publication-Ready Result]
 
-    style A fill:#e8f4f8,stroke:#2c3e50
-    style B fill:#fef9e7,stroke:#2c3e50
-    style C fill:#e8f8f5,stroke:#2c3e50
-    style G fill:#d5f5e3,stroke:#2c3e50
+    style A fill:#4a90d9,stroke:#2c3e50,color:#fff
+    style B fill:#f5a623,stroke:#2c3e50,color:#fff
+    style C fill:#27ae60,stroke:#2c3e50,color:#fff
+    style D fill:#8e44ad,stroke:#2c3e50,color:#fff
+    style E fill:#8e44ad,stroke:#2c3e50,color:#fff
+    style F fill:#e74c3c,stroke:#2c3e50,color:#fff
+    style G fill:#2c3e50,stroke:#1a252f,color:#fff
 ```
 
 *Figure 1. Statistical testing workflow. scitex-stats automates the full pipeline from raw data to publication-ready results: test recommendation based on data characteristics, test execution with effect size and power analysis, and APA-formatted output.*
