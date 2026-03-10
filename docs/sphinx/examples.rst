@@ -7,6 +7,14 @@ human-readable (``.txt``) and structured (``.json``) output.
 Example 1: Basic t-test
 ------------------------
 
+.. figure:: _static/example_ttest_figure.png
+   :alt: Example t-test visualization
+   :align: center
+   :width: 60%
+
+   **Figure 1.** Box plot with individual data points, significance bracket, p-value,
+   and effect size — generated from the unified result dictionary.
+
 .. code-block:: python
 
    import scitex_stats as ss
