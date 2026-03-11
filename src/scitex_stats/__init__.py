@@ -40,6 +40,7 @@ except _PackageNotFoundError:
 # ---------------------------------------------------------------------------
 
 from scitex_stats import (
+    _utils,
     auto,
     correct,
     descriptive,
@@ -49,21 +50,47 @@ from scitex_stats import (
     tests,
 )
 from scitex_stats._dispatch import available_tests, run_test
+from scitex_stats._utils._serialize import to_json_safe
 from scitex_stats.auto import (
     StatContext,
+    StatStyle,
     TestRule,
+    check_applicable,
+    get_stat_style,
     p_to_stars,
     recommend_tests,
 )
 from scitex_stats.descriptive import describe
+from scitex_stats.tests import (
+    test_anova,
+    test_anova_2way,
+    test_anova_rm,
+    test_brunner_munzel,
+    test_chi2,
+    test_cochran_q,
+    test_fisher,
+    test_friedman,
+    test_kendall,
+    test_kruskal,
+    test_ks_1samp,
+    test_ks_2samp,
+    test_mannwhitneyu,
+    test_mcnemar,
+    test_normality,
+    test_pearson,
+    test_shapiro,
+    test_spearman,
+    test_theilsen,
+    test_ttest_1samp,
+    test_ttest_ind,
+    test_ttest_rel,
+    test_wilcoxon,
+)
 
 __all__ = [
     "__version__",
-    # Dispatcher
-    "run_test",
-    "available_tests",
-    "describe",
     # Submodules
+    "_utils",
     "auto",
     "correct",
     "descriptive",
@@ -71,11 +98,49 @@ __all__ = [
     "posthoc",
     "power",
     "tests",
+    # Dispatcher
+    "run_test",
+    "available_tests",
+    # Descriptive
+    "describe",
+    # JSON serialization
+    "to_json_safe",
     # Auto convenience
     "StatContext",
     "TestRule",
+    "StatStyle",
     "recommend_tests",
+    "check_applicable",
+    "get_stat_style",
     "p_to_stars",
+    # Parametric (6)
+    "test_ttest_ind",
+    "test_ttest_rel",
+    "test_ttest_1samp",
+    "test_anova",
+    "test_anova_rm",
+    "test_anova_2way",
+    # Nonparametric (5)
+    "test_brunner_munzel",
+    "test_wilcoxon",
+    "test_kruskal",
+    "test_mannwhitneyu",
+    "test_friedman",
+    # Correlation (4)
+    "test_pearson",
+    "test_spearman",
+    "test_kendall",
+    "test_theilsen",
+    # Categorical (4)
+    "test_chi2",
+    "test_fisher",
+    "test_mcnemar",
+    "test_cochran_q",
+    # Normality (4)
+    "test_shapiro",
+    "test_normality",
+    "test_ks_1samp",
+    "test_ks_2samp",
 ]
 
 # EOF
