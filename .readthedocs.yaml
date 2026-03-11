@@ -14,10 +14,8 @@ sphinx:
   configuration: docs/sphinx/conf.py
   fail_on_warning: false
 
-# Optionally build your docs in additional formats such as PDF and ePub
-formats:
-  - pdf
-  - epub
+# Disable PDF/ePub to avoid multi-file output errors
+formats: []
 
 # Python configuration
 python:
