@@ -87,6 +87,9 @@ all = [
 [project.scripts]
 scitex-stats = "scitex_stats._cli:main"
 
+[project.entry-points."scitex_linter.plugins"]
+stats = "scitex_stats._linter_plugin:get_plugin"
+
 [project.urls]
 Homepage = "https://github.com/ywatanabe1989/scitex-stats"
 Documentation = "https://scitex-stats.readthedocs.io"

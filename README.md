@@ -217,6 +217,19 @@ scitex-stats mcp start
 
 *Table 2. All 23 statistical tests organized by category.*
 
+## Lint Rules
+
+Detected by [scitex-linter](https://github.com/ywatanabe1989/scitex-linter) when this package is installed.
+
+| Rule | Severity | Message |
+|------|----------|---------|
+| `STX-ST001` | warning | `scipy.stats.ttest_ind()` — use `stx.stats.ttest_ind()` for auto effect size + CI |
+| `STX-ST002` | warning | `scipy.stats.mannwhitneyu()` — use `stx.stats.mannwhitneyu()` for auto effect size |
+| `STX-ST003` | warning | `scipy.stats.pearsonr()` — use `stx.stats.pearsonr()` for auto CI + power |
+| `STX-ST004` | warning | `scipy.stats.f_oneway()` — use `stx.stats.anova_oneway()` for post-hoc + effect sizes |
+| `STX-ST005` | warning | `scipy.stats.wilcoxon()` — use `stx.stats.wilcoxon()` for auto effect size |
+| `STX-ST006` | warning | `scipy.stats.kruskal()` — use `stx.stats.kruskal()` for post-hoc + effect sizes |
+
 ## Part of SciTeX
 
 SciTeX Stats is part of [**SciTeX**](https://scitex.ai). When used inside the SciTeX framework, statistical testing integrates with the full pipeline — from data loading through analysis to publication-ready figures:
