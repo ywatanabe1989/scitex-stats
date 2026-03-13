@@ -20,14 +20,12 @@ IO:
 
 """Imports"""
 import argparse
-import sys
 from typing import Literal, Optional, Union
 
 import numpy as np
 import pandas as pd
 from scipy import stats
 
-import scitex as stx
 from scitex_stats._logging import getLogger
 
 logger = getLogger(__name__)
@@ -317,6 +315,7 @@ def main(args):
 
     # Create visualizations
     logger.info("\n=== Creating visualizations ===")
+    import scitex as stx
 
     fig, axes = stx.plt.subplots(2, 2, figsize=(12, 10))
 
@@ -409,6 +408,7 @@ def run_main():
     import sys
 
     import matplotlib.pyplot as plt
+    import scitex as stx
 
     args = parse_args()
 
