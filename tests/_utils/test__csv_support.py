@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Tests for seaborn-style data= parameter support in scitex.stats."""
 
+import importlib.util
 import os
 import tempfile
 
@@ -9,6 +10,11 @@ import pandas as pd
 import pytest
 
 from scitex_stats._utils._csv_support import resolve_columns, resolve_groups
+
+requires_scitex_io = pytest.mark.skipif(
+    importlib.util.find_spec("scitex_io") is None,
+    reason="scitex_io not installed",
+)
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -73,6 +79,7 @@ class TestResolveColumns:
         assert "x" in resolved
         assert len(resolved["x"]) == 30
 
+    @requires_scitex_io
     def test_csv_path(self, csv_path):
         resolved = resolve_columns(csv_path, x="before", y="after")
         assert isinstance(resolved["x"], np.ndarray)
@@ -112,6 +119,7 @@ class TestResolveGroups:
         assert len(groups) == 2
         assert names == ["A", "B"]
 
+    @requires_scitex_io
     def test_csv_path(self, csv_path):
         groups, names = resolve_groups(csv_path, "score", "group")
         assert len(groups) == 3
@@ -157,6 +165,7 @@ class TestTwoSampleDataParam:
         result = test_mannwhitneyu(x="before", y="after", data=sample_df)
         assert "pvalue" in result
 
+    @requires_scitex_io
     def test_csv_path_as_data(self, csv_path):
         from scitex_stats import test_ttest_ind
 

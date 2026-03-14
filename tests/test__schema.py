@@ -651,7 +651,10 @@ class TestCreateStatResult:
     def test_basic_creation(self):
         """Test basic creation with minimal fields."""
         result = create_stat_result(
-            test_type="pearson", statistic_name="r", statistic_value=0.85, p_value=0.001
+            test_type="pearson",
+            statistic_name="r",
+            statistic_value=0.85,
+            p_value=0.0001,
         )
 
         assert result.test_type == "pearson"
