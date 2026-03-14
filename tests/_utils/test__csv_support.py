@@ -11,20 +11,14 @@ import pytest
 from scitex_stats._utils._csv_support import resolve_columns, resolve_groups
 
 
-def _has_scitex_io():
+def _skip_without_scitex_io():
+    """Skip test if scitex.io is not available."""
     try:
         import scitex  # noqa: F401
 
         _ = scitex.io
-        return True
     except (ImportError, AttributeError):
-        return False
-
-
-requires_scitex_io = pytest.mark.skipif(
-    not _has_scitex_io(),
-    reason="scitex.io not available",
-)
+        pytest.skip("scitex.io not available")
 
 
 # ---------------------------------------------------------------------------
@@ -91,6 +85,7 @@ class TestResolveColumns:
         assert len(resolved["x"]) == 30
 
     def test_csv_path(self, csv_path):
+        _skip_without_scitex_io()
         resolved = resolve_columns(csv_path, x="before", y="after")
         assert isinstance(resolved["x"], np.ndarray)
         assert len(resolved["x"]) == 30
@@ -130,6 +125,7 @@ class TestResolveGroups:
         assert names == ["A", "B"]
 
     def test_csv_path(self, csv_path):
+        _skip_without_scitex_io()
         groups, names = resolve_groups(csv_path, "score", "group")
         assert len(groups) == 3
 
@@ -175,6 +171,7 @@ class TestTwoSampleDataParam:
         assert "pvalue" in result
 
     def test_csv_path_as_data(self, csv_path):
+        _skip_without_scitex_io()
         from scitex_stats import test_ttest_ind
 
         result = test_ttest_ind(x="before", y="after", data=csv_path)
