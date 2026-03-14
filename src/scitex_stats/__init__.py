@@ -36,6 +36,17 @@ except _PackageNotFoundError:
                     break
 
 # ---------------------------------------------------------------------------
+# Optional decorator from scitex-dev (graceful fallback)
+# ---------------------------------------------------------------------------
+try:
+    from scitex_dev.decorators import supports_return_as as _supports_return_as
+except ImportError:
+
+    def _supports_return_as(fn):
+        return fn
+
+
+# ---------------------------------------------------------------------------
 # Core imports — these are the public Python API
 # ---------------------------------------------------------------------------
 
@@ -86,6 +97,13 @@ from scitex_stats.tests import (
     test_ttest_rel,
     test_wilcoxon,
 )
+
+# ---------------------------------------------------------------------------
+# Apply @supports_return_as to public API functions
+# ---------------------------------------------------------------------------
+run_test = _supports_return_as(run_test)
+describe = _supports_return_as(describe)
+recommend_tests = _supports_return_as(recommend_tests)
 
 __all__ = [
     "__version__",

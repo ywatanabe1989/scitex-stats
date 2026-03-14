@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "scitex-stats"
-version = "0.2.4"
+version = "0.2.5"
 description = "Publication-ready statistical testing framework with 23 tests, effect sizes, power analysis, and MCP server"
 readme = "README.md"
 license = "AGPL-3.0"
@@ -57,6 +57,7 @@ mcp = [
     "fastmcp>=2.0.0",
 ]
 dev = [
+    "scitex-dev",
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
     "pytest-xdist>=3.0.0",
@@ -70,6 +71,7 @@ docs = [
     "sphinx-autodoc-typehints>=1.25",
 ]
 all = [
+    "scitex-dev",
     "matplotlib>=3.5.0",
     "figrecipe>=0.13.0",
     "fastmcp>=2.0.0",
@@ -86,6 +88,9 @@ all = [
 
 [project.scripts]
 scitex-stats = "scitex_stats._cli:main"
+
+[project.entry-points."scitex_dev.docs"]
+scitex-stats = "scitex_stats"
 
 [project.entry-points."scitex_linter.plugins"]
 stats = "scitex_stats._linter_plugin:get_plugin"
