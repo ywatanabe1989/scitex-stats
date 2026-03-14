@@ -9,7 +9,10 @@ from typing import Any, Dict, List, Tuple, Union
 import numpy as np
 import pandas as pd
 
-import scitex as stx
+
+def _load_file(path: str) -> pd.DataFrame:
+    """Load a tabular file as DataFrame."""
+    return pd.read_csv(path)
 
 
 def resolve_columns(
@@ -45,7 +48,7 @@ def resolve_columns(
     array([1, 2, 3])
     """
     if isinstance(data, (str, Path)):
-        data = stx.io.load(str(data))
+        data = _load_file(str(data))
 
     result = {}
     for key, val in col_map.items():
@@ -97,7 +100,7 @@ def resolve_groups(
     ['A', 'B']
     """
     if isinstance(data, (str, Path)):
-        data = stx.io.load(str(data))
+        data = _load_file(str(data))
 
     for col_name, col_label in [
         (value_col, "value_col"),
