@@ -11,10 +11,6 @@ import pytest
 
 from scitex_stats._utils._csv_support import resolve_columns, resolve_groups
 
-requires_scitex_io = pytest.mark.skipif(
-    importlib.util.find_spec("scitex_io") is None,
-    reason="scitex_io not installed",
-)
 
 # ---------------------------------------------------------------------------
 # Fixtures
