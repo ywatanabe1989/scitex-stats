@@ -150,6 +150,29 @@ power.sample_size(effect_size=0.5, alpha=0.05, power=0.8, test="ttest_ind")
 power.achieved_power(effect_size=0.5, n=30, alpha=0.05, test="ttest_ind")
 ```
 
+## CLI Commands
+
+```bash
+# Start MCP server
+scitex-stats mcp run
+scitex-stats mcp install            # Install in Claude Desktop
+
+# Browse API
+scitex-stats list-python-apis       # List all public APIs
+scitex-stats introspect api scitex_stats -v  # With docstrings
+
+# Documentation
+scitex-stats docs --list            # List doc pages
+scitex-stats docs --tldr            # Quick-start summary
+scitex-stats docs --json            # JSON for LLM consumption
+
+# Skills (self-describing)
+scitex-stats skills                     # Show this SKILL.md
+scitex-stats skills list                # List skill pages
+scitex-stats skills get                 # Show main SKILL.md
+scitex-stats skills get test-selection  # Show a reference page
+```
+
 ## MCP Tools (for AI agents)
 
 | Tool | Purpose |

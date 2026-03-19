@@ -82,11 +82,12 @@ def main(argv=None) -> int:
     # Register top-level convenience commands
     introspect.register_list_python_apis(subparsers)
 
-    # Docs subcommand (from scitex-dev)
+    # Docs and Skills subcommands (from scitex-dev)
     try:
-        from scitex_dev.cli import register_docs_subcommand
+        from scitex_dev.cli import register_docs_subcommand, register_skills_subcommand
 
         register_docs_subcommand(subparsers, package="scitex-stats")
+        register_skills_subcommand(subparsers, package="scitex-stats")
     except ImportError:
         pass
 
