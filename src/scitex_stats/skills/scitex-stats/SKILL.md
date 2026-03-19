@@ -12,10 +12,11 @@ allowed-tools: mcp__scitex__stats_*
 import scitex_stats as ss
 
 # Run a test directly
-result = ss.run_test("ttest_ind", g1, g2)
+result = ss.run_test("brunner_munzel", g1, g2)
 
-# Don't know which test? Let it recommend
-ss.recommend_tests(g1, g2, g3)
+# Don't know which test? Build a context, get recommendations
+ctx = ss.StatContext(n_groups=2, sample_sizes=[30, 32], outcome_type="continuous", design="between")
+ss.recommend_tests(ctx)  # → ['brunner_munzel', 'ttest_ind', 'mannwhitneyu']
 
 # Descriptive statistics
 ss.describe(data)
@@ -23,17 +24,26 @@ ss.describe(data)
 
 ## Common Workflows
 
-### "I have two groups to compare"
+### "I have two independent groups to compare"
 
 ```python
+# Non-parametric (default choice — robust to non-normality and unequal variance)
+result = ss.test_brunner_munzel(g1, g2)
+
 # Parametric (normal data, equal variance)
 result = ss.test_ttest_ind(g1, g2)
 
-# Non-parametric alternative
-result = ss.test_mannwhitneyu(g1, g2)
+# Other non-parametric alternatives
+result = ss.test_mannwhitneyu(g1, g2)  # assumes equal variance
+```
 
-# Paired samples
+### "I have two paired groups"
+
+```python
+# Parametric (normal differences)
 result = ss.test_ttest_rel(before, after)
+
+# Non-parametric
 result = ss.test_wilcoxon(before, after)
 ```
 
@@ -159,7 +169,7 @@ power.achieved_power(effect_size=0.5, n=30, alpha=0.05, test="ttest_ind")
 
 | Scenario | Parametric | Non-parametric |
 |----------|-----------|----------------|
-| 2 independent groups | `ttest_ind` | `mannwhitneyu` |
+| 2 independent groups | `ttest_ind` | `brunner_munzel` (preferred), `mannwhitneyu` |
 | 2 paired groups | `ttest_rel` | `wilcoxon` |
 | 1 sample vs value | `ttest_1samp` | `ks_1samp` |
 | 3+ independent groups | `anova` | `kruskal` |
