@@ -92,6 +92,9 @@ scitex-stats = "scitex_stats._cli:main"
 [project.entry-points."scitex_dev.docs"]
 scitex-stats = "scitex_stats"
 
+[project.entry-points."scitex_dev.skills"]
+scitex-stats = "scitex_stats"
+
 [project.entry-points."scitex_linter.plugins"]
 stats = "scitex_stats._linter_plugin:get_plugin"
 
@@ -103,6 +106,9 @@ Issues = "https://github.com/ywatanabe1989/scitex-stats/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/scitex_stats"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"src/scitex_stats/skills" = "scitex_stats/skills"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
