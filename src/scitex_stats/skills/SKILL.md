@@ -167,7 +167,7 @@ scitex-stats docs --tldr            # Quick-start summary
 scitex-stats docs --json            # JSON for LLM consumption
 
 # Skills (self-describing)
-scitex-stats skills                     # Show this SKILL.md
+scitex-stats skills                     # Show help (list/get)
 scitex-stats skills list                # List skill pages
 scitex-stats skills get                 # Show main SKILL.md
 scitex-stats skills get test-selection  # Show a reference page
