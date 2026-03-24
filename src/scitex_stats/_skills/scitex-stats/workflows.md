@@ -1,77 +1,77 @@
+---
+name: workflows
+description: Common statistical analysis workflows — group comparisons, correlations, normality, post-hoc, power.
+---
+
 # Common Workflows
 
-## "I need to find papers on a topic"
+## "Compare two groups"
 
 ```python
-from crossref_local import search
+import scitex_stats as ss
 
-results = search("CRISPR genome editing", limit=20)
-for work in results:
-    print(f"{work.title} ({work.year}) - {work.doi}")
+# Auto-recommend the right test
+recs = ss.recommend_tests(group1, group2)
+# Uses normality check, sample size, paired/independent to suggest
+
+# Then run it
+result = ss.run_test("ttest_ind", group1, group2)
+# result = {statistic, p_value, effect_size, ci, power, n1, n2, ...}
 ```
 
-## "I have DOIs and need metadata"
+## "Compare multiple groups"
 
 ```python
-from crossref_local import get, get_many, enrich_dois
-
-# Single DOI
-work = get("10.1038/nature12373")
-
-# Multiple DOIs
-works = get_many(["10.1038/nature12373", "10.1126/science.aax0758"])
-
-# Enrich with citation counts and references
-enriched = enrich_dois(["10.1038/nature12373"])
+result = ss.test_anova(group1, group2, group3)
+# If significant, follow up with post-hoc:
+from scitex_stats.posthoc import tukey_hsd, games_howell
+posthoc = tukey_hsd(group1, group2, group3)
 ```
 
-## "I need citation information"
+## "Check correlation"
 
 ```python
-from crossref_local import get_citing, get_cited, get_citation_count
-
-citing = get_citing("10.1038/nature12373")   # Papers citing this work
-cited = get_cited("10.1038/nature12373")     # Papers this work cites
-count = get_citation_count("10.1038/nature12373")  # 1539
+result = ss.test_pearson(x, y)    # parametric
+result = ss.test_spearman(x, y)   # nonparametric
+result = ss.test_kendall(x, y)    # ordinal
 ```
 
-## "I want to validate my bibliography"
+## "Correct for multiple comparisons"
 
 ```python
-from crossref_local import check_bibtex, check_citations
+from scitex_stats.correct import bonferroni, fdr, holm
 
-# Check a BibTeX file
-report = check_bibtex("references.bib")
-
-# Check DOIs in a list
-report = check_doi_list("dois.txt")
+p_values = [0.01, 0.04, 0.03, 0.08]
+corrected = fdr(p_values)             # Benjamini-Hochberg
+corrected = bonferroni(p_values)      # Bonferroni
+corrected = holm(p_values)            # Holm-Bonferroni
 ```
 
-## "I need a citation network visualization"
+## "Check normality before choosing test"
 
 ```python
-from crossref_local import CitationNetwork
-
-network = CitationNetwork("10.1038/nature12373", depth=2)
-network.save_html("citation_network.html")  # requires: pip install crossref-local[viz]
+result = ss.test_shapiro(data)
+result = ss.test_normality(data)   # combined normality check
+result = ss.test_ks_1samp(data)    # Kolmogorov-Smirnov
 ```
 
-## "I want to calculate impact factors"
+## "Calculate power / sample size"
 
 ```python
-from crossref_local.impact_factor import ImpactFactorCalculator
+from scitex_stats.power import power_analysis
 
-with ImpactFactorCalculator() as calc:
-    result = calc.calculate_impact_factor("Nature", target_year=2023)
-    print(f"IF: {result['impact_factor']:.3f}")  # 54.067
+result = power_analysis(
+    test="ttest_ind",
+    effect_size=0.5,    # Cohen's d
+    alpha=0.05,
+    power=0.8,
+)
+# result.n_per_group → required sample size
 ```
 
-## "I need async operations"
+## "Format results for publication"
 
 ```python
-from crossref_local import aio
-
-async def main():
-    counts = await aio.count_many(["CRISPR", "neural network", "climate"])
-    results = await aio.search("machine learning")
+result = ss.run_test("ttest_ind", g1, g2, return_as="latex")
+# → "t(28) = 2.45, p = .021, d = 0.89"
 ```

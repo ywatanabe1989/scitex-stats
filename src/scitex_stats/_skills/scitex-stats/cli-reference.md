@@ -1,35 +1,38 @@
-# CLI Commands
+---
+name: cli-reference
+description: CLI commands for scitex-stats — run tests, recommend, describe, power analysis from the terminal.
+---
+
+# CLI Reference
 
 ```bash
-# Search
-crossref-local search "deep learning EEG" -n 20
-crossref-local search "CRISPR" -n 5 -a --json      # With abstracts, JSON output
-crossref-local search-by-doi 10.1038/nature12373
+# Entry point
+scitex-stats <command> [options]
 
-# Check citations
-crossref-local check bibliography.bib
-crossref-local check dois.txt --json
+# Run a test
+scitex-stats run ttest_ind --data1 group1.csv --data2 group2.csv
+scitex-stats run anova --data groups.csv
 
-# Status
-crossref-local status
-crossref-local status --json
+# Recommend tests
+scitex-stats recommend --data1 group1.csv --data2 group2.csv
 
-# Server
-crossref-local relay --dry-run            # Preview server config
-crossref-local relay --port 8080          # Start HTTP relay
+# Descriptive statistics
+scitex-stats describe --data data.csv
 
 # MCP server
-crossref-local mcp start                  # stdio (Claude Desktop)
-crossref-local mcp start -t http          # HTTP transport
-crossref-local mcp doctor                 # Diagnose setup
-crossref-local mcp list-tools -vv         # List tools with descriptions
+scitex-stats mcp start              # stdio transport (Claude Desktop)
+scitex-stats mcp start -t http      # HTTP transport
+scitex-stats mcp doctor             # Diagnose MCP setup
+scitex-stats mcp list-tools -vv     # List tools with descriptions
+
+# Skills
+scitex-stats skills list
+scitex-stats skills get
+
+# Documentation
+scitex-stats docs list
+scitex-stats docs get quickstart
 
 # Browse API
-crossref-local list-python-apis -v        # List all public APIs
-
-# Documentation & Skills
-crossref-local docs list
-crossref-local docs get quickstart
-crossref-local skills list
-crossref-local skills get
+scitex-stats list-python-apis -v
 ```
