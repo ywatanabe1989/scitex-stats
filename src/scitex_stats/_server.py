@@ -232,6 +232,38 @@ async def p_to_stars(
 
 
 # =============================================================================
+# Skills Tools
+# =============================================================================
+
+
+@mcp.tool()
+async def skills_list() -> str:
+    """List available skill pages for scitex-stats."""
+    try:
+        from scitex_dev.skills import list_skills
+
+        result = list_skills(package="scitex-stats")
+        return _json({"success": True, "skills": result.get("scitex-stats", [])})
+    except ImportError:
+        return _json({"success": False, "error": "scitex-dev not installed"})
+
+
+@mcp.tool()
+async def skills_get(name: Optional[str] = None) -> str:
+    """Get a skill page for scitex-stats. Without name, returns main SKILL.md."""
+    try:
+        from scitex_dev.skills import get_skill
+
+        content = get_skill(package="scitex-stats", name=name)
+        if content:
+            return _json({"success": True, "name": name, "content": content})
+        target = f"'{name}'" if name else "SKILL.md"
+        return _json({"success": False, "error": f"Skill {target} not found"})
+    except ImportError:
+        return _json({"success": False, "error": "scitex-dev not installed"})
+
+
+# =============================================================================
 # Server Entry Point
 # =============================================================================
 
