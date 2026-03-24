@@ -109,6 +109,7 @@ packages = ["src/scitex_stats"]
 
 [tool.hatch.build.targets.wheel.force-include]
 "src/scitex_stats/skills" = "scitex_stats/skills"
+"src/scitex_stats/_skills" = "scitex_stats/_skills"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
