@@ -1,5 +1,4 @@
 ---
-name: workflows
 description: Common statistical analysis workflows — group comparisons, correlations, normality, post-hoc, power.
 ---
 

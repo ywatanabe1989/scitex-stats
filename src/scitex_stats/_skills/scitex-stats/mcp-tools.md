@@ -1,5 +1,4 @@
 ---
-name: mcp-tools
 description: MCP tools for AI agents — 10 statistical tools accessible via scitex MCP server.
 ---
 

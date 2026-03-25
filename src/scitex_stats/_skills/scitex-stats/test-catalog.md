@@ -1,5 +1,4 @@
 ---
-name: test-catalog
 description: All 23 statistical tests organized by category — parametric, nonparametric, correlation, categorical, normality.
 ---
 

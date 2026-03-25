@@ -1,5 +1,4 @@
 ---
-name: cli-reference
 description: CLI commands for scitex-stats — run tests, recommend, describe, power analysis from the terminal.
 ---
 

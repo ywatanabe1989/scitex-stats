@@ -1,5 +1,4 @@
 ---
-name: quick-start
 description: Basic usage of scitex-stats — run_test, recommend_tests, describe, effect sizes.
 ---
 
