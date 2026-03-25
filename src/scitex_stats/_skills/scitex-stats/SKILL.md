@@ -1,5 +1,4 @@
 ---
-name: scitex-stats
 description: Publication-ready statistical testing — 23 tests, effect sizes, power analysis, auto test selection, and MCP tools for AI agents.
 allowed-tools: mcp__scitex__stats_*
 ---
