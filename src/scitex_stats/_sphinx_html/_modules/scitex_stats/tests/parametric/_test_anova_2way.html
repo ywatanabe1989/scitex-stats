@@ -1,0 +1,729 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scitex_stats.tests.parametric._test_anova_2way &mdash; SciTeX Stats v0.2.4</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            SciTeX Stats
+              <img src="../../../../_static/scitex-logo-banner.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../installation.html#basic-installation">Basic Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../installation.html#optional-dependencies">Optional Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../installation.html#development-installation">Development Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../quickstart.html">Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#effect-sizes">Effect Sizes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#power-analysis">Power Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#multiple-comparison-correction">Multiple Comparison Correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#post-hoc-tests">Post-hoc Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#mcp-server">MCP Server</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../choosing_tests.html">Choosing the Right Test</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#decision-flowchart">Decision Flowchart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#step-1-what-type-of-data">Step 1: What Type of Data?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#step-2-how-many-groups">Step 2: How Many Groups?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#step-3-check-assumptions">Step 3: Check Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#automatic-recommendation">Automatic Recommendation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#correlation-tests">Correlation Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#categorical-tests">Categorical Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../unified_output.html">Unified Output Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#result-dictionary">Result Dictionary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#key-fields">Key Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#null-hypotheses">Null Hypotheses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#significance-stars">Significance Stars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#working-with-results">Working with Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cli.html">CLI Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../cli.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../cli.html#core-commands">Core Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../cli.html#mcp-subcommands">MCP Subcommands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mcp.html">MCP Server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#starting-the-server">Starting the Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#mcp-client-configuration">MCP Client Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#available-tools">Available Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#diagnostics">Diagnostics</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.run_test"><code class="docutils literal notranslate"><span class="pre">run_test()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.available_tests"><code class="docutils literal notranslate"><span class="pre">available_tests()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.describe"><code class="docutils literal notranslate"><span class="pre">describe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.to_json_safe"><code class="docutils literal notranslate"><span class="pre">to_json_safe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext"><code class="docutils literal notranslate"><span class="pre">StatContext</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.__init__"><code class="docutils literal notranslate"><span class="pre">StatContext.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.__post_init__"><code class="docutils literal notranslate"><span class="pre">StatContext.__post_init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.control_group_name"><code class="docutils literal notranslate"><span class="pre">StatContext.control_group_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.effective_paired"><code class="docutils literal notranslate"><span class="pre">StatContext.effective_paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.from_data"><code class="docutils literal notranslate"><span class="pre">StatContext.from_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.from_dict"><code class="docutils literal notranslate"><span class="pre">StatContext.from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.group_names"><code class="docutils literal notranslate"><span class="pre">StatContext.group_names</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.has_control_group"><code class="docutils literal notranslate"><span class="pre">StatContext.has_control_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.min_n_per_group"><code class="docutils literal notranslate"><span class="pre">StatContext.min_n_per_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.missing_allowed"><code class="docutils literal notranslate"><span class="pre">StatContext.missing_allowed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.n_factors"><code class="docutils literal notranslate"><span class="pre">StatContext.n_factors</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.n_total"><code class="docutils literal notranslate"><span class="pre">StatContext.n_total</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.normality_ok"><code class="docutils literal notranslate"><span class="pre">StatContext.normality_ok</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.paired"><code class="docutils literal notranslate"><span class="pre">StatContext.paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.to_dict"><code class="docutils literal notranslate"><span class="pre">StatContext.to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.variance_homogeneity_ok"><code class="docutils literal notranslate"><span class="pre">StatContext.variance_homogeneity_ok</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.n_groups"><code class="docutils literal notranslate"><span class="pre">StatContext.n_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.sample_sizes"><code class="docutils literal notranslate"><span class="pre">StatContext.sample_sizes</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.outcome_type"><code class="docutils literal notranslate"><span class="pre">StatContext.outcome_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.design"><code class="docutils literal notranslate"><span class="pre">StatContext.design</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule"><code class="docutils literal notranslate"><span class="pre">TestRule</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.__init__"><code class="docutils literal notranslate"><span class="pre">TestRule.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.description"><code class="docutils literal notranslate"><span class="pre">TestRule.description</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.priority"><code class="docutils literal notranslate"><span class="pre">TestRule.priority</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.name"><code class="docutils literal notranslate"><span class="pre">TestRule.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.family"><code class="docutils literal notranslate"><span class="pre">TestRule.family</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.min_groups"><code class="docutils literal notranslate"><span class="pre">TestRule.min_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.max_groups"><code class="docutils literal notranslate"><span class="pre">TestRule.max_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.outcome_types"><code class="docutils literal notranslate"><span class="pre">TestRule.outcome_types</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.supports_paired"><code class="docutils literal notranslate"><span class="pre">TestRule.supports_paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.supports_unpaired"><code class="docutils literal notranslate"><span class="pre">TestRule.supports_unpaired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.design_allowed"><code class="docutils literal notranslate"><span class="pre">TestRule.design_allowed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.requires_control_group"><code class="docutils literal notranslate"><span class="pre">TestRule.requires_control_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.min_n_total"><code class="docutils literal notranslate"><span class="pre">TestRule.min_n_total</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.min_n_per_group"><code class="docutils literal notranslate"><span class="pre">TestRule.min_n_per_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.needs_normality"><code class="docutils literal notranslate"><span class="pre">TestRule.needs_normality</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.needs_equal_variance"><code class="docutils literal notranslate"><span class="pre">TestRule.needs_equal_variance</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.min_factors"><code class="docutils literal notranslate"><span class="pre">TestRule.min_factors</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.max_factors"><code class="docutils literal notranslate"><span class="pre">TestRule.max_factors</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle"><code class="docutils literal notranslate"><span class="pre">StatStyle</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.__init__"><code class="docutils literal notranslate"><span class="pre">StatStyle.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.decimal_places_effect"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_effect</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.decimal_places_p"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_p</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.decimal_places_stat"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_stat</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.format_effect"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_effect()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.format_n"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_n()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.format_p"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_p()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.format_stat"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_stat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.n_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.n_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.p_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.p_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.p_to_stars"><code class="docutils literal notranslate"><span class="pre">StatStyle.p_to_stars()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.id"><code class="docutils literal notranslate"><span class="pre">StatStyle.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.label"><code class="docutils literal notranslate"><span class="pre">StatStyle.label</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.target"><code class="docutils literal notranslate"><span class="pre">StatStyle.target</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.stat_symbol_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.stat_symbol_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.alpha_thresholds"><code class="docutils literal notranslate"><span class="pre">StatStyle.alpha_thresholds</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.effect_label_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.effect_label_format</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.recommend_tests"><code class="docutils literal notranslate"><span class="pre">recommend_tests()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.check_applicable"><code class="docutils literal notranslate"><span class="pre">check_applicable()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.get_stat_style"><code class="docutils literal notranslate"><span class="pre">get_stat_style()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.p_to_stars"><code class="docutils literal notranslate"><span class="pre">p_to_stars()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ttest_ind"><code class="docutils literal notranslate"><span class="pre">test_ttest_ind()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ttest_rel"><code class="docutils literal notranslate"><span class="pre">test_ttest_rel()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ttest_1samp"><code class="docutils literal notranslate"><span class="pre">test_ttest_1samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_anova"><code class="docutils literal notranslate"><span class="pre">test_anova()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_anova_rm"><code class="docutils literal notranslate"><span class="pre">test_anova_rm()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_anova_2way"><code class="docutils literal notranslate"><span class="pre">test_anova_2way()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_brunner_munzel"><code class="docutils literal notranslate"><span class="pre">test_brunner_munzel()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_wilcoxon"><code class="docutils literal notranslate"><span class="pre">test_wilcoxon()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_kruskal"><code class="docutils literal notranslate"><span class="pre">test_kruskal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_mannwhitneyu"><code class="docutils literal notranslate"><span class="pre">test_mannwhitneyu()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_friedman"><code class="docutils literal notranslate"><span class="pre">test_friedman()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_pearson"><code class="docutils literal notranslate"><span class="pre">test_pearson()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_spearman"><code class="docutils literal notranslate"><span class="pre">test_spearman()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_kendall"><code class="docutils literal notranslate"><span class="pre">test_kendall()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_theilsen"><code class="docutils literal notranslate"><span class="pre">test_theilsen()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_chi2"><code class="docutils literal notranslate"><span class="pre">test_chi2()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_fisher"><code class="docutils literal notranslate"><span class="pre">test_fisher()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_mcnemar"><code class="docutils literal notranslate"><span class="pre">test_mcnemar()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_cochran_q"><code class="docutils literal notranslate"><span class="pre">test_cochran_q()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_shapiro"><code class="docutils literal notranslate"><span class="pre">test_shapiro()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_normality"><code class="docutils literal notranslate"><span class="pre">test_normality()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ks_1samp"><code class="docutils literal notranslate"><span class="pre">test_ks_1samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ks_2samp"><code class="docutils literal notranslate"><span class="pre">test_ks_2samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats._PackageNotFoundError"><code class="docutils literal notranslate"><span class="pre">_PackageNotFoundError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats._version"><code class="docutils literal notranslate"><span class="pre">_version()</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-1-basic-t-test">Example 1: Basic t-test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-2-automatic-test-recommendation">Example 2: Automatic Test Recommendation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-3-multiple-comparison-correction">Example 3: Multiple Comparison Correction</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SciTeX Stats</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scitex_stats.tests.parametric._test_anova_2way</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scitex_stats.tests.parametric._test_anova_2way</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># Timestamp: &quot;2025-10-01 17:30:00 (ywatanabe)&quot;</span>
+<span class="c1"># File: scitex_stats/tests/parametric/_test_anova_2way.py</span>
+<span class="c1"># ----------------------------------------</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functionalities:</span>
+<span class="sd">  - Perform two-way ANOVA for factorial designs (2 factors)</span>
+<span class="sd">  - Test main effects and interaction effects</span>
+<span class="sd">  - Compute partial eta-squared for each effect</span>
+<span class="sd">  - Generate interaction plots and marginal means</span>
+<span class="sd">  - Support balanced and unbalanced designs</span>
+
+<span class="sd">Dependencies:</span>
+<span class="sd">  - packages: numpy, pandas, scipy, matplotlib</span>
+
+<span class="sd">IO:</span>
+<span class="sd">  - input: Data with two factors (DataFrame or arrays)</span>
+<span class="sd">  - output: Test results for each effect and optional figure</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;Imports&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># noqa: E402</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.axes</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>  <span class="c1"># noqa: E402</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._utils._formatters</span><span class="w"> </span><span class="kn">import</span> <span class="n">p2stars</span>  <span class="c1"># noqa: E402</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">._anova_helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpret_eta_squared</span><span class="p">,</span> <span class="n">partial_eta_squared</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._plot_anova_2way</span><span class="w"> </span><span class="kn">import</span> <span class="n">_plot_anova_2way</span>  <span class="c1"># noqa: E402</span>
+
+<span class="n">__FILE__</span> <span class="o">=</span> <span class="vm">__file__</span>
+<span class="n">__DIR__</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__FILE__</span><span class="p">)</span>
+
+<span class="n">HAS_PLT</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<div class="viewcode-block" id="test_anova_2way">
+<a class="viewcode-back" href="../../../../api/index.html#scitex_stats.test_anova_2way">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_anova_2way</span><span class="p">(</span>  <span class="c1"># noqa: C901</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">factor_a</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">factor_b</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">factor_a_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Factor A&quot;</span><span class="p">,</span>
+    <span class="n">factor_b_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Factor B&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">check_assumptions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">ax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">Axes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">return_as</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="s2">&quot;dataframe&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span><span class="p">,</span>
+    <span class="n">decimals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform two-way ANOVA for factorial designs.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : DataFrame or array</span>
+<span class="sd">        - If DataFrame: requires factor_a, factor_b, value column names</span>
+<span class="sd">        - If array: 2D or 3D array (see factor_a, factor_b parameters)</span>
+<span class="sd">    factor_a : str or array, optional</span>
+<span class="sd">        - If str: column name for factor A in DataFrame</span>
+<span class="sd">        - If array: factor A levels for each observation</span>
+<span class="sd">    factor_b : str or array, optional</span>
+<span class="sd">        - If str: column name for factor B in DataFrame</span>
+<span class="sd">        - If array: factor B levels for each observation</span>
+<span class="sd">    value : str, optional</span>
+<span class="sd">        Column name for dependent variable (required if data is DataFrame)</span>
+<span class="sd">    factor_a_name : str, default &#39;Factor A&#39;</span>
+<span class="sd">        Name for factor A</span>
+<span class="sd">    factor_b_name : str, default &#39;Factor B&#39;</span>
+<span class="sd">        Name for factor B</span>
+<span class="sd">    alpha : float, default 0.05</span>
+<span class="sd">        Significance level</span>
+<span class="sd">    check_assumptions : bool, default True</span>
+<span class="sd">        Whether to check normality and homogeneity assumptions</span>
+<span class="sd">    plot : bool, default False</span>
+<span class="sd">        Whether to generate interaction plot</span>
+<span class="sd">    ax : matplotlib.axes.Axes, optional</span>
+<span class="sd">        Axes object to plot on. If None and plot=True, creates new figure.</span>
+<span class="sd">        If provided, automatically enables plotting.</span>
+<span class="sd">    return_as : {&#39;dict&#39;, &#39;dataframe&#39;}, default &#39;dict&#39;</span>
+<span class="sd">        Output format</span>
+<span class="sd">    decimals : int, default 3</span>
+<span class="sd">        Number of decimal places for rounding</span>
+<span class="sd">    verbose : bool, default False</span>
+<span class="sd">        Whether to print test results</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    result : dict or DataFrame</span>
+<span class="sd">        Test results including for each effect (A, B, interaction):</span>
+<span class="sd">        - effect: Name of effect</span>
+<span class="sd">        - statistic: F-statistic</span>
+<span class="sd">        - pvalue: p-value</span>
+<span class="sd">        - df_effect: Degrees of freedom for effect</span>
+<span class="sd">        - df_error: Degrees of freedom for error</span>
+<span class="sd">        - effect_size: Partial eta-squared</span>
+<span class="sd">        - rejected: Whether to reject null hypothesis</span>
+<span class="sd">        - significant: Same as rejected</span>
+
+<span class="sd">    If plot=True, returns tuple of (result, figure)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Two-way ANOVA tests the effects of two independent categorical variables</span>
+<span class="sd">    (factors) on a continuous dependent variable, including their interaction.</span>
+
+<span class="sd">    **Three Hypotheses Tested**:</span>
+<span class="sd">    1. **Main effect of Factor A**: Marginal means of A levels differ</span>
+<span class="sd">    2. **Main effect of Factor B**: Marginal means of B levels differ</span>
+<span class="sd">    3. **Interaction A×B**: Effect of A depends on level of B (and vice versa)</span>
+
+<span class="sd">    **Null Hypotheses**:</span>
+<span class="sd">    - H0_A: All marginal means of Factor A are equal</span>
+<span class="sd">    - H0_B: All marginal means of Factor B are equal</span>
+<span class="sd">    - H0_AB: No interaction between Factors A and B</span>
+
+<span class="sd">    **Assumptions**:</span>
+<span class="sd">    1. **Independence**: Observations are independent</span>
+<span class="sd">    2. **Normality**: Residuals are normally distributed within each cell</span>
+<span class="sd">    3. **Homogeneity of variance**: Equal variances across all cells</span>
+
+<span class="sd">    **Sum of Squares Decomposition**:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        SS_{total} = SS_A + SS_B + SS_{AB} + SS_{error}</span>
+
+<span class="sd">    Where:</span>
+<span class="sd">    - SS_A: Sum of squares for main effect A</span>
+<span class="sd">    - SS_B: Sum of squares for main effect B</span>
+<span class="sd">    - SS_AB: Sum of squares for interaction A×B</span>
+<span class="sd">    - SS_error: Sum of squares for error (within cells)</span>
+
+<span class="sd">    **F-statistics**:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        F_A = \\frac{MS_A}{MS_{error}}, \\quad F_B = \\frac{MS_B}{MS_{error}}, \\quad F_{AB} = \\frac{MS_{AB}}{MS_{error}}</span>
+
+<span class="sd">    **Effect Size (Partial η²)**:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \\eta_p^2 = \\frac{SS_{effect}}{SS_{effect} + SS_{error}}</span>
+
+<span class="sd">    **Interpreting Results**:</span>
+<span class="sd">    - **Significant interaction**: Main effects should be interpreted cautiously.</span>
+<span class="sd">      Use simple effects analysis or interaction plots.</span>
+<span class="sd">    - **Non-significant interaction**: Main effects can be interpreted directly.</span>
+
+<span class="sd">    **Post-hoc tests**:</span>
+<span class="sd">    If main effects are significant:</span>
+<span class="sd">    - Pairwise comparisons with test_ttest_ind()</span>
+<span class="sd">    - Apply corrections: correct_bonferroni(), correct_holm()</span>
+
+<span class="sd">    If interaction is significant:</span>
+<span class="sd">    - Simple effects: test effect of A at each level of B</span>
+<span class="sd">    - Pairwise comparisons within each level</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from scitex_stats.tests.parametric import test_anova_2way</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Example: Drug (2 levels) × Gender (2 levels)</span>
+<span class="sd">    &gt;&gt;&gt; np.random.seed(42)</span>
+<span class="sd">    &gt;&gt;&gt; n_per_cell = 10</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; data = pd.DataFrame({</span>
+<span class="sd">    ...     &#39;Drug&#39;: [&#39;Placebo&#39;]*20 + [&#39;Active&#39;]*20,</span>
+<span class="sd">    ...     &#39;Gender&#39;: ([&#39;Male&#39;]*10 + [&#39;Female&#39;]*10) * 2,</span>
+<span class="sd">    ...     &#39;Score&#39;: np.concatenate([</span>
+<span class="sd">    ...         np.random.normal(50, 10, 10),  # Placebo, Male</span>
+<span class="sd">    ...         np.random.normal(55, 10, 10),  # Placebo, Female</span>
+<span class="sd">    ...         np.random.normal(65, 10, 10),  # Active, Male</span>
+<span class="sd">    ...         np.random.normal(75, 10, 10),  # Active, Female (interaction)</span>
+<span class="sd">    ...     ])</span>
+<span class="sd">    ... })</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; result = test_anova_2way(</span>
+<span class="sd">    ...     data,</span>
+<span class="sd">    ...     factor_a=&#39;Drug&#39;,</span>
+<span class="sd">    ...     factor_b=&#39;Gender&#39;,</span>
+<span class="sd">    ...     value=&#39;Score&#39;,</span>
+<span class="sd">    ...     plot=True</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; for effect in result:</span>
+<span class="sd">    ...     print(f&quot;{effect[&#39;effect&#39;]}: F = {effect[&#39;statistic&#39;]:.2f}, p = {effect[&#39;pvalue&#39;]:.4f}&quot;)</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Fisher, R. A. (1925). Statistical Methods for Research Workers.</span>
+<span class="sd">    .. [2] Montgomery, D. C. (2017). Design and Analysis of Experiments (9th ed.).</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    test_anova : One-way ANOVA</span>
+<span class="sd">    test_anova_rm : Repeated measures ANOVA</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Parse input data</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">factor_a</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">factor_b</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;For DataFrame input, must specify factor_a, factor_b, and value column names&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">value</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">factor_a_vals</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">factor_a</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">factor_b_vals</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">factor_b</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="c1"># Get unique levels</span>
+        <span class="n">a_levels</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">factor_a</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+        <span class="n">b_levels</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">factor_b</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+
+        <span class="c1"># Use actual column names if not specified</span>
+        <span class="k">if</span> <span class="n">factor_a_name</span> <span class="o">==</span> <span class="s2">&quot;Factor A&quot;</span><span class="p">:</span>
+            <span class="n">factor_a_name</span> <span class="o">=</span> <span class="n">factor_a</span>
+        <span class="k">if</span> <span class="n">factor_b_name</span> <span class="o">==</span> <span class="s2">&quot;Factor B&quot;</span><span class="p">:</span>
+            <span class="n">factor_b_name</span> <span class="o">=</span> <span class="n">factor_b</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Array input</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">factor_a</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">factor_b</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;For array input, must provide factor_a and factor_b arrays&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">factor_a_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">factor_a</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="n">factor_b_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">factor_b</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">factor_a_vals</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">factor_b_vals</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;data, factor_a, and factor_b must have same length&quot;</span><span class="p">)</span>
+
+        <span class="n">a_levels</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">factor_a_vals</span><span class="p">))</span>
+        <span class="n">b_levels</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">factor_b_vals</span><span class="p">))</span>
+
+    <span class="c1"># Build design matrix</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">n_a</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a_levels</span><span class="p">)</span>
+    <span class="n">n_b</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">b_levels</span><span class="p">)</span>
+
+    <span class="c1"># Create level indices</span>
+    <span class="n">a_idx</span> <span class="o">=</span> <span class="p">{</span><span class="n">level</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">level</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">a_levels</span><span class="p">)}</span>
+    <span class="n">b_idx</span> <span class="o">=</span> <span class="p">{</span><span class="n">level</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">level</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">b_levels</span><span class="p">)}</span>
+
+    <span class="c1"># Compute cell counts and means</span>
+    <span class="n">cell_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_a</span><span class="p">,</span> <span class="n">n_b</span><span class="p">))</span>
+    <span class="n">cell_sums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_a</span><span class="p">,</span> <span class="n">n_b</span><span class="p">))</span>
+    <span class="n">cell_means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_a</span><span class="p">,</span> <span class="n">n_b</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">ai</span> <span class="o">=</span> <span class="n">a_idx</span><span class="p">[</span><span class="n">factor_a_vals</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="n">bi</span> <span class="o">=</span> <span class="n">b_idx</span><span class="p">[</span><span class="n">factor_b_vals</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="n">cell_counts</span><span class="p">[</span><span class="n">ai</span><span class="p">,</span> <span class="n">bi</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">cell_sums</span><span class="p">[</span><span class="n">ai</span><span class="p">,</span> <span class="n">bi</span><span class="p">]</span> <span class="o">+=</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="c1"># Check for empty cells</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">cell_counts</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Empty cells detected. All factor combinations must have at least one observation.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">cell_means</span> <span class="o">=</span> <span class="n">cell_sums</span> <span class="o">/</span> <span class="n">cell_counts</span>
+
+    <span class="c1"># Compute marginal means (weighted by cell counts for unbalanced designs)</span>
+    <span class="n">a_marginal_means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cell_means</span> <span class="o">*</span> <span class="n">cell_counts</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">cell_counts</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>
+    <span class="n">b_marginal_means</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cell_means</span> <span class="o">*</span> <span class="n">cell_counts</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">cell_counts</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">)</span>
+    <span class="n">grand_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="c1"># Compute sum of squares</span>
+    <span class="c1"># ss_total = np.sum((y - grand_mean) ** 2)  # Not used in calculations</span>
+
+    <span class="c1"># SS for factor A (main effect)</span>
+    <span class="n">ss_a</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">ai</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_a</span><span class="p">):</span>
+        <span class="n">n_a_level</span> <span class="o">=</span> <span class="n">cell_counts</span><span class="p">[</span><span class="n">ai</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">ss_a</span> <span class="o">+=</span> <span class="n">n_a_level</span> <span class="o">*</span> <span class="p">(</span><span class="n">a_marginal_means</span><span class="p">[</span><span class="n">ai</span><span class="p">]</span> <span class="o">-</span> <span class="n">grand_mean</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+
+    <span class="c1"># SS for factor B (main effect)</span>
+    <span class="n">ss_b</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">bi</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_b</span><span class="p">):</span>
+        <span class="n">n_b_level</span> <span class="o">=</span> <span class="n">cell_counts</span><span class="p">[:,</span> <span class="n">bi</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">ss_b</span> <span class="o">+=</span> <span class="n">n_b_level</span> <span class="o">*</span> <span class="p">(</span><span class="n">b_marginal_means</span><span class="p">[</span><span class="n">bi</span><span class="p">]</span> <span class="o">-</span> <span class="n">grand_mean</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+
+    <span class="c1"># SS for interaction</span>
+    <span class="n">ss_ab</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">ai</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_a</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">bi</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_b</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">cell_counts</span><span class="p">[</span><span class="n">ai</span><span class="p">,</span> <span class="n">bi</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">n_cell</span> <span class="o">=</span> <span class="n">cell_counts</span><span class="p">[</span><span class="n">ai</span><span class="p">,</span> <span class="n">bi</span><span class="p">]</span>
+                <span class="n">predicted</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">grand_mean</span>
+                    <span class="o">+</span> <span class="p">(</span><span class="n">a_marginal_means</span><span class="p">[</span><span class="n">ai</span><span class="p">]</span> <span class="o">-</span> <span class="n">grand_mean</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="p">(</span><span class="n">b_marginal_means</span><span class="p">[</span><span class="n">bi</span><span class="p">]</span> <span class="o">-</span> <span class="n">grand_mean</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">ss_ab</span> <span class="o">+=</span> <span class="n">n_cell</span> <span class="o">*</span> <span class="p">(</span><span class="n">cell_means</span><span class="p">[</span><span class="n">ai</span><span class="p">,</span> <span class="n">bi</span><span class="p">]</span> <span class="o">-</span> <span class="n">predicted</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+
+    <span class="c1"># SS error (within cells)</span>
+    <span class="n">ss_error</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">ai</span> <span class="o">=</span> <span class="n">a_idx</span><span class="p">[</span><span class="n">factor_a_vals</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="n">bi</span> <span class="o">=</span> <span class="n">b_idx</span><span class="p">[</span><span class="n">factor_b_vals</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="n">ss_error</span> <span class="o">+=</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">cell_means</span><span class="p">[</span><span class="n">ai</span><span class="p">,</span> <span class="n">bi</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
+
+    <span class="c1"># Degrees of freedom</span>
+    <span class="n">df_a</span> <span class="o">=</span> <span class="n">n_a</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">df_b</span> <span class="o">=</span> <span class="n">n_b</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">df_ab</span> <span class="o">=</span> <span class="n">df_a</span> <span class="o">*</span> <span class="n">df_b</span>
+    <span class="n">df_error</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="n">n_a</span> <span class="o">*</span> <span class="n">n_b</span>
+    <span class="c1"># df_total = n - 1  # Not used in calculations</span>
+
+    <span class="c1"># Mean squares</span>
+    <span class="n">ms_a</span> <span class="o">=</span> <span class="n">ss_a</span> <span class="o">/</span> <span class="n">df_a</span> <span class="k">if</span> <span class="n">df_a</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">ms_b</span> <span class="o">=</span> <span class="n">ss_b</span> <span class="o">/</span> <span class="n">df_b</span> <span class="k">if</span> <span class="n">df_b</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">ms_ab</span> <span class="o">=</span> <span class="n">ss_ab</span> <span class="o">/</span> <span class="n">df_ab</span> <span class="k">if</span> <span class="n">df_ab</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">ms_error</span> <span class="o">=</span> <span class="n">ss_error</span> <span class="o">/</span> <span class="n">df_error</span> <span class="k">if</span> <span class="n">df_error</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="c1"># F-statistics</span>
+    <span class="n">F_a</span> <span class="o">=</span> <span class="n">ms_a</span> <span class="o">/</span> <span class="n">ms_error</span> <span class="k">if</span> <span class="n">ms_error</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">F_b</span> <span class="o">=</span> <span class="n">ms_b</span> <span class="o">/</span> <span class="n">ms_error</span> <span class="k">if</span> <span class="n">ms_error</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">F_ab</span> <span class="o">=</span> <span class="n">ms_ab</span> <span class="o">/</span> <span class="n">ms_error</span> <span class="k">if</span> <span class="n">ms_error</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="c1"># p-values</span>
+    <span class="n">p_a</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">stats</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">F_a</span><span class="p">,</span> <span class="n">df_a</span><span class="p">,</span> <span class="n">df_error</span><span class="p">)</span> <span class="k">if</span> <span class="n">df_a</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">1.0</span>
+    <span class="n">p_b</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">stats</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">F_b</span><span class="p">,</span> <span class="n">df_b</span><span class="p">,</span> <span class="n">df_error</span><span class="p">)</span> <span class="k">if</span> <span class="n">df_b</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">1.0</span>
+    <span class="n">p_ab</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">stats</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">F_ab</span><span class="p">,</span> <span class="n">df_ab</span><span class="p">,</span> <span class="n">df_error</span><span class="p">)</span> <span class="k">if</span> <span class="n">df_ab</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">1.0</span>
+
+    <span class="c1"># Effect sizes (partial eta-squared)</span>
+    <span class="n">eta2_a</span> <span class="o">=</span> <span class="n">partial_eta_squared</span><span class="p">(</span><span class="n">ss_a</span><span class="p">,</span> <span class="n">ss_error</span><span class="p">)</span>
+    <span class="n">eta2_b</span> <span class="o">=</span> <span class="n">partial_eta_squared</span><span class="p">(</span><span class="n">ss_b</span><span class="p">,</span> <span class="n">ss_error</span><span class="p">)</span>
+    <span class="n">eta2_ab</span> <span class="o">=</span> <span class="n">partial_eta_squared</span><span class="p">(</span><span class="n">ss_ab</span><span class="p">,</span> <span class="n">ss_error</span><span class="p">)</span>
+
+    <span class="c1"># Build results for each effect</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Main effect A</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;test&quot;</span><span class="p">:</span> <span class="s2">&quot;Two-way ANOVA&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;effect&quot;</span><span class="p">:</span> <span class="n">factor_a_name</span><span class="p">,</span>
+            <span class="s2">&quot;effect_type&quot;</span><span class="p">:</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;statistic&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">F_a</span><span class="p">),</span> <span class="n">decimals</span><span class="p">),</span>
+            <span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">p_a</span><span class="p">),</span> <span class="n">decimals</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="s2">&quot;df_effect&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">df_a</span><span class="p">),</span>
+            <span class="s2">&quot;df_error&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">df_error</span><span class="p">),</span>
+            <span class="s2">&quot;effect_size&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">eta2_a</span><span class="p">),</span> <span class="n">decimals</span><span class="p">),</span>
+            <span class="s2">&quot;effect_size_metric&quot;</span><span class="p">:</span> <span class="s2">&quot;partial_eta_squared&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;effect_size_interpretation&quot;</span><span class="p">:</span> <span class="n">interpret_eta_squared</span><span class="p">(</span><span class="n">eta2_a</span><span class="p">),</span>
+            <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">alpha</span><span class="p">,</span>
+            <span class="s2">&quot;significant&quot;</span><span class="p">:</span> <span class="n">p_a</span> <span class="o">&lt;</span> <span class="n">alpha</span><span class="p">,</span>
+            <span class="s2">&quot;stars&quot;</span><span class="p">:</span> <span class="n">p2stars</span><span class="p">(</span><span class="n">p_a</span><span class="p">),</span>
+            <span class="s2">&quot;H0&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No main effect of </span><span class="si">{</span><span class="n">factor_a_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Main effect B</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;test&quot;</span><span class="p">:</span> <span class="s2">&quot;Two-way ANOVA&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;effect&quot;</span><span class="p">:</span> <span class="n">factor_b_name</span><span class="p">,</span>
+            <span class="s2">&quot;effect_type&quot;</span><span class="p">:</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;statistic&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">F_b</span><span class="p">),</span> <span class="n">decimals</span><span class="p">),</span>
+            <span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">p_b</span><span class="p">),</span> <span class="n">decimals</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="s2">&quot;df_effect&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">df_b</span><span class="p">),</span>
+            <span class="s2">&quot;df_error&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">df_error</span><span class="p">),</span>
+            <span class="s2">&quot;effect_size&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">eta2_b</span><span class="p">),</span> <span class="n">decimals</span><span class="p">),</span>
+            <span class="s2">&quot;effect_size_metric&quot;</span><span class="p">:</span> <span class="s2">&quot;partial_eta_squared&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;effect_size_interpretation&quot;</span><span class="p">:</span> <span class="n">interpret_eta_squared</span><span class="p">(</span><span class="n">eta2_b</span><span class="p">),</span>
+            <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">alpha</span><span class="p">,</span>
+            <span class="s2">&quot;significant&quot;</span><span class="p">:</span> <span class="n">p_b</span> <span class="o">&lt;</span> <span class="n">alpha</span><span class="p">,</span>
+            <span class="s2">&quot;stars&quot;</span><span class="p">:</span> <span class="n">p2stars</span><span class="p">(</span><span class="n">p_b</span><span class="p">),</span>
+            <span class="s2">&quot;H0&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No main effect of </span><span class="si">{</span><span class="n">factor_b_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Interaction A×B</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;test&quot;</span><span class="p">:</span> <span class="s2">&quot;Two-way ANOVA&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;effect&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">factor_a_name</span><span class="si">}</span><span class="s2"> × </span><span class="si">{</span><span class="n">factor_b_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;effect_type&quot;</span><span class="p">:</span> <span class="s2">&quot;interaction&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;statistic&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">F_ab</span><span class="p">),</span> <span class="n">decimals</span><span class="p">),</span>
+            <span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">p_ab</span><span class="p">),</span> <span class="n">decimals</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="s2">&quot;df_effect&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">df_ab</span><span class="p">),</span>
+            <span class="s2">&quot;df_error&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">df_error</span><span class="p">),</span>
+            <span class="s2">&quot;effect_size&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">eta2_ab</span><span class="p">),</span> <span class="n">decimals</span><span class="p">),</span>
+            <span class="s2">&quot;effect_size_metric&quot;</span><span class="p">:</span> <span class="s2">&quot;partial_eta_squared&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;effect_size_interpretation&quot;</span><span class="p">:</span> <span class="n">interpret_eta_squared</span><span class="p">(</span><span class="n">eta2_ab</span><span class="p">),</span>
+            <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">alpha</span><span class="p">,</span>
+            <span class="s2">&quot;significant&quot;</span><span class="p">:</span> <span class="n">p_ab</span> <span class="o">&lt;</span> <span class="n">alpha</span><span class="p">,</span>
+            <span class="s2">&quot;stars&quot;</span><span class="p">:</span> <span class="n">p2stars</span><span class="p">(</span><span class="n">p_ab</span><span class="p">),</span>
+            <span class="s2">&quot;H0&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No interaction between </span><span class="si">{</span><span class="n">factor_a_name</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">factor_b_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Store cell means and marginals for plotting</span>
+    <span class="n">results_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;effects&quot;</span><span class="p">:</span> <span class="n">results</span><span class="p">,</span>
+        <span class="s2">&quot;cell_means&quot;</span><span class="p">:</span> <span class="n">cell_means</span><span class="p">,</span>
+        <span class="s2">&quot;a_levels&quot;</span><span class="p">:</span> <span class="n">a_levels</span><span class="p">,</span>
+        <span class="s2">&quot;b_levels&quot;</span><span class="p">:</span> <span class="n">b_levels</span><span class="p">,</span>
+        <span class="s2">&quot;a_marginal_means&quot;</span><span class="p">:</span> <span class="n">a_marginal_means</span><span class="p">,</span>
+        <span class="s2">&quot;b_marginal_means&quot;</span><span class="p">:</span> <span class="n">b_marginal_means</span><span class="p">,</span>
+        <span class="s2">&quot;factor_a_name&quot;</span><span class="p">:</span> <span class="n">factor_a_name</span><span class="p">,</span>
+        <span class="s2">&quot;factor_b_name&quot;</span><span class="p">:</span> <span class="n">factor_b_name</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Log results if verbose</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">getLogger</span>
+
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Two-way ANOVA Results:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;effect&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: F(</span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;df_effect&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;df_error&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;statistic&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, p = </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;pvalue&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;stars&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Auto-enable plotting if ax is provided</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plot</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Generate plot if requested</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">plot</span> <span class="ow">and</span> <span class="n">HAS_PLT</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">_plot_anova_2way</span><span class="p">(</span><span class="n">results_dict</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Use provided axes (not fully implemented for 2x2 layout)</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">_plot_anova_2way</span><span class="p">(</span><span class="n">results_dict</span><span class="p">)</span>
+
+    <span class="c1"># Return based on format</span>
+    <span class="k">if</span> <span class="n">return_as</span> <span class="o">==</span> <span class="s2">&quot;dataframe&quot;</span><span class="p">:</span>
+        <span class="n">result_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">plot</span> <span class="ow">and</span> <span class="n">fig</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result_df</span><span class="p">,</span> <span class="n">fig</span>
+        <span class="k">return</span> <span class="n">result_df</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">plot</span> <span class="ow">and</span> <span class="n">fig</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">fig</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+
+<span class="c1"># Demo: python -m scitex_stats.tests.parametric._demo_anova_2way</span>
+
+<span class="c1"># EOF</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Yusuke Watanabe.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

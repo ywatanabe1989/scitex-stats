@@ -31,7 +31,7 @@ scitex-stats provides a unified interface that covers the full statistical workf
 
 - **23 statistical tests** with automatic recommendation based on data characteristics
 - **Built-in effect sizes** (Cohen's d, Cliff's delta, eta squared), **power analysis**, and **APA-formatted output**
-- **Three interfaces** — Python API, CLI, and MCP server — so human researchers and AI agents use the same engine
+- **Four interfaces** — Python API, CLI, MCP server, and Skills — so human researchers and AI agents use the same engine
 
 ```mermaid
 flowchart LR
@@ -111,7 +111,7 @@ result = ss.run_test("ttest_ind", data=group1, data2=group2)
 print(result["formatted"])
 ```
 
-## Three Interfaces
+## Four Interfaces
 
 <details>
 <summary><strong>Python API</strong></summary>
@@ -194,6 +194,30 @@ scitex-stats mcp start
 ```
 
 > **[Full MCP specification](https://scitex-stats.readthedocs.io/)**
+
+</details>
+
+<details>
+<summary><strong>Skills — for AI Agent Discovery</strong></summary>
+
+<br>
+
+Skills provide workflow-oriented guides that AI agents query to discover capabilities and usage patterns.
+
+```bash
+scitex-stats skills list              # List available skill pages
+scitex-stats skills get SKILL         # Show main skill page
+scitex-dev skills export --package scitex-stats  # Export to Claude Code
+```
+
+| Skill | Content |
+|-------|---------|
+| `quick-start` | Basic usage and core patterns |
+| `test-catalog` | All 23 statistical tests with categories |
+| `effect-sizes` | Effect size measures and interpretation |
+| `workflows` | Common analysis patterns |
+| `cli-reference` | CLI commands |
+| `mcp-tools` | MCP tools for AI agents |
 
 </details>
 

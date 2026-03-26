@@ -1,0 +1,460 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scitex_stats.auto._stat_style &mdash; SciTeX Stats v0.2.4</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            SciTeX Stats
+              <img src="../../../_static/scitex-logo-banner.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#basic-installation">Basic Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#optional-dependencies">Optional Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#development-installation">Development Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#effect-sizes">Effect Sizes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#power-analysis">Power Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#multiple-comparison-correction">Multiple Comparison Correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#post-hoc-tests">Post-hoc Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#mcp-server">MCP Server</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../choosing_tests.html">Choosing the Right Test</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../choosing_tests.html#decision-flowchart">Decision Flowchart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../choosing_tests.html#step-1-what-type-of-data">Step 1: What Type of Data?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../choosing_tests.html#step-2-how-many-groups">Step 2: How Many Groups?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../choosing_tests.html#step-3-check-assumptions">Step 3: Check Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../choosing_tests.html#automatic-recommendation">Automatic Recommendation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../choosing_tests.html#correlation-tests">Correlation Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../choosing_tests.html#categorical-tests">Categorical Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../unified_output.html">Unified Output Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../unified_output.html#result-dictionary">Result Dictionary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../unified_output.html#key-fields">Key Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../unified_output.html#null-hypotheses">Null Hypotheses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../unified_output.html#significance-stars">Significance Stars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../unified_output.html#working-with-results">Working with Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">CLI Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../cli.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../cli.html#core-commands">Core Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../cli.html#mcp-subcommands">MCP Subcommands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mcp.html">MCP Server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../mcp.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../mcp.html#starting-the-server">Starting the Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../mcp.html#mcp-client-configuration">MCP Client Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../mcp.html#available-tools">Available Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../mcp.html#diagnostics">Diagnostics</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.run_test"><code class="docutils literal notranslate"><span class="pre">run_test()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.available_tests"><code class="docutils literal notranslate"><span class="pre">available_tests()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.describe"><code class="docutils literal notranslate"><span class="pre">describe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.to_json_safe"><code class="docutils literal notranslate"><span class="pre">to_json_safe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext"><code class="docutils literal notranslate"><span class="pre">StatContext</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.__init__"><code class="docutils literal notranslate"><span class="pre">StatContext.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.__post_init__"><code class="docutils literal notranslate"><span class="pre">StatContext.__post_init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.control_group_name"><code class="docutils literal notranslate"><span class="pre">StatContext.control_group_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.effective_paired"><code class="docutils literal notranslate"><span class="pre">StatContext.effective_paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.from_data"><code class="docutils literal notranslate"><span class="pre">StatContext.from_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.from_dict"><code class="docutils literal notranslate"><span class="pre">StatContext.from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.group_names"><code class="docutils literal notranslate"><span class="pre">StatContext.group_names</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.has_control_group"><code class="docutils literal notranslate"><span class="pre">StatContext.has_control_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.min_n_per_group"><code class="docutils literal notranslate"><span class="pre">StatContext.min_n_per_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.missing_allowed"><code class="docutils literal notranslate"><span class="pre">StatContext.missing_allowed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.n_factors"><code class="docutils literal notranslate"><span class="pre">StatContext.n_factors</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.n_total"><code class="docutils literal notranslate"><span class="pre">StatContext.n_total</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.normality_ok"><code class="docutils literal notranslate"><span class="pre">StatContext.normality_ok</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.paired"><code class="docutils literal notranslate"><span class="pre">StatContext.paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.to_dict"><code class="docutils literal notranslate"><span class="pre">StatContext.to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.variance_homogeneity_ok"><code class="docutils literal notranslate"><span class="pre">StatContext.variance_homogeneity_ok</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.n_groups"><code class="docutils literal notranslate"><span class="pre">StatContext.n_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.sample_sizes"><code class="docutils literal notranslate"><span class="pre">StatContext.sample_sizes</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.outcome_type"><code class="docutils literal notranslate"><span class="pre">StatContext.outcome_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.design"><code class="docutils literal notranslate"><span class="pre">StatContext.design</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule"><code class="docutils literal notranslate"><span class="pre">TestRule</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.__init__"><code class="docutils literal notranslate"><span class="pre">TestRule.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.description"><code class="docutils literal notranslate"><span class="pre">TestRule.description</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.priority"><code class="docutils literal notranslate"><span class="pre">TestRule.priority</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.name"><code class="docutils literal notranslate"><span class="pre">TestRule.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.family"><code class="docutils literal notranslate"><span class="pre">TestRule.family</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.min_groups"><code class="docutils literal notranslate"><span class="pre">TestRule.min_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.max_groups"><code class="docutils literal notranslate"><span class="pre">TestRule.max_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.outcome_types"><code class="docutils literal notranslate"><span class="pre">TestRule.outcome_types</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.supports_paired"><code class="docutils literal notranslate"><span class="pre">TestRule.supports_paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.supports_unpaired"><code class="docutils literal notranslate"><span class="pre">TestRule.supports_unpaired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.design_allowed"><code class="docutils literal notranslate"><span class="pre">TestRule.design_allowed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.requires_control_group"><code class="docutils literal notranslate"><span class="pre">TestRule.requires_control_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.min_n_total"><code class="docutils literal notranslate"><span class="pre">TestRule.min_n_total</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.min_n_per_group"><code class="docutils literal notranslate"><span class="pre">TestRule.min_n_per_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.needs_normality"><code class="docutils literal notranslate"><span class="pre">TestRule.needs_normality</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.needs_equal_variance"><code class="docutils literal notranslate"><span class="pre">TestRule.needs_equal_variance</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.min_factors"><code class="docutils literal notranslate"><span class="pre">TestRule.min_factors</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.max_factors"><code class="docutils literal notranslate"><span class="pre">TestRule.max_factors</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle"><code class="docutils literal notranslate"><span class="pre">StatStyle</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.__init__"><code class="docutils literal notranslate"><span class="pre">StatStyle.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.decimal_places_effect"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_effect</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.decimal_places_p"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_p</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.decimal_places_stat"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_stat</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.format_effect"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_effect()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.format_n"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_n()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.format_p"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_p()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.format_stat"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_stat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.n_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.n_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.p_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.p_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.p_to_stars"><code class="docutils literal notranslate"><span class="pre">StatStyle.p_to_stars()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.id"><code class="docutils literal notranslate"><span class="pre">StatStyle.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.label"><code class="docutils literal notranslate"><span class="pre">StatStyle.label</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.target"><code class="docutils literal notranslate"><span class="pre">StatStyle.target</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.stat_symbol_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.stat_symbol_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.alpha_thresholds"><code class="docutils literal notranslate"><span class="pre">StatStyle.alpha_thresholds</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.effect_label_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.effect_label_format</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.recommend_tests"><code class="docutils literal notranslate"><span class="pre">recommend_tests()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.check_applicable"><code class="docutils literal notranslate"><span class="pre">check_applicable()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.get_stat_style"><code class="docutils literal notranslate"><span class="pre">get_stat_style()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.p_to_stars"><code class="docutils literal notranslate"><span class="pre">p_to_stars()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_ttest_ind"><code class="docutils literal notranslate"><span class="pre">test_ttest_ind()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_ttest_rel"><code class="docutils literal notranslate"><span class="pre">test_ttest_rel()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_ttest_1samp"><code class="docutils literal notranslate"><span class="pre">test_ttest_1samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_anova"><code class="docutils literal notranslate"><span class="pre">test_anova()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_anova_rm"><code class="docutils literal notranslate"><span class="pre">test_anova_rm()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_anova_2way"><code class="docutils literal notranslate"><span class="pre">test_anova_2way()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_brunner_munzel"><code class="docutils literal notranslate"><span class="pre">test_brunner_munzel()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_wilcoxon"><code class="docutils literal notranslate"><span class="pre">test_wilcoxon()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_kruskal"><code class="docutils literal notranslate"><span class="pre">test_kruskal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_mannwhitneyu"><code class="docutils literal notranslate"><span class="pre">test_mannwhitneyu()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_friedman"><code class="docutils literal notranslate"><span class="pre">test_friedman()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_pearson"><code class="docutils literal notranslate"><span class="pre">test_pearson()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_spearman"><code class="docutils literal notranslate"><span class="pre">test_spearman()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_kendall"><code class="docutils literal notranslate"><span class="pre">test_kendall()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_theilsen"><code class="docutils literal notranslate"><span class="pre">test_theilsen()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_chi2"><code class="docutils literal notranslate"><span class="pre">test_chi2()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_fisher"><code class="docutils literal notranslate"><span class="pre">test_fisher()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_mcnemar"><code class="docutils literal notranslate"><span class="pre">test_mcnemar()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_cochran_q"><code class="docutils literal notranslate"><span class="pre">test_cochran_q()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_shapiro"><code class="docutils literal notranslate"><span class="pre">test_shapiro()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_normality"><code class="docutils literal notranslate"><span class="pre">test_normality()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_ks_1samp"><code class="docutils literal notranslate"><span class="pre">test_ks_1samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_ks_2samp"><code class="docutils literal notranslate"><span class="pre">test_ks_2samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats._PackageNotFoundError"><code class="docutils literal notranslate"><span class="pre">_PackageNotFoundError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats._version"><code class="docutils literal notranslate"><span class="pre">_version()</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#example-1-basic-t-test">Example 1: Basic t-test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#example-2-automatic-test-recommendation">Example 2: Automatic Test Recommendation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#example-3-multiple-comparison-correction">Example 3: Multiple Comparison Correction</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SciTeX Stats</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scitex_stats.auto._stat_style</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scitex_stats.auto._stat_style</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># Timestamp: &quot;2026-01-24 (ywatanabe)&quot;</span>
+<span class="c1"># File: scitex_stats/auto/_stat_style.py</span>
+
+<span class="sd">&quot;&quot;&quot;StatStyle dataclass for statistical reporting.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="n">OutputTarget</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;latex&quot;</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">,</span> <span class="s2">&quot;plain&quot;</span><span class="p">]</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;StatStyle&quot;</span><span class="p">,</span> <span class="s2">&quot;OutputTarget&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="StatStyle">
+<a class="viewcode-back" href="../../../api/index.html#scitex_stats.StatStyle">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StatStyle</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Style configuration for statistical reporting.</span>
+
+<span class="sd">    Defines how to format statistical results for a specific journal</span>
+<span class="sd">    or output format.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    id : str</span>
+<span class="sd">        Unique identifier for this style.</span>
+<span class="sd">    label : str</span>
+<span class="sd">        Human-readable label (e.g., &quot;APA (LaTeX)&quot;).</span>
+<span class="sd">    target : OutputTarget</span>
+<span class="sd">        Output format: &quot;latex&quot;, &quot;html&quot;, or &quot;plain&quot;.</span>
+<span class="sd">    stat_symbol_format : dict</span>
+<span class="sd">        Maps statistic symbols to their formatted versions.</span>
+<span class="sd">    p_format : str</span>
+<span class="sd">        Format string for p-values.</span>
+<span class="sd">    alpha_thresholds : list of (float, str)</span>
+<span class="sd">        P-value thresholds for stars.</span>
+<span class="sd">    effect_label_format : dict</span>
+<span class="sd">        Maps effect size names to their formatted labels.</span>
+<span class="sd">    n_format : str</span>
+<span class="sd">        Format string for sample sizes.</span>
+<span class="sd">    decimal_places_p : int</span>
+<span class="sd">        Decimal places for p-values.</span>
+<span class="sd">    decimal_places_stat : int</span>
+<span class="sd">        Decimal places for test statistics.</span>
+<span class="sd">    decimal_places_effect : int</span>
+<span class="sd">        Decimal places for effect sizes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">target</span><span class="p">:</span> <span class="n">OutputTarget</span>
+
+    <span class="n">stat_symbol_format</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">p_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;p = </span><span class="si">{p:.3f}</span><span class="s2">&quot;</span>
+    <span class="n">alpha_thresholds</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">effect_label_format</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">n_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;n_{</span><span class="si">%s</span><span class="s2">} = </span><span class="si">%d</span><span class="s2">&quot;</span>
+
+    <span class="n">decimal_places_p</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">decimal_places_stat</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">decimal_places_effect</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
+
+<div class="viewcode-block" id="StatStyle.format_stat">
+<a class="viewcode-back" href="../../../api/index.html#scitex_stats.StatStyle.format_stat">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format_stat</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">symbol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">df</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format a test statistic.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        symbol : str</span>
+<span class="sd">            Statistic symbol (e.g., &quot;t&quot;, &quot;F&quot;, &quot;chi2&quot;).</span>
+<span class="sd">        value : float</span>
+<span class="sd">            Statistic value.</span>
+<span class="sd">        df : float, optional</span>
+<span class="sd">            Degrees of freedom.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Formatted statistic string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fmt_symbol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stat_symbol_format</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">symbol</span><span class="p">,</span> <span class="n">symbol</span><span class="p">)</span>
+        <span class="n">dp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decimal_places_stat</span>
+
+        <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fmt_symbol</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">df</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">dp</span><span class="si">}</span><span class="s2">f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fmt_symbol</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">dp</span><span class="si">}</span><span class="s2">f</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="StatStyle.format_p">
+<a class="viewcode-back" href="../../../api/index.html#scitex_stats.StatStyle.format_p">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format_p</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format a p-value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        p_value : float</span>
+<span class="sd">            P-value to format.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Formatted p-value string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p_symbol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stat_symbol_format</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">)</span>
+        <span class="n">dp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decimal_places_p</span>
+
+        <span class="k">if</span> <span class="n">p_value</span> <span class="o">&lt;</span> <span class="mf">0.001</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p_symbol</span><span class="si">}</span><span class="s2"> &lt; 0.001&quot;</span>
+        <span class="k">if</span> <span class="n">p_value</span> <span class="o">&lt;</span> <span class="mf">0.0001</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p_symbol</span><span class="si">}</span><span class="s2"> &lt; 0.0001&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p_symbol</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">p_value</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">dp</span><span class="si">}</span><span class="s2">f</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="StatStyle.format_effect">
+<a class="viewcode-back" href="../../../api/index.html#scitex_stats.StatStyle.format_effect">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format_effect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format an effect size.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Effect size name (e.g., &quot;cohens_d_ind&quot;).</span>
+<span class="sd">        value : float</span>
+<span class="sd">            Effect size value.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Formatted effect size string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">effect_label_format</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">dp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decimal_places_effect</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">dp</span><span class="si">}</span><span class="s2">f</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="StatStyle.format_n">
+<a class="viewcode-back" href="../../../api/index.html#scitex_stats.StatStyle.format_n">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">format_n</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format a sample size.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        group : str</span>
+<span class="sd">            Group name/label.</span>
+<span class="sd">        n : int</span>
+<span class="sd">            Sample size.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Formatted sample size string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_format</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_format</span> <span class="o">%</span> <span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_format</span> <span class="o">%</span> <span class="n">n</span></div>
+
+
+<div class="viewcode-block" id="StatStyle.p_to_stars">
+<a class="viewcode-back" href="../../../api/index.html#scitex_stats.StatStyle.p_to_stars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">p_to_stars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert p-value to significance stars.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        p_value : float</span>
+<span class="sd">            P-value.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Stars string (&quot;***&quot;, &quot;**&quot;, &quot;*&quot;, or &quot;ns&quot;).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">p_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;ns&quot;</span>
+
+        <span class="k">for</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">stars</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_thresholds</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p_value</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">stars</span>
+        <span class="k">return</span> <span class="s2">&quot;ns&quot;</span></div>
+</div>
+
+
+
+<span class="c1"># EOF</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Yusuke Watanabe.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,783 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scitex_stats.tests.parametric._test_anova_rm &mdash; SciTeX Stats v0.2.4</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            SciTeX Stats
+              <img src="../../../../_static/scitex-logo-banner.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../installation.html#basic-installation">Basic Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../installation.html#optional-dependencies">Optional Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../installation.html#development-installation">Development Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../quickstart.html">Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#effect-sizes">Effect Sizes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#power-analysis">Power Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#multiple-comparison-correction">Multiple Comparison Correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#post-hoc-tests">Post-hoc Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#mcp-server">MCP Server</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../choosing_tests.html">Choosing the Right Test</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#decision-flowchart">Decision Flowchart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#step-1-what-type-of-data">Step 1: What Type of Data?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#step-2-how-many-groups">Step 2: How Many Groups?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#step-3-check-assumptions">Step 3: Check Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#automatic-recommendation">Automatic Recommendation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#correlation-tests">Correlation Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#categorical-tests">Categorical Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../unified_output.html">Unified Output Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#result-dictionary">Result Dictionary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#key-fields">Key Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#null-hypotheses">Null Hypotheses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#significance-stars">Significance Stars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#working-with-results">Working with Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cli.html">CLI Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../cli.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../cli.html#core-commands">Core Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../cli.html#mcp-subcommands">MCP Subcommands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mcp.html">MCP Server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#starting-the-server">Starting the Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#mcp-client-configuration">MCP Client Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#available-tools">Available Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#diagnostics">Diagnostics</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.run_test"><code class="docutils literal notranslate"><span class="pre">run_test()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.available_tests"><code class="docutils literal notranslate"><span class="pre">available_tests()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.describe"><code class="docutils literal notranslate"><span class="pre">describe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.to_json_safe"><code class="docutils literal notranslate"><span class="pre">to_json_safe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext"><code class="docutils literal notranslate"><span class="pre">StatContext</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.__init__"><code class="docutils literal notranslate"><span class="pre">StatContext.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.__post_init__"><code class="docutils literal notranslate"><span class="pre">StatContext.__post_init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.control_group_name"><code class="docutils literal notranslate"><span class="pre">StatContext.control_group_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.effective_paired"><code class="docutils literal notranslate"><span class="pre">StatContext.effective_paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.from_data"><code class="docutils literal notranslate"><span class="pre">StatContext.from_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.from_dict"><code class="docutils literal notranslate"><span class="pre">StatContext.from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.group_names"><code class="docutils literal notranslate"><span class="pre">StatContext.group_names</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.has_control_group"><code class="docutils literal notranslate"><span class="pre">StatContext.has_control_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.min_n_per_group"><code class="docutils literal notranslate"><span class="pre">StatContext.min_n_per_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.missing_allowed"><code class="docutils literal notranslate"><span class="pre">StatContext.missing_allowed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.n_factors"><code class="docutils literal notranslate"><span class="pre">StatContext.n_factors</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.n_total"><code class="docutils literal notranslate"><span class="pre">StatContext.n_total</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.normality_ok"><code class="docutils literal notranslate"><span class="pre">StatContext.normality_ok</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.paired"><code class="docutils literal notranslate"><span class="pre">StatContext.paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.to_dict"><code class="docutils literal notranslate"><span class="pre">StatContext.to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.variance_homogeneity_ok"><code class="docutils literal notranslate"><span class="pre">StatContext.variance_homogeneity_ok</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.n_groups"><code class="docutils literal notranslate"><span class="pre">StatContext.n_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.sample_sizes"><code class="docutils literal notranslate"><span class="pre">StatContext.sample_sizes</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.outcome_type"><code class="docutils literal notranslate"><span class="pre">StatContext.outcome_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.design"><code class="docutils literal notranslate"><span class="pre">StatContext.design</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule"><code class="docutils literal notranslate"><span class="pre">TestRule</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.__init__"><code class="docutils literal notranslate"><span class="pre">TestRule.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.description"><code class="docutils literal notranslate"><span class="pre">TestRule.description</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.priority"><code class="docutils literal notranslate"><span class="pre">TestRule.priority</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.name"><code class="docutils literal notranslate"><span class="pre">TestRule.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.family"><code class="docutils literal notranslate"><span class="pre">TestRule.family</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.min_groups"><code class="docutils literal notranslate"><span class="pre">TestRule.min_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.max_groups"><code class="docutils literal notranslate"><span class="pre">TestRule.max_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.outcome_types"><code class="docutils literal notranslate"><span class="pre">TestRule.outcome_types</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.supports_paired"><code class="docutils literal notranslate"><span class="pre">TestRule.supports_paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.supports_unpaired"><code class="docutils literal notranslate"><span class="pre">TestRule.supports_unpaired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.design_allowed"><code class="docutils literal notranslate"><span class="pre">TestRule.design_allowed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.requires_control_group"><code class="docutils literal notranslate"><span class="pre">TestRule.requires_control_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.min_n_total"><code class="docutils literal notranslate"><span class="pre">TestRule.min_n_total</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.min_n_per_group"><code class="docutils literal notranslate"><span class="pre">TestRule.min_n_per_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.needs_normality"><code class="docutils literal notranslate"><span class="pre">TestRule.needs_normality</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.needs_equal_variance"><code class="docutils literal notranslate"><span class="pre">TestRule.needs_equal_variance</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.min_factors"><code class="docutils literal notranslate"><span class="pre">TestRule.min_factors</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.max_factors"><code class="docutils literal notranslate"><span class="pre">TestRule.max_factors</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle"><code class="docutils literal notranslate"><span class="pre">StatStyle</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.__init__"><code class="docutils literal notranslate"><span class="pre">StatStyle.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.decimal_places_effect"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_effect</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.decimal_places_p"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_p</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.decimal_places_stat"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_stat</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.format_effect"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_effect()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.format_n"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_n()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.format_p"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_p()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.format_stat"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_stat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.n_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.n_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.p_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.p_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.p_to_stars"><code class="docutils literal notranslate"><span class="pre">StatStyle.p_to_stars()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.id"><code class="docutils literal notranslate"><span class="pre">StatStyle.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.label"><code class="docutils literal notranslate"><span class="pre">StatStyle.label</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.target"><code class="docutils literal notranslate"><span class="pre">StatStyle.target</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.stat_symbol_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.stat_symbol_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.alpha_thresholds"><code class="docutils literal notranslate"><span class="pre">StatStyle.alpha_thresholds</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.effect_label_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.effect_label_format</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.recommend_tests"><code class="docutils literal notranslate"><span class="pre">recommend_tests()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.check_applicable"><code class="docutils literal notranslate"><span class="pre">check_applicable()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.get_stat_style"><code class="docutils literal notranslate"><span class="pre">get_stat_style()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.p_to_stars"><code class="docutils literal notranslate"><span class="pre">p_to_stars()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ttest_ind"><code class="docutils literal notranslate"><span class="pre">test_ttest_ind()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ttest_rel"><code class="docutils literal notranslate"><span class="pre">test_ttest_rel()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ttest_1samp"><code class="docutils literal notranslate"><span class="pre">test_ttest_1samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_anova"><code class="docutils literal notranslate"><span class="pre">test_anova()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_anova_rm"><code class="docutils literal notranslate"><span class="pre">test_anova_rm()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_anova_2way"><code class="docutils literal notranslate"><span class="pre">test_anova_2way()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_brunner_munzel"><code class="docutils literal notranslate"><span class="pre">test_brunner_munzel()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_wilcoxon"><code class="docutils literal notranslate"><span class="pre">test_wilcoxon()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_kruskal"><code class="docutils literal notranslate"><span class="pre">test_kruskal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_mannwhitneyu"><code class="docutils literal notranslate"><span class="pre">test_mannwhitneyu()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_friedman"><code class="docutils literal notranslate"><span class="pre">test_friedman()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_pearson"><code class="docutils literal notranslate"><span class="pre">test_pearson()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_spearman"><code class="docutils literal notranslate"><span class="pre">test_spearman()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_kendall"><code class="docutils literal notranslate"><span class="pre">test_kendall()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_theilsen"><code class="docutils literal notranslate"><span class="pre">test_theilsen()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_chi2"><code class="docutils literal notranslate"><span class="pre">test_chi2()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_fisher"><code class="docutils literal notranslate"><span class="pre">test_fisher()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_mcnemar"><code class="docutils literal notranslate"><span class="pre">test_mcnemar()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_cochran_q"><code class="docutils literal notranslate"><span class="pre">test_cochran_q()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_shapiro"><code class="docutils literal notranslate"><span class="pre">test_shapiro()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_normality"><code class="docutils literal notranslate"><span class="pre">test_normality()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ks_1samp"><code class="docutils literal notranslate"><span class="pre">test_ks_1samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ks_2samp"><code class="docutils literal notranslate"><span class="pre">test_ks_2samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats._PackageNotFoundError"><code class="docutils literal notranslate"><span class="pre">_PackageNotFoundError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats._version"><code class="docutils literal notranslate"><span class="pre">_version()</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-1-basic-t-test">Example 1: Basic t-test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-2-automatic-test-recommendation">Example 2: Automatic Test Recommendation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-3-multiple-comparison-correction">Example 3: Multiple Comparison Correction</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SciTeX Stats</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scitex_stats.tests.parametric._test_anova_rm</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scitex_stats.tests.parametric._test_anova_rm</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># Timestamp: &quot;2025-10-01 17:00:00 (ywatanabe)&quot;</span>
+<span class="c1"># File: scitex_stats/tests/parametric/_test_anova_rm.py</span>
+<span class="c1"># ----------------------------------------</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functionalities:</span>
+<span class="sd">  - Perform repeated measures ANOVA for within-subjects designs</span>
+<span class="sd">  - Test sphericity assumption (Mauchly&#39;s test)</span>
+<span class="sd">  - Apply Greenhouse-Geisser correction when sphericity violated</span>
+<span class="sd">  - Compute partial eta-squared effect size</span>
+<span class="sd">  - Generate profile plots and distribution visualizations</span>
+
+<span class="sd">Dependencies:</span>
+<span class="sd">  - packages: numpy, pandas, scipy, matplotlib, pingouin</span>
+
+<span class="sd">IO:</span>
+<span class="sd">  - input: Data in wide or long format (subjects × conditions)</span>
+<span class="sd">  - output: Test results (dict or DataFrame) and optional figure</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;Imports&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># noqa: E402</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.axes</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>  <span class="c1"># noqa: E402</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._utils._formatters</span><span class="w"> </span><span class="kn">import</span> <span class="n">p2stars</span>  <span class="c1"># noqa: E402</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">._anova_helpers</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># noqa: E402</span>
+    <span class="n">greenhouse_geisser_epsilon</span><span class="p">,</span>
+    <span class="n">interpret_eta_squared</span><span class="p">,</span>
+    <span class="n">mauchly_sphericity</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._anova_helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial_eta_squared</span> <span class="k">as</span> <span class="n">partial_eta_squared_rm</span>  <span class="c1"># noqa: E402</span>
+
+<span class="n">__FILE__</span> <span class="o">=</span> <span class="vm">__file__</span>
+<span class="n">__DIR__</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__FILE__</span><span class="p">)</span>
+
+<span class="n">HAS_PLT</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># Try importing pingouin for sphericity test</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pingouin</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pg</span>  <span class="c1"># noqa: E402</span>
+
+    <span class="n">HAS_PINGOUIN</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">HAS_PINGOUIN</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="test_anova_rm">
+<a class="viewcode-back" href="../../../../api/index.html#scitex_stats.test_anova_rm">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_anova_rm</span><span class="p">(</span>  <span class="c1"># noqa: C901</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
+    <span class="n">subject_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">condition_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">value_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">condition_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">correction</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;gg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="n">check_sphericity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">ax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">Axes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">return_as</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="s2">&quot;dataframe&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span><span class="p">,</span>
+    <span class="n">decimals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform repeated measures ANOVA for within-subjects designs.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : array or DataFrame</span>
+<span class="sd">        - If array: shape (n_subjects, n_conditions), wide format</span>
+<span class="sd">        - If DataFrame with subject_col/condition_col: long format</span>
+<span class="sd">        - If DataFrame without: wide format (rows=subjects, cols=conditions)</span>
+<span class="sd">    subject_col : str, optional</span>
+<span class="sd">        Column name for subject IDs (long format)</span>
+<span class="sd">    condition_col : str, optional</span>
+<span class="sd">        Column name for conditions (long format)</span>
+<span class="sd">    value_col : str, optional</span>
+<span class="sd">        Column name for values (long format)</span>
+<span class="sd">    condition_names : list of str, optional</span>
+<span class="sd">        Names for conditions (wide format)</span>
+<span class="sd">    alpha : float, default 0.05</span>
+<span class="sd">        Significance level</span>
+<span class="sd">    correction : {&#39;auto&#39;, &#39;none&#39;, &#39;gg&#39;}, default &#39;auto&#39;</span>
+<span class="sd">        Correction method:</span>
+<span class="sd">        - &#39;auto&#39;: Apply GG correction if sphericity violated</span>
+<span class="sd">        - &#39;none&#39;: No correction</span>
+<span class="sd">        - &#39;gg&#39;: Always apply Greenhouse-Geisser correction</span>
+<span class="sd">    check_sphericity : bool, default True</span>
+<span class="sd">        Whether to test sphericity assumption</span>
+<span class="sd">    plot : bool, default False</span>
+<span class="sd">        Whether to generate profile plot</span>
+<span class="sd">    ax : matplotlib.axes.Axes, optional</span>
+<span class="sd">        Axes object to plot on. If None and plot=True, creates new figure.</span>
+<span class="sd">        If provided, automatically enables plotting.</span>
+<span class="sd">    return_as : {&#39;dict&#39;, &#39;dataframe&#39;}, default &#39;dict&#39;</span>
+<span class="sd">        Output format</span>
+<span class="sd">    decimals : int, default 3</span>
+<span class="sd">        Number of decimal places for rounding</span>
+<span class="sd">    verbose : bool, default False</span>
+<span class="sd">        Whether to print test results</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    result : dict or DataFrame</span>
+<span class="sd">        Test results including:</span>
+<span class="sd">        - statistic: F-statistic</span>
+<span class="sd">        - pvalue: p-value (possibly corrected)</span>
+<span class="sd">        - df_effect: Degrees of freedom for effect</span>
+<span class="sd">        - df_error: Degrees of freedom for error</span>
+<span class="sd">        - effect_size: Partial eta-squared</span>
+<span class="sd">        - sphericity_W: Mauchly&#39;s W (if checked)</span>
+<span class="sd">        - sphericity_pvalue: Sphericity test p-value</span>
+<span class="sd">        - sphericity_met: Whether sphericity assumption met</span>
+<span class="sd">        - epsilon_gg: Greenhouse-Geisser epsilon</span>
+<span class="sd">        - correction_applied: Which correction was applied</span>
+<span class="sd">        - significant: Whether to reject null hypothesis</span>
+
+<span class="sd">    If plot=True, returns tuple of (result, figure)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Repeated measures ANOVA tests whether the means differ across multiple</span>
+<span class="sd">    conditions measured on the same subjects (within-subjects factor).</span>
+
+<span class="sd">    **Null Hypothesis (H0)**: All condition means are equal</span>
+
+<span class="sd">    **Assumptions**:</span>
+<span class="sd">    1. **Independence of subjects**: Different subjects are independent</span>
+<span class="sd">    2. **Normality**: Differences between conditions are normally distributed</span>
+<span class="sd">    3. **Sphericity**: Variances of differences between all pairs of conditions</span>
+<span class="sd">       are equal (tested with Mauchly&#39;s test)</span>
+
+<span class="sd">    **Sphericity**:</span>
+<span class="sd">    The sphericity assumption is unique to repeated measures ANOVA. If violated:</span>
+<span class="sd">    - Greenhouse-Geisser correction: More conservative, use when ε &lt; 0.75</span>
+<span class="sd">    - Huynh-Feldt correction: Less conservative (not implemented)</span>
+<span class="sd">    - Multivariate approach: MANOVA (not implemented)</span>
+
+<span class="sd">    **Greenhouse-Geisser Correction**:</span>
+<span class="sd">    Adjusts degrees of freedom by multiplying by epsilon (ε):</span>
+<span class="sd">    - df_effect_adj = ε × df_effect</span>
+<span class="sd">    - df_error_adj = ε × df_error</span>
+
+<span class="sd">    **Effect Size (Partial η²)**:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \\eta_p^2 = \\frac{SS_{effect}}{SS_{effect} + SS_{error}}</span>
+
+<span class="sd">    Interpretation same as regular eta-squared:</span>
+<span class="sd">    - &lt; 0.01: negligible</span>
+<span class="sd">    - &lt; 0.06: small</span>
+<span class="sd">    - &lt; 0.14: medium</span>
+<span class="sd">    - ≥ 0.14: large</span>
+
+<span class="sd">    **Post-hoc tests**:</span>
+<span class="sd">    If significant, use pairwise t-tests with correction:</span>
+<span class="sd">    - test_ttest_rel() for all pairs</span>
+<span class="sd">    - correct_bonferroni() or correct_holm() for multiple comparisons</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from scitex_stats.tests.parametric import test_anova_rm</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Wide format: subjects × conditions</span>
+<span class="sd">    &gt;&gt;&gt; data = np.array([</span>
+<span class="sd">    ...     [5.2, 6.1, 7.3, 6.8],  # Subject 1</span>
+<span class="sd">    ...     [4.8, 5.9, 6.7, 6.2],  # Subject 2</span>
+<span class="sd">    ...     [5.5, 6.4, 7.1, 7.0],  # Subject 3</span>
+<span class="sd">    ...     [4.9, 5.7, 6.9, 6.5],  # Subject 4</span>
+<span class="sd">    ... ])</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; result = test_anova_rm(</span>
+<span class="sd">    ...     data,</span>
+<span class="sd">    ...     condition_names=[&#39;Baseline&#39;, &#39;Week 1&#39;, &#39;Week 2&#39;, &#39;Week 3&#39;],</span>
+<span class="sd">    ...     plot=True</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; print(f&quot;F = {result[&#39;statistic&#39;]:.2f}, p = {result[&#39;pvalue&#39;]:.4f}&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; print(f&quot;Sphericity met: {result[&#39;sphericity_met&#39;]}&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; print(f&quot;Partial η² = {result[&#39;effect_size&#39;]:.3f}&quot;)</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Greenhouse, S. W., &amp; Geisser, S. (1959). &quot;On methods in the analysis</span>
+<span class="sd">           of profile data&quot;. Psychometrika, 24(2), 95-112.</span>
+<span class="sd">    .. [2] Mauchly, J. W. (1940). &quot;Significance test for sphericity of a normal</span>
+<span class="sd">           n-variate distribution&quot;. The Annals of Mathematical Statistics,</span>
+<span class="sd">           11(2), 204-209.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    test_anova : One-way ANOVA for independent samples</span>
+<span class="sd">    test_friedman : Non-parametric alternative (no sphericity assumption)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert data to wide format array</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">subject_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">condition_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">value_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="c1"># Long format - pivot to wide</span>
+            <span class="n">data_wide</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">subject_col</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">condition_col</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">value_col</span>
+            <span class="p">)</span>
+            <span class="n">data_array</span> <span class="o">=</span> <span class="n">data_wide</span><span class="o">.</span><span class="n">values</span>
+            <span class="k">if</span> <span class="n">condition_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">condition_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data_wide</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Already wide format</span>
+            <span class="n">data_array</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span>
+            <span class="k">if</span> <span class="n">condition_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">condition_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data_array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Data must be 2D (subjects × conditions)&quot;</span><span class="p">)</span>
+
+    <span class="n">n_subjects</span><span class="p">,</span> <span class="n">n_conditions</span> <span class="o">=</span> <span class="n">data_array</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="k">if</span> <span class="n">n_conditions</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Need at least 2 conditions for repeated measures ANOVA&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">condition_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">condition_names</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Condition </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_conditions</span><span class="p">)]</span>
+
+    <span class="c1"># Compute ANOVA</span>
+    <span class="n">grand_mean</span> <span class="o">=</span> <span class="n">data_array</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">subject_means</span> <span class="o">=</span> <span class="n">data_array</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">condition_means</span> <span class="o">=</span> <span class="n">data_array</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Sum of squares</span>
+    <span class="n">ss_total</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">data_array</span> <span class="o">-</span> <span class="n">grand_mean</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">ss_subjects</span> <span class="o">=</span> <span class="n">n_conditions</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">subject_means</span> <span class="o">-</span> <span class="n">grand_mean</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">ss_conditions</span> <span class="o">=</span> <span class="n">n_subjects</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">condition_means</span> <span class="o">-</span> <span class="n">grand_mean</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">ss_error</span> <span class="o">=</span> <span class="n">ss_total</span> <span class="o">-</span> <span class="n">ss_subjects</span> <span class="o">-</span> <span class="n">ss_conditions</span>
+
+    <span class="c1"># Degrees of freedom</span>
+    <span class="n">df_conditions</span> <span class="o">=</span> <span class="n">n_conditions</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">df_subjects</span> <span class="o">=</span> <span class="n">n_subjects</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">df_error</span> <span class="o">=</span> <span class="n">df_conditions</span> <span class="o">*</span> <span class="n">df_subjects</span>
+
+    <span class="c1"># Mean squares</span>
+    <span class="n">ms_conditions</span> <span class="o">=</span> <span class="n">ss_conditions</span> <span class="o">/</span> <span class="n">df_conditions</span>
+    <span class="n">ms_error</span> <span class="o">=</span> <span class="n">ss_error</span> <span class="o">/</span> <span class="n">df_error</span>
+
+    <span class="c1"># F-statistic</span>
+    <span class="n">F_stat</span> <span class="o">=</span> <span class="n">ms_conditions</span> <span class="o">/</span> <span class="n">ms_error</span>
+
+    <span class="c1"># Initial p-value (uncorrected)</span>
+    <span class="n">pvalue</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">stats</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">F_stat</span><span class="p">,</span> <span class="n">df_conditions</span><span class="p">,</span> <span class="n">df_error</span><span class="p">)</span>
+
+    <span class="c1"># Test sphericity</span>
+    <span class="n">sphericity_met</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">sphericity_W</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">sphericity_chi2</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">sphericity_pvalue</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">epsilon_gg</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">correction_applied</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+
+    <span class="k">if</span> <span class="n">check_sphericity</span> <span class="ow">and</span> <span class="n">n_conditions</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">HAS_PINGOUIN</span><span class="p">:</span>
+                <span class="c1"># Use pingouin for robust sphericity test</span>
+                <span class="n">spher</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">sphericity</span><span class="p">(</span><span class="n">data_array</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;mauchly&quot;</span><span class="p">)</span>
+                <span class="n">sphericity_W</span> <span class="o">=</span> <span class="n">spher</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">sphericity_chi2</span> <span class="o">=</span> <span class="n">spher</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">sphericity_pvalue</span> <span class="o">=</span> <span class="n">spher</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Use our implementation</span>
+                <span class="n">sphericity_W</span><span class="p">,</span> <span class="n">sphericity_chi2</span><span class="p">,</span> <span class="n">sphericity_pvalue</span> <span class="o">=</span> <span class="n">mauchly_sphericity</span><span class="p">(</span>
+                    <span class="n">data_array</span>
+                <span class="p">)</span>
+
+            <span class="n">sphericity_met</span> <span class="o">=</span> <span class="n">sphericity_pvalue</span> <span class="o">&gt;=</span> <span class="n">alpha</span>
+
+            <span class="c1"># Compute Greenhouse-Geisser epsilon</span>
+            <span class="k">if</span> <span class="n">HAS_PINGOUIN</span><span class="p">:</span>
+                <span class="n">epsilon_gg</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">epsilon</span><span class="p">(</span><span class="n">data_array</span><span class="p">,</span> <span class="n">correction</span><span class="o">=</span><span class="s2">&quot;gg&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">epsilon_gg</span> <span class="o">=</span> <span class="n">greenhouse_geisser_epsilon</span><span class="p">(</span><span class="n">data_array</span><span class="p">)</span>
+
+            <span class="c1"># Apply correction if needed</span>
+            <span class="k">if</span> <span class="n">correction</span> <span class="o">==</span> <span class="s2">&quot;gg&quot;</span> <span class="ow">or</span> <span class="p">(</span><span class="n">correction</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">sphericity_met</span><span class="p">):</span>
+                <span class="c1"># Adjust degrees of freedom</span>
+                <span class="n">df_conditions_adj</span> <span class="o">=</span> <span class="n">df_conditions</span> <span class="o">*</span> <span class="n">epsilon_gg</span>
+                <span class="n">df_error_adj</span> <span class="o">=</span> <span class="n">df_error</span> <span class="o">*</span> <span class="n">epsilon_gg</span>
+                <span class="n">pvalue</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">stats</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">F_stat</span><span class="p">,</span> <span class="n">df_conditions_adj</span><span class="p">,</span> <span class="n">df_error_adj</span><span class="p">)</span>
+                <span class="n">correction_applied</span> <span class="o">=</span> <span class="s2">&quot;greenhouse-geisser&quot;</span>
+                <span class="n">df_conditions</span> <span class="o">=</span> <span class="n">df_conditions_adj</span>
+                <span class="n">df_error</span> <span class="o">=</span> <span class="n">df_error_adj</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># If sphericity test fails, continue without it</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Sphericity test failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Proceeding without correction.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">sphericity_met</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Compute effect size (partial eta-squared)</span>
+    <span class="n">partial_eta2</span> <span class="o">=</span> <span class="n">partial_eta_squared_rm</span><span class="p">(</span><span class="n">ss_conditions</span><span class="p">,</span> <span class="n">ss_error</span><span class="p">)</span>
+    <span class="n">eta2_interpretation</span> <span class="o">=</span> <span class="n">interpret_eta_squared</span><span class="p">(</span><span class="n">partial_eta2</span><span class="p">)</span>
+
+    <span class="c1"># Build result dictionary</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;test&quot;</span><span class="p">:</span> <span class="s2">&quot;Repeated Measures ANOVA&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;statistic&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">F_stat</span><span class="p">),</span> <span class="n">decimals</span><span class="p">),</span>
+        <span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">pvalue</span><span class="p">),</span> <span class="n">decimals</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">&quot;df_effect&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">df_conditions</span><span class="p">),</span> <span class="n">decimals</span><span class="p">),</span>
+        <span class="s2">&quot;df_error&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">df_error</span><span class="p">),</span> <span class="n">decimals</span><span class="p">),</span>
+        <span class="s2">&quot;n_subjects&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_subjects</span><span class="p">),</span>
+        <span class="s2">&quot;n_conditions&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_conditions</span><span class="p">),</span>
+        <span class="s2">&quot;condition_names&quot;</span><span class="p">:</span> <span class="n">condition_names</span><span class="p">,</span>
+        <span class="s2">&quot;effect_size&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">partial_eta2</span><span class="p">),</span> <span class="n">decimals</span><span class="p">),</span>
+        <span class="s2">&quot;effect_size_metric&quot;</span><span class="p">:</span> <span class="s2">&quot;partial_eta_squared&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;effect_size_interpretation&quot;</span><span class="p">:</span> <span class="n">eta2_interpretation</span><span class="p">,</span>
+        <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">alpha</span><span class="p">,</span>
+        <span class="s2">&quot;significant&quot;</span><span class="p">:</span> <span class="n">pvalue</span> <span class="o">&lt;</span> <span class="n">alpha</span><span class="p">,</span>
+        <span class="s2">&quot;stars&quot;</span><span class="p">:</span> <span class="n">p2stars</span><span class="p">(</span><span class="n">pvalue</span><span class="p">),</span>
+        <span class="s2">&quot;H0&quot;</span><span class="p">:</span> <span class="s2">&quot;All condition means are equal&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Add sphericity results</span>
+    <span class="k">if</span> <span class="n">sphericity_W</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;sphericity_W&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">sphericity_W</span><span class="p">),</span> <span class="n">decimals</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;sphericity_chi2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">sphericity_chi2</span><span class="p">),</span> <span class="n">decimals</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;sphericity_pvalue&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">sphericity_pvalue</span><span class="p">),</span> <span class="n">decimals</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;sphericity_met&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sphericity_met</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;epsilon_gg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">epsilon_gg</span><span class="p">),</span> <span class="n">decimals</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;correction_applied&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">correction_applied</span>
+
+    <span class="c1"># Log results if verbose</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">getLogger</span>
+
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Repeated Measures ANOVA: F(</span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;df_effect&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;df_error&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;statistic&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, p = </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;pvalue&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;stars&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Partial η² = </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;effect_size&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;effect_size_interpretation&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;sphericity_met&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sphericity met: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;sphericity_met&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Auto-enable plotting if ax is provided</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plot</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Generate plot if requested</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">plot</span> <span class="ow">and</span> <span class="n">HAS_PLT</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">_plot_anova_rm</span><span class="p">(</span><span class="n">data_array</span><span class="p">,</span> <span class="n">condition_names</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Use provided axes (not fully implemented for 1x3 layout)</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">_plot_anova_rm</span><span class="p">(</span><span class="n">data_array</span><span class="p">,</span> <span class="n">condition_names</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+    <span class="c1"># Return based on format</span>
+    <span class="k">if</span> <span class="n">return_as</span> <span class="o">==</span> <span class="s2">&quot;dataframe&quot;</span><span class="p">:</span>
+        <span class="n">result_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">result</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">plot</span> <span class="ow">and</span> <span class="n">fig</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result_df</span><span class="p">,</span> <span class="n">fig</span>
+        <span class="k">return</span> <span class="n">result_df</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">plot</span> <span class="ow">and</span> <span class="n">fig</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">fig</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_plot_anova_rm</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">condition_names</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create visualization for repeated measures ANOVA.&quot;&quot;&quot;</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+    <span class="n">n_subjects</span><span class="p">,</span> <span class="n">n_conditions</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">conditions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_conditions</span><span class="p">)</span>
+
+    <span class="c1"># Panel 1: Profile plot (individual subjects)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_subjects</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">conditions</span><span class="p">,</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span>
+            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+            <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Add mean profile</span>
+    <span class="n">means</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">sems</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n_subjects</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">conditions</span><span class="p">,</span>
+        <span class="n">means</span><span class="p">,</span>
+        <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+        <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span>
+        <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean&quot;</span><span class="p">,</span>
+        <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+        <span class="n">conditions</span><span class="p">,</span>
+        <span class="n">means</span> <span class="o">-</span> <span class="n">sems</span><span class="p">,</span>
+        <span class="n">means</span> <span class="o">+</span> <span class="n">sems</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;±SEM&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">conditions</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">condition_names</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Condition&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Repeated Measures ANOVA&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+    <span class="c1"># Stats text box - top-left corner</span>
+    <span class="n">stars_text</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;stars&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;ns&quot;</span><span class="p">,</span> <span class="s2">&quot;$n$s&quot;</span><span class="p">)</span>
+    <span class="n">text_str</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;$F$(</span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;df_effect&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;df_error&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;statistic&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">stars_text</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;$p$ = </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;pvalue&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">eta_p^2$ = </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;effect_size&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;$n$ = </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;n_subjects&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+        <span class="mf">0.02</span><span class="p">,</span>
+        <span class="mf">0.98</span><span class="p">,</span>
+        <span class="n">text_str</span><span class="p">,</span>
+        <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span>
+        <span class="n">verticalalignment</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Panel 2: Box plots</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_conditions</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">data</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_conditions</span><span class="p">)],</span>
+        <span class="n">positions</span><span class="o">=</span><span class="n">positions</span><span class="p">,</span>
+        <span class="n">widths</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+        <span class="n">patch_artist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Color boxes</span>
+    <span class="k">for</span> <span class="n">patch</span> <span class="ow">in</span> <span class="n">_</span><span class="p">[</span><span class="s2">&quot;boxes&quot;</span><span class="p">]:</span>
+        <span class="n">patch</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;lightblue&quot;</span><span class="p">)</span>
+        <span class="n">patch</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.7</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">condition_names</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Condition&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Distribution by Condition&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Panel 3: Results summary</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+
+    <span class="n">result_text</span> <span class="o">=</span> <span class="s2">&quot;Repeated Measures ANOVA</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">result_text</span> <span class="o">+=</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">35</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+    <span class="n">result_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;F(</span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;df_effect&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;df_error&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;statistic&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">result_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;p-value = </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;pvalue&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;stars&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+    <span class="n">result_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Partial η² = </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;effect_size&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">result_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Interpretation: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;effect_size_interpretation&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+    <span class="k">if</span> <span class="s2">&quot;sphericity_W&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+        <span class="n">result_text</span> <span class="o">+=</span> <span class="s2">&quot;Sphericity Test:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">result_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;  Mauchly&#39;s W = </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;sphericity_W&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">result_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;  p = </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;sphericity_pvalue&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">result_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;  Met: </span><span class="si">{</span><span class="s1">&#39;Yes&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;sphericity_met&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;No&#39;</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;correction_applied&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+            <span class="n">result_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;  ε_GG = </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;epsilon_gg&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">result_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;  Correction: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;correction_applied&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+
+    <span class="n">result_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Subjects: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;n_subjects&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">result_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Conditions: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;n_conditions&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">result_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Significant (α=</span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">): &quot;</span>
+    <span class="n">result_text</span> <span class="o">+=</span> <span class="s2">&quot;Yes&quot;</span> <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;significant&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="s2">&quot;No&quot;</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+        <span class="mf">0.1</span><span class="p">,</span>
+        <span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">result_text</span><span class="p">,</span>
+        <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">verticalalignment</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>
+        <span class="n">fontfamily</span><span class="o">=</span><span class="s2">&quot;monospace&quot;</span><span class="p">,</span>
+        <span class="n">bbox</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">boxstyle</span><span class="o">=</span><span class="s2">&quot;round&quot;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;wheat&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">fig</span>
+
+
+<span class="c1"># Demo: python -m scitex_stats.tests.parametric._demo_anova_rm</span>
+
+<span class="c1"># EOF</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Yusuke Watanabe.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
