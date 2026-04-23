@@ -34,7 +34,6 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-import scitex as stx
 from scitex_stats._logging import getLogger
 
 logger = getLogger(__name__)
@@ -171,6 +170,7 @@ def interpret_epsilon_squared(epsilon2: float) -> str:
 
 def main(args):
     """Demonstrate epsilon-squared computation."""
+    import scitex as stx
     logger.info("Demonstrating epsilon-squared effect size for Kruskal-Wallis")
 
     # Set random seed

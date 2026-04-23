@@ -33,7 +33,6 @@ from typing import Union
 import numpy as np
 import pandas as pd
 
-import scitex as stx
 from scitex_stats._logging import getLogger
 
 logger = getLogger(__name__)
@@ -184,6 +183,7 @@ def interpret_cliffs_delta(delta: float) -> str:
 
 def main(args):
     """Demonstrate Cliff's delta computation."""
+    import scitex as stx
     logger.info("Demonstrating Cliff's delta effect size")
 
     # Set random seed

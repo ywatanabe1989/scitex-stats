@@ -33,7 +33,6 @@ from typing import Literal, Optional, Union
 import numpy as np
 import pandas as pd
 
-import scitex as stx
 from scitex_stats._logging import getLogger
 
 logger = getLogger(__name__)
@@ -198,6 +197,7 @@ def interpret_cohens_d(d: float) -> str:
 
 def main(args):
     """Demonstrate Cohen's d computation."""
+    import scitex as stx
     logger.info("Demonstrating Cohen's d effect size")
 
     # Set random seed

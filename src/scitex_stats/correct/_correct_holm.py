@@ -35,7 +35,6 @@ import matplotlib.axes
 import numpy as np
 import pandas as pd
 
-import scitex as stx
 from scitex_stats._logging import getLogger
 
 logger = getLogger(__name__)
@@ -333,6 +332,7 @@ def _plot_holm(corrected_results, alpha, m, ax):
 
 def main(args):
     """Demonstrate Holm correction functionality."""
+    import scitex as stx
     logger.info("Demonstrating Holm-Bonferroni correction")
 
     # Example 1: Basic usage with multiple tests
