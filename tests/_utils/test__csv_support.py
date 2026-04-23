@@ -12,13 +12,11 @@ from scitex_stats._utils._csv_support import resolve_columns, resolve_groups
 
 
 def _skip_without_scitex_io():
-    """Skip test if scitex.io is not available."""
+    """Skip test if scitex_io is not available."""
     try:
-        import scitex  # noqa: F401
-
-        _ = scitex.io
-    except (ImportError, AttributeError):
-        pytest.skip("scitex.io not available")
+        import scitex_io  # noqa: F401
+    except ImportError:
+        pytest.skip("scitex_io not available")
 
 
 # ---------------------------------------------------------------------------
