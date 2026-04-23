@@ -7,14 +7,39 @@ allowed-tools: mcp__scitex__stats_*
 
 Publication-ready statistical testing framework with 23 tests, effect sizes, power analysis, and automatic test recommendation.
 
+## Installation & import (two equivalent paths)
+
+The same module is reachable via two install paths. Both forms work at
+runtime; which one a user has depends on their install choice.
+
+```python
+# Standalone — pip install scitex-stats
+import scitex_stats as sst
+sst.run_test(...)
+
+# Umbrella — pip install scitex
+import scitex.stats as sst
+sst.run_test(...)
+```
+
+`pip install scitex-stats` alone does NOT expose the `scitex` namespace;
+`import scitex.stats` raises `ModuleNotFoundError`. To use the
+`scitex.stats` form, also `pip install scitex`.
+
+See [../../general/02_interface-python-api.md] for the ecosystem-wide
+rule and empirical verification table.
+
 ## Sub-skills
 
-- [quick-start.md](quick-start.md) — Basic usage and core patterns
-- [test-catalog.md](test-catalog.md) — All 23 statistical tests with categories
-- [effect-sizes.md](effect-sizes.md) — Effect size measures and interpretation
-- [workflows.md](workflows.md) — Common analysis patterns
-- [cli-reference.md](cli-reference.md) — CLI commands
-- [mcp-tools.md](mcp-tools.md) — MCP tools for AI agents
+### Core
+- [01_test-catalog.md](01_test-catalog.md) — All 23 statistical tests with categories
+- [02_effect-sizes.md](02_effect-sizes.md) — Effect size measures and interpretation
+
+### Workflows
+- [10_quick-start.md](10_quick-start.md) — Basic usage and core patterns
+- [11_workflows.md](11_workflows.md) — Common analysis patterns
+- [12_cli-reference.md](12_cli-reference.md) — CLI commands
+- [13_mcp-tools.md](13_mcp-tools.md) — MCP tools for AI agents
 
 ## CLI
 
