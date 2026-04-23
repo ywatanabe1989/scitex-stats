@@ -21,6 +21,15 @@
 
 ---
 
+## Problem and Solution
+
+
+| # | Problem | Solution |
+|---|---------|----------|
+| 1 | **Bare scipy returns `(statistic, p)`** -- effect size, CI, normality check, power each need manual follow-up calls | **Publication-ready** -- `stx.stats.run_test("ttest_ind", g1, g2, return_as="dataframe")` yields statistic + effect size (Cohen's d) + CI + normality + power in one DataFrame |
+| 2 | **Test selection requires expertise** -- non-parametric vs parametric, paired vs independent, one-way vs repeated ANOVA | **Auto-recommend** -- `stx.stats.recommend_tests(data)` inspects distributions and suggests the right 2-3 tests |
+| 3 | **APA formatting is manual** -- every paper spells out `t(58) = 2.34, p = .021, d = 0.60` by hand | **`format_results(style="apa")`** -- typed output strings in APA, MLA, or LaTeX directly from the result dataframe |
+
 ## Problem
 
 Statistical testing in Python is fragmented across `scipy`, `statsmodels`, and `pingouin` — each with different interfaces and output conventions. Getting publication-ready results requires substantial manual work: computing effect sizes, running power analysis, formatting to APA or journal standards. AI agents face a further barrier: they cannot call Python libraries directly and need structured, tool-based access.
