@@ -48,6 +48,12 @@ def to_json_safe(result: Dict[str, Any]) -> Dict[str, Any]:
     >>> "formatted" in safe
     True
     """
+    # Guard: only dicts go through key-by-key conversion. DataFrame /
+    # other return_as types are passed through unchanged so run_test with
+    # return_as="dataframe" / "latex" does not blow up on Series values.
+    if not isinstance(result, dict):
+        return result
+
     out: Dict[str, Any] = {}
     for k, v in result.items():
         if isinstance(v, np.bool_):
