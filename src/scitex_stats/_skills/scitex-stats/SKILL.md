@@ -71,3 +71,8 @@ scitex-stats <command> [options]
 | `stats_normality_test` | Normality testing |
 | `stats_format_results` | Format for publication |
 | `stats_p_to_stars` | p-value to significance stars |
+
+
+## Environment
+
+- [14_env-vars.md](14_env-vars.md) — SCITEX_* env vars read by scitex-stats at runtime
