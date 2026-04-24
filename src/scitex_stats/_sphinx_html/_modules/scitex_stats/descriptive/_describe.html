@@ -1,0 +1,483 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scitex_stats.descriptive._describe &mdash; SciTeX Stats v0.2.4</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            SciTeX Stats
+              <img src="../../../_static/scitex-logo-banner.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#basic-installation">Basic Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#optional-dependencies">Optional Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#development-installation">Development Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#effect-sizes">Effect Sizes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#power-analysis">Power Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#multiple-comparison-correction">Multiple Comparison Correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#post-hoc-tests">Post-hoc Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#mcp-server">MCP Server</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../choosing_tests.html">Choosing the Right Test</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../choosing_tests.html#decision-flowchart">Decision Flowchart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../choosing_tests.html#step-1-what-type-of-data">Step 1: What Type of Data?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../choosing_tests.html#step-2-how-many-groups">Step 2: How Many Groups?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../choosing_tests.html#step-3-check-assumptions">Step 3: Check Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../choosing_tests.html#automatic-recommendation">Automatic Recommendation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../choosing_tests.html#correlation-tests">Correlation Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../choosing_tests.html#categorical-tests">Categorical Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../unified_output.html">Unified Output Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../unified_output.html#result-dictionary">Result Dictionary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../unified_output.html#key-fields">Key Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../unified_output.html#null-hypotheses">Null Hypotheses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../unified_output.html#significance-stars">Significance Stars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../unified_output.html#working-with-results">Working with Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli.html">CLI Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../cli.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../cli.html#core-commands">Core Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../cli.html#mcp-subcommands">MCP Subcommands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mcp.html">MCP Server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../mcp.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../mcp.html#starting-the-server">Starting the Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../mcp.html#mcp-client-configuration">MCP Client Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../mcp.html#available-tools">Available Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../mcp.html#diagnostics">Diagnostics</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.run_test"><code class="docutils literal notranslate"><span class="pre">run_test()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.available_tests"><code class="docutils literal notranslate"><span class="pre">available_tests()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.describe"><code class="docutils literal notranslate"><span class="pre">describe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.to_json_safe"><code class="docutils literal notranslate"><span class="pre">to_json_safe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext"><code class="docutils literal notranslate"><span class="pre">StatContext</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.__init__"><code class="docutils literal notranslate"><span class="pre">StatContext.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.__post_init__"><code class="docutils literal notranslate"><span class="pre">StatContext.__post_init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.control_group_name"><code class="docutils literal notranslate"><span class="pre">StatContext.control_group_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.effective_paired"><code class="docutils literal notranslate"><span class="pre">StatContext.effective_paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.from_data"><code class="docutils literal notranslate"><span class="pre">StatContext.from_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.from_dict"><code class="docutils literal notranslate"><span class="pre">StatContext.from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.group_names"><code class="docutils literal notranslate"><span class="pre">StatContext.group_names</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.has_control_group"><code class="docutils literal notranslate"><span class="pre">StatContext.has_control_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.min_n_per_group"><code class="docutils literal notranslate"><span class="pre">StatContext.min_n_per_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.missing_allowed"><code class="docutils literal notranslate"><span class="pre">StatContext.missing_allowed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.n_factors"><code class="docutils literal notranslate"><span class="pre">StatContext.n_factors</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.n_total"><code class="docutils literal notranslate"><span class="pre">StatContext.n_total</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.normality_ok"><code class="docutils literal notranslate"><span class="pre">StatContext.normality_ok</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.paired"><code class="docutils literal notranslate"><span class="pre">StatContext.paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.to_dict"><code class="docutils literal notranslate"><span class="pre">StatContext.to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.variance_homogeneity_ok"><code class="docutils literal notranslate"><span class="pre">StatContext.variance_homogeneity_ok</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.n_groups"><code class="docutils literal notranslate"><span class="pre">StatContext.n_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.sample_sizes"><code class="docutils literal notranslate"><span class="pre">StatContext.sample_sizes</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.outcome_type"><code class="docutils literal notranslate"><span class="pre">StatContext.outcome_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatContext.design"><code class="docutils literal notranslate"><span class="pre">StatContext.design</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule"><code class="docutils literal notranslate"><span class="pre">TestRule</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.__init__"><code class="docutils literal notranslate"><span class="pre">TestRule.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.description"><code class="docutils literal notranslate"><span class="pre">TestRule.description</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.priority"><code class="docutils literal notranslate"><span class="pre">TestRule.priority</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.name"><code class="docutils literal notranslate"><span class="pre">TestRule.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.family"><code class="docutils literal notranslate"><span class="pre">TestRule.family</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.min_groups"><code class="docutils literal notranslate"><span class="pre">TestRule.min_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.max_groups"><code class="docutils literal notranslate"><span class="pre">TestRule.max_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.outcome_types"><code class="docutils literal notranslate"><span class="pre">TestRule.outcome_types</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.supports_paired"><code class="docutils literal notranslate"><span class="pre">TestRule.supports_paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.supports_unpaired"><code class="docutils literal notranslate"><span class="pre">TestRule.supports_unpaired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.design_allowed"><code class="docutils literal notranslate"><span class="pre">TestRule.design_allowed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.requires_control_group"><code class="docutils literal notranslate"><span class="pre">TestRule.requires_control_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.min_n_total"><code class="docutils literal notranslate"><span class="pre">TestRule.min_n_total</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.min_n_per_group"><code class="docutils literal notranslate"><span class="pre">TestRule.min_n_per_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.needs_normality"><code class="docutils literal notranslate"><span class="pre">TestRule.needs_normality</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.needs_equal_variance"><code class="docutils literal notranslate"><span class="pre">TestRule.needs_equal_variance</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.min_factors"><code class="docutils literal notranslate"><span class="pre">TestRule.min_factors</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.TestRule.max_factors"><code class="docutils literal notranslate"><span class="pre">TestRule.max_factors</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle"><code class="docutils literal notranslate"><span class="pre">StatStyle</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.__init__"><code class="docutils literal notranslate"><span class="pre">StatStyle.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.decimal_places_effect"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_effect</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.decimal_places_p"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_p</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.decimal_places_stat"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_stat</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.format_effect"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_effect()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.format_n"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_n()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.format_p"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_p()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.format_stat"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_stat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.n_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.n_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.p_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.p_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.p_to_stars"><code class="docutils literal notranslate"><span class="pre">StatStyle.p_to_stars()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.id"><code class="docutils literal notranslate"><span class="pre">StatStyle.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.label"><code class="docutils literal notranslate"><span class="pre">StatStyle.label</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.target"><code class="docutils literal notranslate"><span class="pre">StatStyle.target</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.stat_symbol_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.stat_symbol_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.alpha_thresholds"><code class="docutils literal notranslate"><span class="pre">StatStyle.alpha_thresholds</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#scitex_stats.StatStyle.effect_label_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.effect_label_format</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.recommend_tests"><code class="docutils literal notranslate"><span class="pre">recommend_tests()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.check_applicable"><code class="docutils literal notranslate"><span class="pre">check_applicable()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.get_stat_style"><code class="docutils literal notranslate"><span class="pre">get_stat_style()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.p_to_stars"><code class="docutils literal notranslate"><span class="pre">p_to_stars()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_ttest_ind"><code class="docutils literal notranslate"><span class="pre">test_ttest_ind()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_ttest_rel"><code class="docutils literal notranslate"><span class="pre">test_ttest_rel()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_ttest_1samp"><code class="docutils literal notranslate"><span class="pre">test_ttest_1samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_anova"><code class="docutils literal notranslate"><span class="pre">test_anova()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_anova_rm"><code class="docutils literal notranslate"><span class="pre">test_anova_rm()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_anova_2way"><code class="docutils literal notranslate"><span class="pre">test_anova_2way()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_brunner_munzel"><code class="docutils literal notranslate"><span class="pre">test_brunner_munzel()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_wilcoxon"><code class="docutils literal notranslate"><span class="pre">test_wilcoxon()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_kruskal"><code class="docutils literal notranslate"><span class="pre">test_kruskal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_mannwhitneyu"><code class="docutils literal notranslate"><span class="pre">test_mannwhitneyu()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_friedman"><code class="docutils literal notranslate"><span class="pre">test_friedman()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_pearson"><code class="docutils literal notranslate"><span class="pre">test_pearson()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_spearman"><code class="docutils literal notranslate"><span class="pre">test_spearman()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_kendall"><code class="docutils literal notranslate"><span class="pre">test_kendall()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_theilsen"><code class="docutils literal notranslate"><span class="pre">test_theilsen()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_chi2"><code class="docutils literal notranslate"><span class="pre">test_chi2()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_fisher"><code class="docutils literal notranslate"><span class="pre">test_fisher()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_mcnemar"><code class="docutils literal notranslate"><span class="pre">test_mcnemar()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_cochran_q"><code class="docutils literal notranslate"><span class="pre">test_cochran_q()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_shapiro"><code class="docutils literal notranslate"><span class="pre">test_shapiro()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_normality"><code class="docutils literal notranslate"><span class="pre">test_normality()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_ks_1samp"><code class="docutils literal notranslate"><span class="pre">test_ks_1samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats.test_ks_2samp"><code class="docutils literal notranslate"><span class="pre">test_ks_2samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats._PackageNotFoundError"><code class="docutils literal notranslate"><span class="pre">_PackageNotFoundError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#scitex_stats._version"><code class="docutils literal notranslate"><span class="pre">_version()</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#example-1-basic-t-test">Example 1: Basic t-test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#example-2-automatic-test-recommendation">Example 2: Automatic Test Recommendation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#example-3-multiple-comparison-correction">Example 3: Multiple Comparison Correction</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SciTeX Stats</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scitex_stats.descriptive._describe</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scitex_stats.descriptive._describe</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># Timestamp: &quot;2025-12-27 (refactored)&quot;</span>
+<span class="c1"># File: scitex/stats/descriptive/_describe.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Comprehensive descriptive statistics.</span>
+
+<span class="sd">Uses torch when available (preserves tensor type), falls back to numpy.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">__FILE__</span> <span class="o">=</span> <span class="vm">__file__</span>
+<span class="n">__DIR__</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__FILE__</span><span class="p">)</span>
+
+<span class="c1"># Optional torch support</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+    <span class="n">HAS_TORCH</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">torch</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">HAS_TORCH</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">._nan</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">nancount</span><span class="p">,</span>
+    <span class="n">nankurtosis</span><span class="p">,</span>
+    <span class="n">nanmax</span><span class="p">,</span>
+    <span class="n">nanmean</span><span class="p">,</span>
+    <span class="n">nanmin</span><span class="p">,</span>
+    <span class="n">nanq25</span><span class="p">,</span>
+    <span class="n">nanq50</span><span class="p">,</span>
+    <span class="n">nanq75</span><span class="p">,</span>
+    <span class="n">nanskewness</span><span class="p">,</span>
+    <span class="n">nanstd</span><span class="p">,</span>
+    <span class="n">nanvar</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._real</span><span class="w"> </span><span class="kn">import</span> <span class="n">kurtosis</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">q25</span><span class="p">,</span> <span class="n">q50</span><span class="p">,</span> <span class="n">q75</span><span class="p">,</span> <span class="n">skewness</span><span class="p">,</span> <span class="n">std</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_torch_tensor</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if x is a torch tensor.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">HAS_TORCH</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_axis</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">dim</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize axis/dim parameter.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">dim</span> <span class="k">if</span> <span class="n">dim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">axis</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">verify_non_leakage</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">dim</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify that statistics computation doesn&#39;t leak information across samples.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array-like</span>
+<span class="sd">        Input data</span>
+<span class="sd">    dim : int or tuple, optional</span>
+<span class="sd">        Dimension(s) along which to verify</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if no leakage detected</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">described</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">describe</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">x_first</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">_is_torch_tensor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)[:</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">described_first</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">describe</span><span class="p">(</span><span class="n">x_first</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">_is_torch_tensor</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">described_first</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">described</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Shape mismatch: </span><span class="si">{</span><span class="n">described_first</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">described</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span>
+            <span class="n">described_first</span><span class="p">,</span>
+            <span class="n">described</span><span class="p">[:</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span>
+            <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Statistics leak information across samples&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">described_first</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">described</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Shape mismatch: </span><span class="si">{</span><span class="n">described_first</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">described</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span>
+            <span class="n">described_first</span><span class="p">,</span>
+            <span class="n">described</span><span class="p">[:</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span>
+            <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+            <span class="n">err_msg</span><span class="o">=</span><span class="s2">&quot;Statistics leak information across samples&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="n">_DEFAULT_FUNCS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="s2">&quot;kurtosis&quot;</span><span class="p">,</span> <span class="s2">&quot;skewness&quot;</span><span class="p">,</span> <span class="s2">&quot;q25&quot;</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span> <span class="s2">&quot;q75&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="describe">
+<a class="viewcode-back" href="../../../api/index.html#scitex_stats.describe">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">describe</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">,</span>
+    <span class="n">axis</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">dim</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">keepdims</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">funcs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute descriptive statistics.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array-like</span>
+<span class="sd">        Input data (numpy array or torch tensor)</span>
+<span class="sd">    axis : int, default=-1</span>
+<span class="sd">        Deprecated. Use dim instead</span>
+<span class="sd">    dim : int or tuple of ints, optional</span>
+<span class="sd">        Dimension(s) along which to compute statistics</span>
+<span class="sd">    keepdims : bool, default=False</span>
+<span class="sd">        Whether to keep reduced dimensions</span>
+<span class="sd">    funcs : list of str or &quot;all&quot;, optional</span>
+<span class="sd">        Statistical functions to compute. Clean names (mean, std, median,</span>
+<span class="sd">        etc.) use nan-safe implementations. Legacy nan-prefixed names</span>
+<span class="sd">        (nanmean, nanstd, etc.) are also accepted. If None, uses default:</span>
+<span class="sd">        [&quot;mean&quot;, &quot;std&quot;, &quot;kurtosis&quot;, &quot;skewness&quot;, &quot;q25&quot;, &quot;median&quot;, &quot;q75&quot;].</span>
+<span class="sd">    device : optional</span>
+<span class="sd">        Device for torch tensors (ignored for numpy)</span>
+<span class="sd">    batch_size : int, default=-1</span>
+<span class="sd">        Batch size for processing (currently unused)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Tuple[ndarray or Tensor, List[str]]</span>
+<span class="sd">        Computed statistics stacked along last dimension and their names</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">funcs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">funcs</span> <span class="o">=</span> <span class="n">_DEFAULT_FUNCS</span>
+
+    <span class="n">dim</span> <span class="o">=</span> <span class="n">_normalize_axis</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span>
+    <span class="n">dim</span> <span class="o">=</span> <span class="p">(</span><span class="n">dim</span><span class="p">,)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">else</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span> <span class="k">if</span> <span class="n">dim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="c1"># Clean names map to nan-safe functions (recommended).</span>
+    <span class="c1"># Legacy nan-prefixed names and strict (non-nan) names also available.</span>
+    <span class="n">func_candidates</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1"># Clean names -&gt; nan-safe (default, recommended)</span>
+        <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">nanmean</span><span class="p">,</span>
+        <span class="s2">&quot;std&quot;</span><span class="p">:</span> <span class="n">nanstd</span><span class="p">,</span>
+        <span class="s2">&quot;var&quot;</span><span class="p">:</span> <span class="n">nanvar</span><span class="p">,</span>
+        <span class="s2">&quot;kurtosis&quot;</span><span class="p">:</span> <span class="n">nankurtosis</span><span class="p">,</span>
+        <span class="s2">&quot;skewness&quot;</span><span class="p">:</span> <span class="n">nanskewness</span><span class="p">,</span>
+        <span class="s2">&quot;q25&quot;</span><span class="p">:</span> <span class="n">nanq25</span><span class="p">,</span>
+        <span class="s2">&quot;median&quot;</span><span class="p">:</span> <span class="n">nanq50</span><span class="p">,</span>
+        <span class="s2">&quot;q75&quot;</span><span class="p">:</span> <span class="n">nanq75</span><span class="p">,</span>
+        <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="n">nanmax</span><span class="p">,</span>
+        <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="n">nanmin</span><span class="p">,</span>
+        <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">nancount</span><span class="p">,</span>
+        <span class="c1"># Strict (non-nan-safe) variants</span>
+        <span class="s2">&quot;mean_strict&quot;</span><span class="p">:</span> <span class="n">mean</span><span class="p">,</span>
+        <span class="s2">&quot;std_strict&quot;</span><span class="p">:</span> <span class="n">std</span><span class="p">,</span>
+        <span class="s2">&quot;kurtosis_strict&quot;</span><span class="p">:</span> <span class="n">kurtosis</span><span class="p">,</span>
+        <span class="s2">&quot;skewness_strict&quot;</span><span class="p">:</span> <span class="n">skewness</span><span class="p">,</span>
+        <span class="s2">&quot;q25_strict&quot;</span><span class="p">:</span> <span class="n">q25</span><span class="p">,</span>
+        <span class="s2">&quot;q50_strict&quot;</span><span class="p">:</span> <span class="n">q50</span><span class="p">,</span>
+        <span class="s2">&quot;q75_strict&quot;</span><span class="p">:</span> <span class="n">q75</span><span class="p">,</span>
+        <span class="c1"># Legacy nan-prefixed names (backward compat)</span>
+        <span class="s2">&quot;nanmean&quot;</span><span class="p">:</span> <span class="n">nanmean</span><span class="p">,</span>
+        <span class="s2">&quot;nanstd&quot;</span><span class="p">:</span> <span class="n">nanstd</span><span class="p">,</span>
+        <span class="s2">&quot;nanvar&quot;</span><span class="p">:</span> <span class="n">nanvar</span><span class="p">,</span>
+        <span class="s2">&quot;nankurtosis&quot;</span><span class="p">:</span> <span class="n">nankurtosis</span><span class="p">,</span>
+        <span class="s2">&quot;nanskewness&quot;</span><span class="p">:</span> <span class="n">nanskewness</span><span class="p">,</span>
+        <span class="s2">&quot;nanq25&quot;</span><span class="p">:</span> <span class="n">nanq25</span><span class="p">,</span>
+        <span class="s2">&quot;nanq50&quot;</span><span class="p">:</span> <span class="n">nanq50</span><span class="p">,</span>
+        <span class="s2">&quot;nanq75&quot;</span><span class="p">:</span> <span class="n">nanq75</span><span class="p">,</span>
+        <span class="s2">&quot;nanmax&quot;</span><span class="p">:</span> <span class="n">nanmax</span><span class="p">,</span>
+        <span class="s2">&quot;nanmin&quot;</span><span class="p">:</span> <span class="n">nanmin</span><span class="p">,</span>
+        <span class="s2">&quot;nancount&quot;</span><span class="p">:</span> <span class="n">nancount</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">func_names</span> <span class="o">=</span> <span class="n">funcs</span>
+    <span class="k">if</span> <span class="n">funcs</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+        <span class="c1"># Use clean names for &quot;all&quot; mode</span>
+        <span class="n">all_clean</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;std&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;var&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;kurtosis&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;skewness&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;q25&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;median&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;q75&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;max&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;min&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;count&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">_funcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">func_candidates</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">all_clean</span><span class="p">]</span>
+        <span class="n">func_names</span> <span class="o">=</span> <span class="n">all_clean</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_funcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">func_candidates</span><span class="p">[</span><span class="n">ff</span><span class="p">]</span> <span class="k">for</span> <span class="n">ff</span> <span class="ow">in</span> <span class="n">func_names</span><span class="p">]</span>
+
+    <span class="n">calculated</span> <span class="o">=</span> <span class="p">[</span><span class="n">ff</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">)</span> <span class="k">for</span> <span class="n">ff</span> <span class="ow">in</span> <span class="n">_funcs</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">_is_torch_tensor</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">calculated</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">func_names</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">calculated</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">func_names</span></div>
+
+
+
+<span class="c1"># EOF</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Yusuke Watanabe.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -33,7 +33,6 @@ from typing import List, Union
 import numpy as np
 import pandas as pd
 
-import scitex as stx
 from scitex_stats._logging import getLogger
 
 logger = getLogger(__name__)
@@ -174,6 +173,7 @@ def interpret_eta_squared(eta2: float) -> str:
 
 def main(args):
     """Demonstrate eta-squared computation."""
+    import scitex as stx
     logger.info("Demonstrating eta-squared effect size for ANOVA")
 
     # Set random seed

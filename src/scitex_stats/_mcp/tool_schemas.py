@@ -19,8 +19,14 @@ def get_tool_schemas() -> list[types.Tool]:
         types.Tool(
             name="recommend_tests",
             description=(
-                "Recommend appropriate statistical tests based on data characteristics. "
-                "Returns ranked list of tests with rationale."
+                "Recommend the right statistical test given data characteristics — "
+                "acts as an expert statistician. Use when the user asks 'which test "
+                "should I use?', 't-test or Mann-Whitney?', 'parametric or "
+                "non-parametric?', 'how do I compare these groups?', or is unsure "
+                "between ANOVA, Kruskal-Wallis, chi-square, etc. Takes n_groups, "
+                "sample sizes, outcome type (continuous/ordinal/categorical/binary), "
+                "design (between/within/mixed), and paired flag; returns a ranked "
+                "list with rationale for each recommendation."
             ),
             inputSchema={
                 "type": "object",
@@ -69,8 +75,19 @@ def get_tool_schemas() -> list[types.Tool]:
         types.Tool(
             name="run_test",
             description=(
-                "Execute a statistical test on provided data. "
-                "Returns test statistic, p-value, effect size, and confidence intervals."
+                "Run ANY of 23 statistical tests on data — t-test (independent/"
+                "paired/one-sample), ANOVA (one-way/repeated-measures/two-way), "
+                "Mann-Whitney U, Wilcoxon signed-rank, Kruskal-Wallis, Friedman, "
+                "Brunner-Munzel, Pearson/Spearman/Kendall/Theil-Sen correlation, "
+                "chi-square, Fisher's exact, McNemar, Cochran's Q, Shapiro-Wilk, "
+                "Kolmogorov-Smirnov. Drop-in replacement for `scipy.stats.ttest_ind`, "
+                "`ttest_rel`, `mannwhitneyu`, `wilcoxon`, `f_oneway`, `kruskal`, "
+                "`pearsonr`, `spearmanr`, `chi2_contingency`, `shapiro`, `kstest`, "
+                "etc. Use whenever the user asks to 'run a t-test', 'compare two "
+                "groups', 'test correlation', 'test normality', 'test independence', "
+                "'do an ANOVA'. Accepts raw arrays OR a CSV path + column names. "
+                "Returns test statistic, p-value, effect size, and confidence "
+                "intervals in one call."
             ),
             inputSchema={
                 "type": "object",
@@ -137,7 +154,14 @@ def get_tool_schemas() -> list[types.Tool]:
         types.Tool(
             name="format_results",
             description=(
-                "Format statistical results in journal style (APA, Nature, etc.)"
+                "Format a statistical result as a publication-ready string in "
+                "APA, Nature, Science, or brief style — e.g. "
+                "'t(28) = 2.45, p = .021, d = 0.89, 95% CI [0.12, 1.66]'. "
+                "Use whenever the user asks to 'format results for a paper', "
+                "'write this up in APA', 'give me the stats sentence', 'format "
+                "for Nature', or needs manuscript-ready statistics reporting. "
+                "Handles italicization of statistic symbols, correct significant "
+                "figures, and per-journal conventions."
             ),
             inputSchema={
                 "type": "object",
@@ -188,8 +212,14 @@ def get_tool_schemas() -> list[types.Tool]:
         types.Tool(
             name="power_analysis",
             description=(
-                "Calculate statistical power or required sample size. "
-                "Supports various test types."
+                "Compute statistical power OR required sample size for a planned "
+                "study — t-test, ANOVA, correlation, or chi-square. Drop-in "
+                "replacement for `statsmodels.stats.power` (TTestIndPower, "
+                "FTestAnovaPower, NormalIndPower) and G*Power. Use whenever the "
+                "user asks 'how many subjects do I need?', 'what sample size for "
+                "effect size d=0.5?', 'what's my power with n=30?', 'do a power "
+                "analysis', or is planning an experiment. Pass effect_size + alpha "
+                "+ power to get n; pass effect_size + alpha + n to get power."
             ),
             inputSchema={
                 "type": "object",
@@ -235,8 +265,14 @@ def get_tool_schemas() -> list[types.Tool]:
         types.Tool(
             name="correct_pvalues",
             description=(
-                "Apply multiple comparison correction to p-values. "
-                "Supports Bonferroni, FDR (Benjamini-Hochberg), Holm, and Sidak methods."
+                "Adjust a list of p-values for multiple comparisons — Bonferroni, "
+                "FDR (Benjamini-Hochberg / Benjamini-Yekutieli), Holm, or Sidak. "
+                "Drop-in replacement for `statsmodels.stats.multitest.multipletests`. "
+                "Use whenever the user asks to 'correct for multiple comparisons', "
+                "'apply Bonferroni', 'FDR-correct these p-values', 'Benjamini-"
+                "Hochberg', 'control family-wise error rate', or has run many "
+                "tests and needs adjusted p-values. Returns adjusted p-values and "
+                "a reject/accept mask at the specified alpha."
             ),
             inputSchema={
                 "type": "object",
@@ -265,8 +301,13 @@ def get_tool_schemas() -> list[types.Tool]:
         types.Tool(
             name="describe",
             description=(
-                "Calculate descriptive statistics for data. "
-                "Returns mean, std, median, quartiles, skewness, kurtosis."
+                "Compute descriptive statistics on a data array — n, mean, std, "
+                "min/max, median, quartiles (or custom percentiles), skewness, "
+                "kurtosis. Drop-in replacement for `pandas.Series.describe()`, "
+                "`numpy.mean/std/percentile`, `scipy.stats.describe`. Use whenever "
+                "the user asks to 'summarize this data', 'describe the "
+                "distribution', 'get mean and std', 'compute quartiles', 'check "
+                "skewness/kurtosis', or wants a one-glance numeric summary."
             ),
             inputSchema={
                 "type": "object",
@@ -290,8 +331,14 @@ def get_tool_schemas() -> list[types.Tool]:
         types.Tool(
             name="effect_size",
             description=(
-                "Calculate effect size between groups. "
-                "Returns Cohen's d, Hedges' g, or other appropriate measure."
+                "Compute standardized effect size between two groups — Cohen's d, "
+                "Hedges' g (small-sample corrected), Glass's delta, or Cliff's "
+                "delta (non-parametric). Drop-in replacement for `pingouin."
+                "compute_effsize` and manual Cohen's d calculations. Use whenever "
+                "the user asks 'what's the effect size?', 'compute Cohen's d', "
+                "'how big is the difference?', 'is this clinically meaningful?', "
+                "or needs to report effect size alongside a p-value. A p-value "
+                "alone is incomplete — reviewers ask for effect sizes."
             ),
             inputSchema={
                 "type": "object",
@@ -325,8 +372,15 @@ def get_tool_schemas() -> list[types.Tool]:
         types.Tool(
             name="normality_test",
             description=(
-                "Test whether data follows a normal distribution. "
-                "Returns test statistic and p-value."
+                "Test whether data follows a normal (Gaussian) distribution — "
+                "Shapiro-Wilk, D'Agostino-Pearson, Anderson-Darling, or Lilliefors. "
+                "Drop-in replacement for `scipy.stats.shapiro`, `normaltest`, "
+                "`anderson`, and `statsmodels.stats.diagnostic.lilliefors`. Use "
+                "whenever the user asks 'is this data normal?', 'test normality', "
+                "'Shapiro-Wilk', 'check Gaussian assumption', 'should I use "
+                "parametric or non-parametric?', or before running a t-test/ANOVA "
+                "that assumes normality. Returns test statistic and p-value; p<0.05 "
+                "rejects normality."
             ),
             inputSchema={
                 "type": "object",
@@ -350,8 +404,15 @@ def get_tool_schemas() -> list[types.Tool]:
         types.Tool(
             name="posthoc_test",
             description=(
-                "Run post-hoc pairwise comparisons after significant ANOVA/Kruskal. "
-                "Supports Tukey HSD, Dunnett, Games-Howell, Dunn."
+                "Run pairwise post-hoc comparisons after a significant ANOVA or "
+                "Kruskal-Wallis — Tukey HSD, Dunnett (vs control), Games-Howell "
+                "(unequal variances), or Dunn (non-parametric). Drop-in "
+                "replacement for `scikit_posthocs.posthoc_*`, "
+                "`statsmodels.stats.multicomp.pairwise_tukeyhsd`, and manual "
+                "Bonferroni-corrected t-tests. Use whenever the user asks 'which "
+                "groups differ?', 'run Tukey HSD', 'compare to control (Dunnett)', "
+                "'follow-up after ANOVA', 'pairwise comparisons', or has a "
+                "significant omnibus test and needs to localize the differences."
             ),
             inputSchema={
                 "type": "object",
@@ -384,7 +445,14 @@ def get_tool_schemas() -> list[types.Tool]:
         # P-value to Stars
         types.Tool(
             name="p_to_stars",
-            description=("Convert p-value to significance stars (*, **, ***, ns)"),
+            description=(
+                "Convert a p-value to significance stars (ns / * / ** / ***) for "
+                "figure annotations and tables. Use whenever the user asks to "
+                "'annotate significance on a plot', 'add stars to boxplot', "
+                "'convert p to stars', 'mark significant comparisons', or needs "
+                "the conventional journal notation (p<0.05 → *, p<0.01 → **, "
+                "p<0.001 → ***). Customizable thresholds."
+            ),
             inputSchema={
                 "type": "object",
                 "properties": {

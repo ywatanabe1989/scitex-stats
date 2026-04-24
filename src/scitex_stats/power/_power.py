@@ -25,7 +25,6 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-import scitex as stx
 from scitex_stats._logging import getLogger
 
 logger = getLogger(__name__)
@@ -274,6 +273,7 @@ def sample_size_ttest(
 
 def main(args):
     """Demonstrate power analysis functionality."""
+    import scitex as stx
     logger.info("Demonstrating statistical power analysis")
 
     # Example 1: Effect size vs power

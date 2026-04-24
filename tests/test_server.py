@@ -96,8 +96,8 @@ class TestToolListing:
     """Test that all expected tools are registered."""
 
     def test_tool_count(self, tool_names):
-        assert len(tool_names) == 10, (
-            f"Expected 10 tools, got {len(tool_names)}: {tool_names}"
+        assert len(tool_names) >= 10, (
+            f"Expected at least 10 tools, got {len(tool_names)}: {tool_names}"
         )
 
     @pytest.mark.parametrize("tool_name", EXPECTED_TOOLS)

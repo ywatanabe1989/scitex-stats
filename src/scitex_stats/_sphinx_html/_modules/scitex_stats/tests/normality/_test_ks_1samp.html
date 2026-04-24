@@ -1,0 +1,746 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scitex_stats.tests.normality._test_ks_1samp &mdash; SciTeX Stats v0.2.4</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            SciTeX Stats
+              <img src="../../../../_static/scitex-logo-banner.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../installation.html#basic-installation">Basic Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../installation.html#optional-dependencies">Optional Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../installation.html#development-installation">Development Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../quickstart.html">Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#effect-sizes">Effect Sizes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#power-analysis">Power Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#multiple-comparison-correction">Multiple Comparison Correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#post-hoc-tests">Post-hoc Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#mcp-server">MCP Server</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../choosing_tests.html">Choosing the Right Test</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#decision-flowchart">Decision Flowchart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#step-1-what-type-of-data">Step 1: What Type of Data?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#step-2-how-many-groups">Step 2: How Many Groups?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#step-3-check-assumptions">Step 3: Check Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#automatic-recommendation">Automatic Recommendation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#correlation-tests">Correlation Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#categorical-tests">Categorical Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../unified_output.html">Unified Output Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#result-dictionary">Result Dictionary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#key-fields">Key Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#null-hypotheses">Null Hypotheses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#significance-stars">Significance Stars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#working-with-results">Working with Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cli.html">CLI Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../cli.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../cli.html#core-commands">Core Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../cli.html#mcp-subcommands">MCP Subcommands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mcp.html">MCP Server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#starting-the-server">Starting the Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#mcp-client-configuration">MCP Client Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#available-tools">Available Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#diagnostics">Diagnostics</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.run_test"><code class="docutils literal notranslate"><span class="pre">run_test()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.available_tests"><code class="docutils literal notranslate"><span class="pre">available_tests()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.describe"><code class="docutils literal notranslate"><span class="pre">describe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.to_json_safe"><code class="docutils literal notranslate"><span class="pre">to_json_safe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext"><code class="docutils literal notranslate"><span class="pre">StatContext</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.__init__"><code class="docutils literal notranslate"><span class="pre">StatContext.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.__post_init__"><code class="docutils literal notranslate"><span class="pre">StatContext.__post_init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.control_group_name"><code class="docutils literal notranslate"><span class="pre">StatContext.control_group_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.effective_paired"><code class="docutils literal notranslate"><span class="pre">StatContext.effective_paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.from_data"><code class="docutils literal notranslate"><span class="pre">StatContext.from_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.from_dict"><code class="docutils literal notranslate"><span class="pre">StatContext.from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.group_names"><code class="docutils literal notranslate"><span class="pre">StatContext.group_names</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.has_control_group"><code class="docutils literal notranslate"><span class="pre">StatContext.has_control_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.min_n_per_group"><code class="docutils literal notranslate"><span class="pre">StatContext.min_n_per_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.missing_allowed"><code class="docutils literal notranslate"><span class="pre">StatContext.missing_allowed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.n_factors"><code class="docutils literal notranslate"><span class="pre">StatContext.n_factors</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.n_total"><code class="docutils literal notranslate"><span class="pre">StatContext.n_total</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.normality_ok"><code class="docutils literal notranslate"><span class="pre">StatContext.normality_ok</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.paired"><code class="docutils literal notranslate"><span class="pre">StatContext.paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.to_dict"><code class="docutils literal notranslate"><span class="pre">StatContext.to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.variance_homogeneity_ok"><code class="docutils literal notranslate"><span class="pre">StatContext.variance_homogeneity_ok</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.n_groups"><code class="docutils literal notranslate"><span class="pre">StatContext.n_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.sample_sizes"><code class="docutils literal notranslate"><span class="pre">StatContext.sample_sizes</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.outcome_type"><code class="docutils literal notranslate"><span class="pre">StatContext.outcome_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.design"><code class="docutils literal notranslate"><span class="pre">StatContext.design</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule"><code class="docutils literal notranslate"><span class="pre">TestRule</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.__init__"><code class="docutils literal notranslate"><span class="pre">TestRule.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.description"><code class="docutils literal notranslate"><span class="pre">TestRule.description</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.priority"><code class="docutils literal notranslate"><span class="pre">TestRule.priority</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.name"><code class="docutils literal notranslate"><span class="pre">TestRule.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.family"><code class="docutils literal notranslate"><span class="pre">TestRule.family</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.min_groups"><code class="docutils literal notranslate"><span class="pre">TestRule.min_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.max_groups"><code class="docutils literal notranslate"><span class="pre">TestRule.max_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.outcome_types"><code class="docutils literal notranslate"><span class="pre">TestRule.outcome_types</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.supports_paired"><code class="docutils literal notranslate"><span class="pre">TestRule.supports_paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.supports_unpaired"><code class="docutils literal notranslate"><span class="pre">TestRule.supports_unpaired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.design_allowed"><code class="docutils literal notranslate"><span class="pre">TestRule.design_allowed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.requires_control_group"><code class="docutils literal notranslate"><span class="pre">TestRule.requires_control_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.min_n_total"><code class="docutils literal notranslate"><span class="pre">TestRule.min_n_total</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.min_n_per_group"><code class="docutils literal notranslate"><span class="pre">TestRule.min_n_per_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.needs_normality"><code class="docutils literal notranslate"><span class="pre">TestRule.needs_normality</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.needs_equal_variance"><code class="docutils literal notranslate"><span class="pre">TestRule.needs_equal_variance</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.min_factors"><code class="docutils literal notranslate"><span class="pre">TestRule.min_factors</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.max_factors"><code class="docutils literal notranslate"><span class="pre">TestRule.max_factors</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle"><code class="docutils literal notranslate"><span class="pre">StatStyle</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.__init__"><code class="docutils literal notranslate"><span class="pre">StatStyle.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.decimal_places_effect"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_effect</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.decimal_places_p"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_p</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.decimal_places_stat"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_stat</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.format_effect"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_effect()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.format_n"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_n()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.format_p"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_p()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.format_stat"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_stat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.n_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.n_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.p_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.p_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.p_to_stars"><code class="docutils literal notranslate"><span class="pre">StatStyle.p_to_stars()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.id"><code class="docutils literal notranslate"><span class="pre">StatStyle.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.label"><code class="docutils literal notranslate"><span class="pre">StatStyle.label</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.target"><code class="docutils literal notranslate"><span class="pre">StatStyle.target</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.stat_symbol_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.stat_symbol_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.alpha_thresholds"><code class="docutils literal notranslate"><span class="pre">StatStyle.alpha_thresholds</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.effect_label_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.effect_label_format</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.recommend_tests"><code class="docutils literal notranslate"><span class="pre">recommend_tests()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.check_applicable"><code class="docutils literal notranslate"><span class="pre">check_applicable()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.get_stat_style"><code class="docutils literal notranslate"><span class="pre">get_stat_style()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.p_to_stars"><code class="docutils literal notranslate"><span class="pre">p_to_stars()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ttest_ind"><code class="docutils literal notranslate"><span class="pre">test_ttest_ind()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ttest_rel"><code class="docutils literal notranslate"><span class="pre">test_ttest_rel()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ttest_1samp"><code class="docutils literal notranslate"><span class="pre">test_ttest_1samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_anova"><code class="docutils literal notranslate"><span class="pre">test_anova()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_anova_rm"><code class="docutils literal notranslate"><span class="pre">test_anova_rm()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_anova_2way"><code class="docutils literal notranslate"><span class="pre">test_anova_2way()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_brunner_munzel"><code class="docutils literal notranslate"><span class="pre">test_brunner_munzel()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_wilcoxon"><code class="docutils literal notranslate"><span class="pre">test_wilcoxon()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_kruskal"><code class="docutils literal notranslate"><span class="pre">test_kruskal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_mannwhitneyu"><code class="docutils literal notranslate"><span class="pre">test_mannwhitneyu()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_friedman"><code class="docutils literal notranslate"><span class="pre">test_friedman()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_pearson"><code class="docutils literal notranslate"><span class="pre">test_pearson()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_spearman"><code class="docutils literal notranslate"><span class="pre">test_spearman()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_kendall"><code class="docutils literal notranslate"><span class="pre">test_kendall()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_theilsen"><code class="docutils literal notranslate"><span class="pre">test_theilsen()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_chi2"><code class="docutils literal notranslate"><span class="pre">test_chi2()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_fisher"><code class="docutils literal notranslate"><span class="pre">test_fisher()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_mcnemar"><code class="docutils literal notranslate"><span class="pre">test_mcnemar()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_cochran_q"><code class="docutils literal notranslate"><span class="pre">test_cochran_q()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_shapiro"><code class="docutils literal notranslate"><span class="pre">test_shapiro()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_normality"><code class="docutils literal notranslate"><span class="pre">test_normality()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ks_1samp"><code class="docutils literal notranslate"><span class="pre">test_ks_1samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ks_2samp"><code class="docutils literal notranslate"><span class="pre">test_ks_2samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats._PackageNotFoundError"><code class="docutils literal notranslate"><span class="pre">_PackageNotFoundError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats._version"><code class="docutils literal notranslate"><span class="pre">_version()</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-1-basic-t-test">Example 1: Basic t-test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-2-automatic-test-recommendation">Example 2: Automatic Test Recommendation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-3-multiple-comparison-correction">Example 3: Multiple Comparison Correction</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SciTeX Stats</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scitex_stats.tests.normality._test_ks_1samp</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scitex_stats.tests.normality._test_ks_1samp</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># Timestamp: &quot;2025-10-01 17:30:00 (ywatanabe)&quot;</span>
+<span class="c1"># File: scitex_stats/tests/normality/_test_ks_1samp.py</span>
+<span class="c1"># ----------------------------------------</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="n">__FILE__</span> <span class="o">=</span> <span class="vm">__file__</span>
+<span class="n">__DIR__</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__FILE__</span><span class="p">)</span>
+<span class="c1"># ----------------------------------------</span>
+
+
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functionalities:</span>
+<span class="sd">  - Perform one-sample Kolmogorov-Smirnov test (compare to reference distribution)</span>
+<span class="sd">  - Generate CDF comparison plots</span>
+<span class="sd">  - Support flexible output formats (dict or DataFrame)</span>
+
+<span class="sd">Dependencies:</span>
+<span class="sd">  - packages: numpy, pandas, scipy, matplotlib</span>
+
+<span class="sd">IO:</span>
+<span class="sd">  - input: One sample (array or Series)</span>
+<span class="sd">  - output: Test results (dict or DataFrame) and optional figure</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">&quot;&quot;&quot;Imports&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># noqa: E402</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.axes</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>  <span class="c1"># noqa: E402</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">scitex</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stx</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">getLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._utils._formatters</span><span class="w"> </span><span class="kn">import</span> <span class="n">fmt_stat</span><span class="p">,</span> <span class="n">fmt_sym</span>  <span class="c1"># noqa: E402</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;Functions&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="test_ks_1samp">
+<a class="viewcode-back" href="../../../../api/index.html#scitex_stats.test_ks_1samp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_ks_1samp</span><span class="p">(</span>  <span class="c1"># noqa: C901</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="n">cdf</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;norm&quot;</span><span class="p">,</span>
+    <span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(),</span>
+    <span class="n">var_x</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span>
+    <span class="n">alternative</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;two-sided&quot;</span><span class="p">,</span> <span class="s2">&quot;less&quot;</span><span class="p">,</span> <span class="s2">&quot;greater&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;two-sided&quot;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">ax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">Axes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">return_as</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="s2">&quot;dataframe&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span><span class="p">,</span>
+    <span class="n">decimals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform one-sample Kolmogorov-Smirnov test.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array or Series</span>
+<span class="sd">        Sample to test</span>
+<span class="sd">    cdf : str or callable, default &#39;norm&#39;</span>
+<span class="sd">        Reference distribution. Either:</span>
+<span class="sd">        - String: &#39;norm&#39;, &#39;uniform&#39;, &#39;expon&#39;, etc. (scipy.stats distribution name)</span>
+<span class="sd">        - Callable: CDF function</span>
+<span class="sd">    args : tuple, default ()</span>
+<span class="sd">        Distribution parameters (e.g., (loc, scale) for normal)</span>
+<span class="sd">    var_x : str, default &#39;x&#39;</span>
+<span class="sd">        Label for sample</span>
+<span class="sd">    alternative : {&#39;two-sided&#39;, &#39;less&#39;, &#39;greater&#39;}, default &#39;two-sided&#39;</span>
+<span class="sd">        Alternative hypothesis</span>
+<span class="sd">    alpha : float, default 0.05</span>
+<span class="sd">        Significance level</span>
+<span class="sd">    plot : bool, default False</span>
+<span class="sd">        Whether to generate CDF comparison plot</span>
+<span class="sd">    data : DataFrame, str, or None, optional</span>
+<span class="sd">        DataFrame or CSV path. When provided, string value for x</span>
+<span class="sd">        is resolved as a column name (seaborn-style).</span>
+<span class="sd">    return_as : {&#39;dict&#39;, &#39;dataframe&#39;}, default &#39;dict&#39;</span>
+<span class="sd">        Output format</span>
+<span class="sd">    decimals : int, default 3</span>
+<span class="sd">        Number of decimal places for rounding</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    results : dict or DataFrame</span>
+<span class="sd">        Test results including:</span>
+<span class="sd">        - test_method: &#39;Kolmogorov-Smirnov test (1-sample)&#39;</span>
+<span class="sd">        - statistic_name: &#39;D&#39;</span>
+<span class="sd">        - statistic: KS D-statistic (maximum CDF difference)</span>
+<span class="sd">        - pvalue: p-value</span>
+<span class="sd">        - pstars: Significance stars</span>
+<span class="sd">        - rejected: Whether null hypothesis is rejected</span>
+<span class="sd">        - n_x: Sample size</span>
+<span class="sd">        - var_x: Variable label</span>
+<span class="sd">        - reference_distribution: Name of reference distribution</span>
+<span class="sd">        - H0: Null hypothesis description</span>
+<span class="sd">    fig : matplotlib.figure.Figure, optional</span>
+<span class="sd">        Figure with CDF comparison (only if plot=True)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The one-sample Kolmogorov-Smirnov test compares the empirical cumulative</span>
+<span class="sd">    distribution function (ECDF) of the sample against a reference CDF.</span>
+
+<span class="sd">    **Null Hypothesis (H0)**: Data follow the specified distribution</span>
+
+<span class="sd">    **Test Statistic D**:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        D = \\sup_x |F_n(x) - F(x)|</span>
+
+<span class="sd">    Where:</span>
+<span class="sd">    - F_n(x): Empirical CDF of sample</span>
+<span class="sd">    - F(x): Reference CDF</span>
+
+<span class="sd">    **Advantages**:</span>
+<span class="sd">    - Distribution-free (no assumptions about data)</span>
+<span class="sd">    - Can test against any continuous distribution</span>
+<span class="sd">    - More general than Shapiro-Wilk (not limited to normality)</span>
+
+<span class="sd">    **Disadvantages**:</span>
+<span class="sd">    - Less powerful than Shapiro-Wilk for normality testing</span>
+<span class="sd">    - Sensitive to sample size (large n → high power, may detect trivial deviations)</span>
+<span class="sd">    - Assumes continuous distribution (not suitable for discrete data)</span>
+
+<span class="sd">    **When to use**:</span>
+<span class="sd">    - Testing goodness-of-fit to any continuous distribution</span>
+<span class="sd">    - Comparing sample to theoretical distribution</span>
+<span class="sd">    - When Shapiro-Wilk is not applicable (non-normal distributions)</span>
+<span class="sd">    - Large sample sizes (n &gt; 50)</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Kolmogorov, A. (1933). &quot;Sulla determinazione empirica di una legge</span>
+<span class="sd">           di distribuzione&quot;. Giornale dell&#39;Istituto Italiano degli Attuari, 4, 83-91.</span>
+<span class="sd">    .. [2] Smirnov, N. (1948). &quot;Table for estimating the goodness of fit of</span>
+<span class="sd">           empirical distributions&quot;. Annals of Mathematical Statistics, 19(2), 279-281.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; # Test if data are normally distributed</span>
+<span class="sd">    &gt;&gt;&gt; x = np.random.normal(0, 1, 100)</span>
+<span class="sd">    &gt;&gt;&gt; result = test_ks_1samp(x, cdf=&#39;norm&#39;, args=(0, 1))</span>
+<span class="sd">    &gt;&gt;&gt; result[&#39;rejected&#39;]</span>
+<span class="sd">    False</span>
+
+<span class="sd">    &gt;&gt;&gt; # Test if data are uniformly distributed</span>
+<span class="sd">    &gt;&gt;&gt; x = np.random.uniform(0, 1, 100)</span>
+<span class="sd">    &gt;&gt;&gt; result = test_ks_1samp(x, cdf=&#39;uniform&#39;, args=(0, 1))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._utils._formatters</span><span class="w"> </span><span class="kn">import</span> <span class="n">p2stars</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._utils._normalizers</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_results</span><span class="p">,</span> <span class="n">force_dataframe</span>
+
+    <span class="c1"># Resolve column names from DataFrame (seaborn-style data= parameter)</span>
+    <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._utils._csv_support</span><span class="w"> </span><span class="kn">import</span> <span class="n">resolve_columns</span>
+
+        <span class="n">resolved</span> <span class="o">=</span> <span class="n">resolve_columns</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">resolved</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Convert to numpy array and remove NaN</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+    <span class="n">n_x</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="c1"># Check sample size</span>
+    <span class="k">if</span> <span class="n">n_x</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;KS test requires at least 3 observations&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Get reference distribution</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cdf</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">ref_dist_name</span> <span class="o">=</span> <span class="n">cdf</span>
+        <span class="c1"># Get scipy distribution</span>
+        <span class="n">ref_dist</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="n">cdf</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">cdf_func</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>  <span class="c1"># noqa: E731</span>
+                <span class="k">return</span> <span class="n">ref_dist</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cdf_func</span> <span class="o">=</span> <span class="n">ref_dist</span><span class="o">.</span><span class="n">cdf</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ref_dist_name</span> <span class="o">=</span> <span class="s2">&quot;custom&quot;</span>
+        <span class="n">cdf_func</span> <span class="o">=</span> <span class="n">cdf</span>
+
+    <span class="c1"># Perform KS test</span>
+    <span class="n">ks_result</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">ks_1samp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf_func</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="n">alternative</span><span class="p">)</span>
+    <span class="n">d_stat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ks_result</span><span class="o">.</span><span class="n">statistic</span><span class="p">)</span>
+    <span class="n">pvalue</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ks_result</span><span class="o">.</span><span class="n">pvalue</span><span class="p">)</span>
+
+    <span class="c1"># Determine if distribution matches</span>
+    <span class="n">rejected</span> <span class="o">=</span> <span class="n">pvalue</span> <span class="o">&lt;</span> <span class="n">alpha</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">rejected</span>
+
+    <span class="c1"># Compile results</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;test_method&quot;</span><span class="p">:</span> <span class="s2">&quot;Kolmogorov-Smirnov test (1-sample)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;statistic&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">d_stat</span><span class="p">,</span> <span class="n">decimals</span><span class="p">),</span>
+        <span class="s2">&quot;stat_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="n">n_x</span><span class="p">,</span>
+        <span class="s2">&quot;var_x&quot;</span><span class="p">:</span> <span class="n">var_x</span><span class="p">,</span>
+        <span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">pvalue</span><span class="p">,</span> <span class="n">decimals</span><span class="p">),</span>
+        <span class="s2">&quot;stars&quot;</span><span class="p">:</span> <span class="n">p2stars</span><span class="p">(</span><span class="n">pvalue</span><span class="p">),</span>
+        <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">alpha</span><span class="p">,</span>
+        <span class="s2">&quot;significant&quot;</span><span class="p">:</span> <span class="n">rejected</span><span class="p">,</span>
+        <span class="s2">&quot;matches_distribution&quot;</span><span class="p">:</span> <span class="n">matches</span><span class="p">,</span>
+        <span class="s2">&quot;reference_distribution&quot;</span><span class="p">:</span> <span class="n">ref_dist_name</span><span class="p">,</span>
+        <span class="s2">&quot;H0&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Data follow </span><span class="si">{</span><span class="n">ref_dist_name</span><span class="si">}</span><span class="s2"> distribution&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Log results if verbose</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;KS test (1-sample): D = </span><span class="si">{</span><span class="n">d_stat</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, p = </span><span class="si">{</span><span class="n">pvalue</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">p2stars</span><span class="p">(</span><span class="n">pvalue</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Matches </span><span class="si">{</span><span class="n">ref_dist_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">matches</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Auto-enable plotting if ax is provided</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plot</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Generate plot if requested</span>
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">stx</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+            <span class="n">_plot_ks_1samp_full</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf_func</span><span class="p">,</span> <span class="n">var_x</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">ref_dist_name</span><span class="p">,</span> <span class="n">axes</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_plot_ks_1samp_simple</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf_func</span><span class="p">,</span> <span class="n">var_x</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">ref_dist_name</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+
+    <span class="c1"># Convert to requested format</span>
+    <span class="k">if</span> <span class="n">return_as</span> <span class="o">==</span> <span class="s2">&quot;dataframe&quot;</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">force_dataframe</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">return_as</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="s2">&quot;dataframe&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">convert_results</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">return_as</span><span class="o">=</span><span class="n">return_as</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_plot_ks_1samp_full</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf_func</span><span class="p">,</span> <span class="n">var_x</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">ref_dist_name</span><span class="p">,</span> <span class="n">axes</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create 2-panel CDF comparison plot for one-sample KS test.&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._plot_helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats_text_box</span>
+
+    <span class="c1"># Plot 1: CDF comparison</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Compute ECDF</span>
+    <span class="n">x_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">ecdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="c1"># Compute reference CDF</span>
+    <span class="n">ref_cdf</span> <span class="o">=</span> <span class="n">cdf_func</span><span class="p">(</span><span class="n">x_sorted</span><span class="p">)</span>
+
+    <span class="c1"># Plot both CDFs</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">step</span><span class="p">(</span>
+        <span class="n">x_sorted</span><span class="p">,</span>
+        <span class="n">ecdf</span><span class="p">,</span>
+        <span class="n">where</span><span class="o">=</span><span class="s2">&quot;post&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Empirical (</span><span class="si">{</span><span class="n">var_x</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">x_sorted</span><span class="p">,</span>
+        <span class="n">ref_cdf</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Reference (</span><span class="si">{</span><span class="n">ref_dist_name</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Mark maximum difference</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ecdf</span> <span class="o">-</span> <span class="n">ref_cdf</span><span class="p">)</span>
+    <span class="n">max_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span>
+        <span class="n">x_sorted</span><span class="p">[</span><span class="n">max_idx</span><span class="p">],</span>
+        <span class="n">ecdf</span><span class="p">[</span><span class="n">max_idx</span><span class="p">],</span>
+        <span class="n">ref_cdf</span><span class="p">[</span><span class="n">max_idx</span><span class="p">],</span>
+        <span class="n">linestyles</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;D = </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;statistic&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Cumulative Probability&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;KS Test (1-sample)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+    <span class="c1"># Add text with results</span>
+    <span class="n">stats_text_box</span><span class="p">(</span>
+        <span class="n">ax</span><span class="p">,</span>
+        <span class="p">[</span>
+            <span class="n">fmt_stat</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;statistic&quot;</span><span class="p">]),</span>
+            <span class="n">fmt_stat</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;pvalue&quot;</span><span class="p">],</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;.4f&quot;</span><span class="p">,</span> <span class="n">stars</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;stars&quot;</span><span class="p">]),</span>
+            <span class="sa">f</span><span class="s2">&quot;Matches: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;matches_distribution&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fmt_sym</span><span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Plot 2: Histogram with reference PDF</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Data&quot;</span><span class="p">)</span>
+
+    <span class="c1"># If reference is a known distribution, plot PDF</span>
+    <span class="k">if</span> <span class="n">ref_dist_name</span> <span class="o">!=</span> <span class="s2">&quot;custom&quot;</span><span class="p">:</span>
+        <span class="n">x_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="n">ref_dist</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="n">ref_dist_name</span><span class="p">)</span>
+        <span class="c1"># Try to get PDF</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ref_dist</span><span class="p">,</span> <span class="s2">&quot;pdf&quot;</span><span class="p">):</span>
+                <span class="n">pdf_vals</span> <span class="o">=</span> <span class="n">ref_dist</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x_range</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_range</span><span class="p">,</span> <span class="n">pdf_vals</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ref_dist_name</span><span class="si">}</span><span class="s2"> PDF&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
+            <span class="k">pass</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Density&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Histogram&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_plot_ks_1samp_simple</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cdf_func</span><span class="p">,</span> <span class="n">var_x</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">ref_dist_name</span><span class="p">,</span> <span class="n">ax</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create single CDF comparison plot on provided axes.&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._plot_helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats_text_box</span>
+
+    <span class="c1"># Compute ECDF</span>
+    <span class="n">x_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">ecdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="c1"># Compute reference CDF</span>
+    <span class="n">ref_cdf</span> <span class="o">=</span> <span class="n">cdf_func</span><span class="p">(</span><span class="n">x_sorted</span><span class="p">)</span>
+
+    <span class="c1"># Plot both CDFs</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">step</span><span class="p">(</span>
+        <span class="n">x_sorted</span><span class="p">,</span>
+        <span class="n">ecdf</span><span class="p">,</span>
+        <span class="n">where</span><span class="o">=</span><span class="s2">&quot;post&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Empirical (</span><span class="si">{</span><span class="n">var_x</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">x_sorted</span><span class="p">,</span>
+        <span class="n">ref_cdf</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Reference (</span><span class="si">{</span><span class="n">ref_dist_name</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Mark maximum difference</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ecdf</span> <span class="o">-</span> <span class="n">ref_cdf</span><span class="p">)</span>
+    <span class="n">max_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span>
+        <span class="n">x_sorted</span><span class="p">[</span><span class="n">max_idx</span><span class="p">],</span>
+        <span class="n">ecdf</span><span class="p">[</span><span class="n">max_idx</span><span class="p">],</span>
+        <span class="n">ref_cdf</span><span class="p">[</span><span class="n">max_idx</span><span class="p">],</span>
+        <span class="n">linestyles</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;D = </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;statistic&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Cumulative Probability&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;KS Test (1-sample)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+    <span class="c1"># Add text with results</span>
+    <span class="n">stats_text_box</span><span class="p">(</span>
+        <span class="n">ax</span><span class="p">,</span>
+        <span class="p">[</span>
+            <span class="n">fmt_stat</span><span class="p">(</span><span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;statistic&quot;</span><span class="p">]),</span>
+            <span class="n">fmt_stat</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;pvalue&quot;</span><span class="p">],</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;.4f&quot;</span><span class="p">,</span> <span class="n">stars</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;stars&quot;</span><span class="p">]),</span>
+            <span class="sa">f</span><span class="s2">&quot;Matches: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;matches_distribution&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fmt_sym</span><span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+
+
+<span class="sd">&quot;&quot;&quot;Main function&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Demonstrate one-sample Kolmogorov-Smirnov test functionality.&quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Demonstrating one-sample Kolmogorov-Smirnov test&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Set random seed</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
+    <span class="c1"># Example 1: One-sample test - normal data</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Example 1: One-sample KS test (normal data) ===&quot;</span><span class="p">)</span>
+
+    <span class="n">x_normal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">result1</span> <span class="o">=</span> <span class="n">test_ks_1samp</span><span class="p">(</span>
+        <span class="n">x_normal</span><span class="p">,</span> <span class="n">cdf</span><span class="o">=</span><span class="s2">&quot;norm&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">var_x</span><span class="o">=</span><span class="s2">&quot;Normal data&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Example 2: One-sample test - exponential data tested against normal</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Example 2: One-sample KS test (exponential data vs normal) ===&quot;</span><span class="p">)</span>
+
+    <span class="n">x_exp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">result2</span> <span class="o">=</span> <span class="n">test_ks_1samp</span><span class="p">(</span>
+        <span class="n">x_exp</span><span class="p">,</span>
+        <span class="n">cdf</span><span class="o">=</span><span class="s2">&quot;norm&quot;</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x_exp</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x_exp</span><span class="p">)),</span>
+        <span class="n">var_x</span><span class="o">=</span><span class="s2">&quot;Exponential data&quot;</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Example 3: One-sample test with visualization</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Example 3: One-sample KS test with visualization ===&quot;</span><span class="p">)</span>
+
+    <span class="n">x_mixed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">90</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)])</span>
+    <span class="n">result3</span> <span class="o">=</span> <span class="n">test_ks_1samp</span><span class="p">(</span>
+        <span class="n">x_mixed</span><span class="p">,</span>
+        <span class="n">cdf</span><span class="o">=</span><span class="s2">&quot;norm&quot;</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">var_x</span><span class="o">=</span><span class="s2">&quot;Mixed data&quot;</span><span class="p">,</span>
+        <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">stx</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">(),</span> <span class="s2">&quot;./ks_1samp_example.jpg&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1"># Example 4: Export results</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Example 4: Export results ===&quot;</span><span class="p">)</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._utils._normalizers</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_results</span><span class="p">,</span> <span class="n">force_dataframe</span>
+
+    <span class="n">test_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">result1</span><span class="p">,</span> <span class="n">result2</span><span class="p">,</span> <span class="n">result3</span><span class="p">]</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">force_dataframe</span><span class="p">(</span><span class="n">test_results</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">DataFrame shape: </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">convert_results</span><span class="p">(</span><span class="n">test_results</span><span class="p">,</span> <span class="n">return_as</span><span class="o">=</span><span class="s2">&quot;excel&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;./ks_1samp_results.xlsx&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Results exported to ./ks_1samp_results.xlsx&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="mi">0</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_args</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse command line arguments.&quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Demonstrate one-sample Kolmogorov-Smirnov test&quot;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--verbose&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Enable verbose output&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_main</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize SciTeX framework and run main.&quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>  <span class="c1"># noqa: E402</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># noqa: E402</span>
+
+    <span class="k">global</span> <span class="n">CONFIG</span><span class="p">,</span> <span class="n">sys</span><span class="p">,</span> <span class="n">plt</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">CONFIG</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="n">plt</span><span class="p">,</span> <span class="n">CC</span><span class="p">,</span> <span class="n">rng_manager</span> <span class="o">=</span> <span class="n">stx</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">start</span><span class="p">(</span>  <span class="c1"># type: ignore[name-defined]</span>
+        <span class="n">sys</span><span class="p">,</span>  <span class="c1"># type: ignore[name-defined]</span>
+        <span class="n">plt</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+        <span class="n">file</span><span class="o">=</span><span class="vm">__file__</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="n">agg</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">exit_status</span> <span class="o">=</span> <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="n">stx</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">(</span>
+        <span class="n">CONFIG</span><span class="p">,</span>  <span class="c1"># type: ignore[name-defined]</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="n">exit_status</span><span class="o">=</span><span class="n">exit_status</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">run_main</span><span class="p">()</span>
+
+<span class="c1"># EOF</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Yusuke Watanabe.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

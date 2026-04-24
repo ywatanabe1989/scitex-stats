@@ -35,7 +35,6 @@ import matplotlib.axes
 import numpy as np
 import pandas as pd
 
-import scitex as stx
 from scitex_stats._logging import getLogger
 
 logger = getLogger(__name__)
@@ -322,6 +321,7 @@ def _plot_bonferroni(df, alpha, ax):
 
 def main(args):
     """Demonstrate Bonferroni correction."""
+    import scitex as stx
     logger.info("Demonstrating Bonferroni correction")
 
     # Example 1: Single test (no correction needed)

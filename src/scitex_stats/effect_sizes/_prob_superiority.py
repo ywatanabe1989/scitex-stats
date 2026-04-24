@@ -33,7 +33,6 @@ from typing import Union
 import numpy as np
 import pandas as pd
 
-import scitex as stx
 from scitex_stats._logging import getLogger
 
 logger = getLogger(__name__)
@@ -186,6 +185,7 @@ def interpret_prob_superiority(prob: float) -> str:
 
 def main(args):
     """Demonstrate probability of superiority computation."""
+    import scitex as stx
     logger.info("Demonstrating probability of superiority P(X > Y)")
 
     # Set random seed
