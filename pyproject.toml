@@ -48,14 +48,14 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-plot = [
-    "matplotlib>=3.5.0",
-]
 figrecipe = [
     "figrecipe>=0.13.0",
 ]
 mcp = [
     "fastmcp>=2.0.0",
+]
+plot = [
+    "matplotlib>=3.5.0",
 ]
 dev = [
     "scitex-dev",
@@ -71,7 +71,11 @@ docs = [
     "sphinx-copybutton>=0.5",
     "sphinx-autodoc-typehints>=1.25",
 ]
-all = []
+all = [
+    "scitex-stats[figrecipe]",
+    "scitex-stats[mcp]",
+    "scitex-stats[plot]",
+]
 
 [project.scripts]
 scitex-stats = "scitex_stats._cli:main"
