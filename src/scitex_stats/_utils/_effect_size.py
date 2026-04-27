@@ -26,7 +26,7 @@ from typing import List, Literal, Optional, Union
 import numpy as np
 import pandas as pd
 
-import scitex as stx
+# import scitex as stx  # moved into __main__ block (used only there)
 from scitex_stats._logging import getLogger
 
 logger = getLogger(__name__)
@@ -990,6 +990,7 @@ def run_main():
 
 
 if __name__ == "__main__":
+    import scitex as stx
     run_main()
 
 # EOF
