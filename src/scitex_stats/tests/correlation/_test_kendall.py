@@ -26,7 +26,10 @@ from typing import Literal, Optional, Union
 import matplotlib.axes
 import numpy as np
 import pandas as pd
-import scitex as stx
+try:
+    import scitex as stx  # noqa: E402
+except ImportError:
+    stx = None
 from scipy import stats
 
 from scitex_stats._logging import getLogger
