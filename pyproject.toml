@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "scitex-stats"
-version = "0.2.10"
+version = "0.2.11"
 description = "Publication-ready statistical testing framework with 23 tests, effect sizes, power analysis, and MCP server"
 readme = "README.md"
 license = "AGPL-3.0-only"
@@ -39,6 +39,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 dependencies = [
+    "matplotlib>=3.5.0",
     "mcp",
     "numpy>=1.21.0",
     "pandas>=1.3.0",
