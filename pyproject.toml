@@ -58,6 +58,7 @@ plot = [
     "matplotlib>=3.5.0",
 ]
 dev = [
+    "scitex",
     "scitex-dev",
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
