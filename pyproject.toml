@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "scitex-stats"
-version = "0.2.14"
+version = "0.2.15"
 description = "Publication-ready statistical testing framework with 23 tests, effect sizes, power analysis, and MCP server"
 readme = "README.md"
 license = "AGPL-3.0-only"
@@ -28,7 +28,6 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Console",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: GNU Affero General Public License v3",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
