@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "scitex-stats"
-version = "0.2.12"
+version = "0.2.13"
 description = "Publication-ready statistical testing framework with 23 tests, effect sizes, power analysis, and MCP server"
 readme = "README.md"
 license = "AGPL-3.0-only"
@@ -89,6 +89,8 @@ scitex-stats = "scitex_stats._cli:main"
 scitex-stats = "scitex_stats"
 
 [project.entry-points."scitex_dev.skills"]
+
+scitex-stats = "scitex_stats"
 
 [project.entry-points."scitex_linter.plugins"]
 stats = "scitex_stats._linter_plugin:get_plugin"
