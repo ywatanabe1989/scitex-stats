@@ -38,74 +38,100 @@ except _PackageNotFoundError:
                     break
 
 # ---------------------------------------------------------------------------
-# Optional decorator from scitex-dev (graceful fallback)
+# PEP 562 lazy public API. Was eager-importing tests/auto/correct/...
+# transitively pulling scipy + 22 test modules at every CLI call (9.3s).
+# Lazy attribute access keeps `import scitex_stats` < 500ms; heavy machinery
+# only loads when its function is actually called.
+# See _skills/general/03_interface_01_python-api/04 §"PEP 562 module __getattr__"
+# and audit-cli rule §10 (CLI startup speed).
 # ---------------------------------------------------------------------------
-try:
-    from scitex_dev.decorators import supports_return_as as _supports_return_as
-except ImportError:
 
-    def _supports_return_as(fn):
+# `run_test`, `describe`, `recommend_tests` are wrapped in @supports_return_as
+# (when scitex-dev is installed) at first attribute access.
+_DECORATED_FNS = {"run_test", "describe", "recommend_tests"}
+
+# Public-name → source-submodule (relative to scitex_stats).
+_LAZY_ATTRS: dict[str, str] = {
+    # Submodules (also re-exported as attributes)
+    "auto": "auto",
+    "correct": "correct",
+    "descriptive": "descriptive",
+    "effect_sizes": "effect_sizes",
+    "posthoc": "posthoc",
+    "power": "power",
+    "tests": "tests",
+    # Dispatcher
+    "available_tests": "_dispatch",
+    "run_test": "_dispatch",
+    # JSON
+    "to_json_safe": "_utils._serialize",
+    # Auto convenience
+    "StatContext": "auto",
+    "StatStyle": "auto",
+    "TestRule": "auto",
+    "check_applicable": "auto",
+    "get_stat_style": "auto",
+    "p_to_stars": "auto",
+    "recommend_tests": "auto",
+    # Descriptive
+    "describe": "descriptive",
+    # Parametric (6)
+    "test_ttest_ind": "tests",
+    "test_ttest_rel": "tests",
+    "test_ttest_1samp": "tests",
+    "test_anova": "tests",
+    "test_anova_rm": "tests",
+    "test_anova_2way": "tests",
+    # Nonparametric (5)
+    "test_brunner_munzel": "tests",
+    "test_wilcoxon": "tests",
+    "test_kruskal": "tests",
+    "test_mannwhitneyu": "tests",
+    "test_friedman": "tests",
+    # Correlation (4)
+    "test_pearson": "tests",
+    "test_spearman": "tests",
+    "test_kendall": "tests",
+    "test_theilsen": "tests",
+    # Categorical (4)
+    "test_chi2": "tests",
+    "test_fisher": "tests",
+    "test_mcnemar": "tests",
+    "test_cochran_q": "tests",
+    # Normality (4)
+    "test_shapiro": "tests",
+    "test_normality": "tests",
+    "test_ks_1samp": "tests",
+    "test_ks_2samp": "tests",
+}
+
+
+def _supports_return_as_lazy(fn):
+    """Apply scitex-dev's @supports_return_as if available; identity otherwise."""
+    try:
+        from scitex_dev.decorators import supports_return_as
+    except ImportError:
         return fn
+    return supports_return_as(fn)
 
 
-# ---------------------------------------------------------------------------
-# Core imports — these are the public Python API
-# ---------------------------------------------------------------------------
+def __getattr__(name: str):
+    """PEP 562 lazy-loader: import on first access, cache, return."""
+    mod_path = _LAZY_ATTRS.get(name)
+    if mod_path is None:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    from importlib import import_module
 
-from scitex_stats import (
-    _utils,
-    auto,
-    correct,
-    descriptive,
-    effect_sizes,
-    posthoc,
-    power,
-    tests,
-)
-from scitex_stats._dispatch import available_tests, run_test
-from scitex_stats._utils._serialize import to_json_safe
-from scitex_stats.auto import (
-    StatContext,
-    StatStyle,
-    TestRule,
-    check_applicable,
-    get_stat_style,
-    p_to_stars,
-    recommend_tests,
-)
-from scitex_stats.descriptive import describe
-from scitex_stats.tests import (
-    test_anova,
-    test_anova_2way,
-    test_anova_rm,
-    test_brunner_munzel,
-    test_chi2,
-    test_cochran_q,
-    test_fisher,
-    test_friedman,
-    test_kendall,
-    test_kruskal,
-    test_ks_1samp,
-    test_ks_2samp,
-    test_mannwhitneyu,
-    test_mcnemar,
-    test_normality,
-    test_pearson,
-    test_shapiro,
-    test_spearman,
-    test_theilsen,
-    test_ttest_1samp,
-    test_ttest_ind,
-    test_ttest_rel,
-    test_wilcoxon,
-)
+    attr = getattr(import_module(f".{mod_path}", __name__), name)
+    if name in _DECORATED_FNS:
+        attr = _supports_return_as_lazy(attr)
+    globals()[name] = attr  # cache; subsequent access skips this branch
+    return attr
 
-# ---------------------------------------------------------------------------
-# Apply @supports_return_as to public API functions
-# ---------------------------------------------------------------------------
-run_test = _supports_return_as(run_test)
-describe = _supports_return_as(describe)
-recommend_tests = _supports_return_as(recommend_tests)
+
+def __dir__() -> list[str]:
+    return sorted(set(_LAZY_ATTRS) | set(globals()))
+
 
 __all__ = [
     "__version__",
@@ -161,5 +187,3 @@ __all__ = [
     "test_ks_1samp",
     "test_ks_2samp",
 ]
-
-# EOF
