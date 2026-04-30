@@ -122,9 +122,16 @@ def __getattr__(name: str):
         raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
     from importlib import import_module
 
-    attr = getattr(import_module(f".{mod_path}", __name__), name)
-    if name in _DECORATED_FNS:
-        attr = _supports_return_as_lazy(attr)
+    mod = import_module(f".{mod_path}", __name__)
+    # Submodule re-exports: when a name maps to itself (e.g. "tests": "tests",
+    # "power": "power"), the user wants the submodule itself, not an
+    # attribute *named* "tests" inside it.
+    if name == mod_path:
+        attr = mod
+    else:
+        attr = getattr(mod, name)
+        if name in _DECORATED_FNS:
+            attr = _supports_return_as_lazy(attr)
     globals()[name] = attr  # cache; subsequent access skips this branch
     return attr
 
