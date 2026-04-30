@@ -110,7 +110,6 @@ recommend_tests = _supports_return_as(recommend_tests)
 __all__ = [
     "__version__",
     # Submodules
-    "_utils",
     "auto",
     "correct",
     "descriptive",
