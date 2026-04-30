@@ -1,5 +1,7 @@
 ---
 description: Basic usage of scitex-stats — run_test, recommend_tests, describe, effect sizes.
+name: quick-start
+tags: [scitex-stats, scitex-package]
 ---
 
 # Quick Start
