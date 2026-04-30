@@ -230,23 +230,36 @@ def cmd_list_python_apis(args: argparse.Namespace) -> int:
 
 
 def register_parser(subparsers) -> argparse.ArgumentParser:
-    """Register introspect subcommand parser."""
-    intro_help = """Python package introspection utilities.
+    """Register `python-api` noun group (replaces verb-shaped `introspect`)."""
+    intro_help = """Python package introspection — `python-api list` / `show`.
 
 Quick start:
-  scitex-stats introspect api scitex_stats       # Full API tree
-  scitex-stats introspect api scitex_stats -v    # With docstrings
-  scitex-stats introspect api scitex_stats --json  # JSON output
+  scitex-stats python-api list scitex_stats       # Full API tree
+  scitex-stats python-api list scitex_stats -v    # With docstrings
+  scitex-stats python-api list scitex_stats --json  # JSON output
 """
     intro_parser = subparsers.add_parser(
-        "introspect",
-        help="Python package introspection",
+        "python-api",
+        help="Python package introspection (list API tree).",
         description=intro_help,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    intro_sub = intro_parser.add_subparsers(dest="introspect_command", title="Commands")
+    intro_sub = intro_parser.add_subparsers(dest="python_api_command", title="Verbs")
 
-    api_parser = intro_sub.add_parser("api", help="List API tree of a module")
+    api_parser = intro_sub.add_parser(
+        "list",
+        help="List API tree of a Python module.",
+        description=(
+            "List the public API tree of a Python module (modules, classes,\n"
+            "functions, variables) up to the requested depth.\n"
+            "\n"
+            "Example:\n"
+            "  $ scitex-stats python-api list scitex_stats\n"
+            "  $ scitex-stats python-api list scitex_stats -v --max-depth 3\n"
+            "  $ scitex-stats python-api list scitex_stats.correct --json"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     api_parser.add_argument(
         "dotted_path", help="Python dotted path (e.g., scitex_stats)"
     )
@@ -276,10 +289,19 @@ Quick start:
 
 
 def register_list_python_apis(parent_parser) -> None:
-    """Register list-python-apis command on a parent parser."""
+    """Register list-python-apis convenience alias on a parent parser."""
     lst_parser = parent_parser.add_parser(
         "list-python-apis",
-        help="List Python APIs (alias for: scitex-stats introspect api scitex_stats)",
+        help="List Python APIs (alias for: scitex-stats python-api list scitex_stats)",
+        description=(
+            "List the public API tree of scitex_stats (alias for `python-api list`).\n"
+            "\n"
+            "Example:\n"
+            "  $ scitex-stats list-python-apis\n"
+            "  $ scitex-stats list-python-apis -v --max-depth 3\n"
+            "  $ scitex-stats list-python-apis --json"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     lst_parser.add_argument(
         "-v",
