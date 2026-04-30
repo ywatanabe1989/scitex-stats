@@ -13,7 +13,7 @@ import argparse
 import sys
 
 from .. import __version__
-from . import introspect, mcp
+from . import introspect, mcp, stats
 
 
 def _cmd_help_recursive(parser: argparse.ArgumentParser) -> int:
@@ -78,6 +78,7 @@ def main(argv=None) -> int:
     # Register subcommand modules
     mcp_parser = mcp.register_parser(subparsers)
     introspect.register_parser(subparsers)
+    stats.register_parsers(subparsers)
 
     # Register top-level convenience commands
     introspect.register_list_python_apis(subparsers)
