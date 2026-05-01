@@ -10,7 +10,6 @@
 [![License: AGPL v3](https://img.shields.io/badge/license-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 <!-- scitex-badges:end -->
 
-
 <p align="center">
   <a href="https://scitex.ai">
     <img src="docs/scitex-logo-banner.png" alt="SciTeX Stats" width="400">
@@ -32,10 +31,7 @@
 
 ---
 
-> **Interfaces:** Python ⭐⭐⭐ (primary) · CLI ⭐ · MCP ⭐⭐ · Skills ⭐⭐ · Hook — · HTTP —
-
 ## Problem and Solution
-
 
 | # | Problem | Solution |
 |---|---------|----------|
@@ -114,8 +110,6 @@ pip install scitex-stats[mcp]
 # Everything
 pip install scitex-stats[all]
 ```
-
-> **SciTeX users**: `pip install scitex` already includes Stats. Use `import scitex` then `scitex.stats`.
 
 ## Quickstart
 
@@ -278,7 +272,9 @@ Detected by [scitex-linter](https://github.com/ywatanabe1989/scitex-linter) when
 
 ## Part of SciTeX
 
-SciTeX Stats is part of [**SciTeX**](https://scitex.ai). When used inside the SciTeX framework, statistical testing integrates with the full pipeline — from data loading through analysis to publication-ready figures:
+`scitex-stats` is part of [**SciTeX**](https://scitex.ai). Install via
+the umbrella with `pip install scitex[stats]` to use as
+`scitex.stats` (Python) or `scitex stats ...` (CLI).
 
 ```python
 import scitex
