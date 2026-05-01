@@ -19,13 +19,6 @@
 <p align="center"><b>Publication-ready statistical testing with 23 tests, effect sizes, power analysis, and APA formatting</b></p>
 
 <p align="center">
-  <a href="https://badge.fury.io/py/scitex-stats"><img src="https://badge.fury.io/py/scitex-stats.svg" alt="PyPI version"></a>
-  <a href="https://scitex-stats.readthedocs.io/"><img src="https://readthedocs.org/projects/scitex-stats/badge/?version=latest" alt="Documentation"></a>
-  <a href="https://github.com/ywatanabe1989/scitex-stats/actions/workflows/test.yml"><img src="https://github.com/ywatanabe1989/scitex-stats/actions/workflows/test.yml/badge.svg" alt="Tests"></a>
-  <a href="https://www.gnu.org/licenses/agpl-3.0"><img src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="License: AGPL-3.0"></a>
-</p>
-
-<p align="center">
   <a href="https://scitex-stats.readthedocs.io/">Full Documentation</a> · <code>pip install scitex-stats</code>
 </p>
 
@@ -129,7 +122,7 @@ print(result["formatted"])
 
 ## Four Interfaces
 
-<details>
+<details open>
 <summary><strong>Python API</strong></summary>
 
 <br>
@@ -161,7 +154,7 @@ from scitex_stats import posthoc
 results = posthoc.posthoc_tukey(groups)
 ```
 
-> **[Full API reference](https://scitex-stats.readthedocs.io/)**
+> **[Full API reference](https://scitex-stats.readthedocs.io/en/latest/api/scitex_stats.html)**
 
 </details>
 
@@ -179,7 +172,7 @@ scitex-stats mcp doctor                      # Check server health
 scitex-stats mcp start                       # Start MCP server
 ```
 
-> **[Full CLI reference](https://scitex-stats.readthedocs.io/)**
+> **[Full CLI reference](https://scitex-stats.readthedocs.io/en/latest/quickstart.html)**
 
 </details>
 
@@ -209,7 +202,7 @@ AI agents can run statistical tests and format publication-ready results autonom
 scitex-stats mcp start
 ```
 
-> **[Full MCP specification](https://scitex-stats.readthedocs.io/)**
+> **[Full MCP specification](https://scitex-stats.readthedocs.io/en/latest/api/scitex_stats._mcp.html)**
 
 </details>
 

@@ -4,12 +4,14 @@
 
 from pathlib import Path
 
+import scitex as stx
 import scitex_stats as ss
 
 OUT_DIR = Path(__file__).parent / "02_test_recommendation_out"
 
 
-def main():
+@stx.session
+def main(CONFIG=stx.session.INJECTED, logger=stx.session.INJECTED):
     OUT_DIR.mkdir(exist_ok=True)
 
     # Create a statistical context for a two-group comparison

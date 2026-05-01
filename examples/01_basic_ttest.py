@@ -6,12 +6,14 @@ from pathlib import Path
 
 import numpy as np
 
+import scitex as stx
 import scitex_stats as ss
 
 OUT_DIR = Path(__file__).parent / "01_basic_ttest_out"
 
 
-def main():
+@stx.session
+def main(CONFIG=stx.session.INJECTED, logger=stx.session.INJECTED):
     OUT_DIR.mkdir(exist_ok=True)
 
     # Generate sample data
