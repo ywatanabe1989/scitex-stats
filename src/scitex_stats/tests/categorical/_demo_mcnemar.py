@@ -20,7 +20,10 @@ import argparse
 
 import pandas as pd
 
-import scitex as stx
+try:
+    import scitex as stx  # noqa: E402
+except ImportError:
+    stx = None
 from scitex_stats._logging import getLogger
 
 from ._test_mcnemar import test_mcnemar

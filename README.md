@@ -1,5 +1,15 @@
 # SciTeX Stats (<code>scitex-stats</code>)
 
+<!-- scitex-badges:start -->
+[![PyPI](https://img.shields.io/pypi/v/scitex-stats.svg)](https://pypi.org/project/scitex-stats/)
+[![Python](https://img.shields.io/pypi/pyversions/scitex-stats.svg)](https://pypi.org/project/scitex-stats/)
+[![Tests](https://github.com/ywatanabe1989/scitex-stats/actions/workflows/test.yml/badge.svg)](https://github.com/ywatanabe1989/scitex-stats/actions/workflows/test.yml)
+[![Install Test](https://github.com/ywatanabe1989/scitex-stats/actions/workflows/install-test.yml/badge.svg)](https://github.com/ywatanabe1989/scitex-stats/actions/workflows/install-test.yml)
+[![Coverage](https://codecov.io/gh/ywatanabe1989/scitex-stats/graph/badge.svg)](https://codecov.io/gh/ywatanabe1989/scitex-stats)
+[![Docs](https://readthedocs.org/projects/scitex-stats/badge/?version=latest)](https://scitex-stats.readthedocs.io/en/latest/)
+[![License: AGPL v3](https://img.shields.io/badge/license-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+<!-- scitex-badges:end -->
+
 <p align="center">
   <a href="https://scitex.ai">
     <img src="docs/scitex-logo-banner.png" alt="SciTeX Stats" width="400">
@@ -22,7 +32,6 @@
 ---
 
 ## Problem and Solution
-
 
 | # | Problem | Solution |
 |---|---------|----------|
@@ -101,8 +110,6 @@ pip install scitex-stats[mcp]
 # Everything
 pip install scitex-stats[all]
 ```
-
-> **SciTeX users**: `pip install scitex` already includes Stats. Use `import scitex` then `scitex.stats`.
 
 ## Quickstart
 
@@ -265,7 +272,9 @@ Detected by [scitex-linter](https://github.com/ywatanabe1989/scitex-linter) when
 
 ## Part of SciTeX
 
-SciTeX Stats is part of [**SciTeX**](https://scitex.ai). When used inside the SciTeX framework, statistical testing integrates with the full pipeline — from data loading through analysis to publication-ready figures:
+`scitex-stats` is part of [**SciTeX**](https://scitex.ai). Install via
+the umbrella with `pip install scitex[stats]` to use as
+`scitex.stats` (Python) or `scitex stats ...` (CLI).
 
 ```python
 import scitex

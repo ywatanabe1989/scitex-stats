@@ -5,6 +5,7 @@
 
 import argparse
 import shutil
+import sys
 
 from .. import __version__
 
@@ -29,6 +30,14 @@ CLAUDE_DESKTOP_CONFIG_PYTHON = """{
 
 def cmd_start(args: argparse.Namespace) -> int:
     """Start the MCP server."""
+    if getattr(args, "dry_run", False):
+        print(
+            f"DRY RUN — would start scitex-stats MCP server (transport={args.transport})"
+        )
+        return 0
+    if not getattr(args, "yes", False) and not sys.stdin.isatty():
+        # Non-interactive context without --yes — proceed (no prompt to wait on)
+        pass
     from .._mcp import run_server
 
     run_server(transport=args.transport)
@@ -267,12 +276,32 @@ def cmd_doctor(args: argparse.Namespace) -> int:
 
 def cmd_config(args: argparse.Namespace) -> int:
     """Show Claude Desktop configuration snippet."""
+    scitex_path = shutil.which("scitex-stats")
+
+    if getattr(args, "json", False):
+        import json as _json
+
+        payload = {
+            "package": "scitex-stats",
+            "version": __version__,
+            "installation_path": scitex_path,
+            "config_paths": {
+                "macos": "~/Library/Application Support/Claude/claude_desktop_config.json",
+                "linux": "~/.config/Claude/claude_desktop_config.json",
+            },
+            "snippets": {
+                "cli": CLAUDE_DESKTOP_CONFIG_CLI,
+                "python_module": CLAUDE_DESKTOP_CONFIG_PYTHON,
+            },
+        }
+        print(_json.dumps(payload, indent=2))
+        return 0
+
     print(f"scitex-stats {__version__}\n")
     print("Add this to your Claude Desktop config file:\n")
     print("  macOS: ~/Library/Application Support/Claude/claude_desktop_config.json")
     print("  Linux: ~/.config/Claude/claude_desktop_config.json\n")
 
-    scitex_path = shutil.which("scitex-stats")
     if scitex_path:
         print(f"Your installation path: {scitex_path}\n")
 
@@ -288,10 +317,10 @@ def register_parser(subparsers) -> argparse.ArgumentParser:
     mcp_help = """MCP (Model Context Protocol) server commands.
 
 Quick start:
-  scitex-stats mcp list-tools    # List all tools
-  scitex-stats mcp doctor        # Check server health
-  scitex-stats mcp installation  # Show Claude Desktop installation guide
-  scitex-stats mcp start         # Start MCP server
+  scitex-stats mcp list-tools         # List all tools
+  scitex-stats mcp doctor             # Check server health
+  scitex-stats mcp show-installation  # Print Claude Desktop installation snippet
+  scitex-stats mcp start              # Start MCP server
 """
     mcp_parser = subparsers.add_parser(
         "mcp",
@@ -302,14 +331,37 @@ Quick start:
     mcp_sub = mcp_parser.add_subparsers(dest="mcp_command", title="Commands")
 
     inst = mcp_sub.add_parser(
-        "installation", help="Show Claude Desktop installation guide"
+        "show-installation",
+        help="Show Claude Desktop installation guide",
+        description=(
+            "Print the Claude Desktop config snippet for scitex-stats MCP server.\n"
+            "\n"
+            "Example:\n"
+            "  $ scitex-stats mcp show-installation\n"
+            "  $ scitex-stats mcp show-installation --json"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    inst.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit machine-readable JSON instead of pretty text.",
     )
     inst.set_defaults(func=cmd_config)
 
     lst = mcp_sub.add_parser(
         "list-tools",
         help="List all available MCP tools",
-        description="Verbosity: (none) names, -v signatures, -vv +description, -vvv full",
+        description=(
+            "List all MCP tools registered under scitex-stats.\n"
+            "Verbosity: (none) names, -v signatures, -vv +description, -vvv full.\n"
+            "\n"
+            "Example:\n"
+            "  $ scitex-stats mcp list-tools\n"
+            "  $ scitex-stats mcp list-tools -vv\n"
+            "  $ scitex-stats mcp list-tools --module correct --json"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     lst.add_argument(
         "-v",
@@ -333,11 +385,44 @@ Quick start:
     )
     lst.set_defaults(func=cmd_list_tools)
 
-    doc = mcp_sub.add_parser("doctor", help="Check MCP server health")
+    doc = mcp_sub.add_parser(
+        "doctor",
+        help="Check MCP server health",
+        description=(
+            "Verify scitex-stats MCP server dependencies + tool count + CLI presence.\n"
+            "\n"
+            "Example:\n"
+            "  $ scitex-stats mcp doctor"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     doc.set_defaults(func=cmd_doctor)
 
-    start = mcp_sub.add_parser("start", help="Start the MCP server")
+    start = mcp_sub.add_parser(
+        "start",
+        help="Start the MCP server",
+        description=(
+            "Launch the scitex-stats MCP server (stdio or SSE transport).\n"
+            "\n"
+            "Example:\n"
+            "  $ scitex-stats mcp start                  # stdio (default)\n"
+            "  $ scitex-stats mcp start --transport sse  # SSE for HTTP clients\n"
+            "  $ scitex-stats mcp start --dry-run        # show what would launch"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     start.add_argument("-t", "--transport", choices=["stdio", "sse"], default="stdio")
+    start.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Print the launch plan without starting the server.",
+    )
+    start.add_argument(
+        "-y",
+        "--yes",
+        action="store_true",
+        help="Suppress interactive confirmation (assume yes).",
+    )
     start.set_defaults(func=cmd_start)
 
     return mcp_parser

@@ -35,7 +35,10 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 from scipy import stats  # noqa: E402
 
-import scitex as stx  # noqa: E402
+try:
+    import scitex as stx  # noqa: E402
+except ImportError:
+    stx = None
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._formatters import fmt_stat, fmt_sym  # noqa: E402
 

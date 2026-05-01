@@ -1,5 +1,7 @@
 ---
 description: All 23 statistical tests organized by category — parametric, nonparametric, correlation, categorical, normality.
+name: test-catalog
+tags: [scitex-stats, scitex-package]
 ---
 
 # Test Catalog (23 Tests)

@@ -13,7 +13,7 @@ import argparse
 import sys
 
 from .. import __version__
-from . import introspect, mcp
+from . import introspect, mcp, stats
 
 
 def _cmd_help_recursive(parser: argparse.ArgumentParser) -> int:
@@ -58,8 +58,12 @@ def main(argv=None) -> int:
         prog="scitex-stats",
         description=(
             "SciTeX Stats - Publication-ready statistical testing framework "
-            "with 23 tests, effect sizes, power analysis, and MCP server"
+            "with 23 tests, effect sizes, power analysis, and MCP server.\n"
+            "\n"
+            "Config is loaded with the SciTeX precedence chain:\n"
+            "  config.yaml -> $SCITEX_STATS_CONFIG -> ~/.scitex/stats/config.yaml -> defaults\n"
         ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
         "-V",
@@ -72,12 +76,19 @@ def main(argv=None) -> int:
         action="store_true",
         help="Show help for all commands recursively",
     )
+    parser.add_argument(
+        "--json",
+        dest="root_json",
+        action="store_true",
+        help="Emit JSON output (propagates to subcommands that honour it).",
+    )
 
     subparsers = parser.add_subparsers(dest="command", title="Commands")
 
     # Register subcommand modules
     mcp_parser = mcp.register_parser(subparsers)
     introspect.register_parser(subparsers)
+    stats.register_parsers(subparsers)
 
     # Register top-level convenience commands
     introspect.register_list_python_apis(subparsers)

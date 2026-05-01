@@ -29,7 +29,10 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-import scitex as stx
+try:
+    import scitex as stx  # noqa: E402
+except ImportError:
+    stx = None
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._formatters import fmt_stat, fmt_sym
 

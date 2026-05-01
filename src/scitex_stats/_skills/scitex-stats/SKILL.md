@@ -9,6 +9,8 @@ interfaces:
   skills: 2
   hook: 0
   http: 0
+name: scitex-stats
+tags: [scitex-stats, scitex-package]
 ---
 
 # scitex-stats

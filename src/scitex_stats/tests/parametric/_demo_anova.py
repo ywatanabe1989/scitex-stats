@@ -22,7 +22,10 @@ import argparse  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
-import scitex as stx  # noqa: E402
+try:
+    import scitex as stx  # noqa: E402
+except ImportError:
+    stx = None
 from scitex_stats._logging import getLogger
 
 logger = getLogger(__name__)

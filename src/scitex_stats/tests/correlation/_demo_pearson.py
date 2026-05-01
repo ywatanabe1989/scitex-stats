@@ -16,7 +16,10 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-import scitex as stx
+try:
+    import scitex as stx  # noqa: E402
+except ImportError:
+    stx = None
 from scitex_stats._logging import getLogger
 
 __FILE__ = __file__

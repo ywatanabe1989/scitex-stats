@@ -25,7 +25,10 @@ from typing import Union  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
-import scitex as stx  # noqa: E402
+try:
+    import scitex as stx  # noqa: E402
+except ImportError:
+    stx = None
 from scitex_stats._logging import getLogger
 
 logger = getLogger(__name__)

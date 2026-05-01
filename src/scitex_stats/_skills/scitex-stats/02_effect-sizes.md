@@ -1,5 +1,7 @@
 ---
 description: Effect size measures — Cohen's d, Cliff's delta, eta squared, epsilon squared, probability of superiority.
+name: effect-sizes
+tags: [scitex-stats, scitex-package]
 ---
 
 # Effect Sizes
