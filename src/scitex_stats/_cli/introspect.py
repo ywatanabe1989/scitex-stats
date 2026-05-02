@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # File: src/scitex_stats/_cli/introspect.py
 
-"""Introspection CLI commands for scitex-stats."""
+"""Introspection CLI worker functions for scitex-stats (Click-friendly, no argparse)."""
 
-import argparse
+from __future__ import annotations
+
 import importlib
 import inspect
 import sys
@@ -155,9 +156,15 @@ def _get_api_tree(module, max_depth: int = 5, docstring: bool = False) -> list:
     return results
 
 
-def cmd_api(args: argparse.Namespace) -> int:
+def cmd_api(
+    *,
+    dotted_path: str,
+    verbose: int = 0,
+    max_depth: int = 5,
+    as_json: bool = False,
+) -> int:
     """List API tree of a Python module."""
-    dotted_path = args.dotted_path.replace("-", "_")
+    dotted_path = dotted_path.replace("-", "_")
 
     try:
         module = importlib.import_module(dotted_path)
@@ -165,9 +172,9 @@ def cmd_api(args: argparse.Namespace) -> int:
         print(f"Error importing {dotted_path}: {e}", file=sys.stderr)
         return 1
 
-    df = _get_api_tree(module, max_depth=args.max_depth, docstring=(args.verbose >= 1))
+    df = _get_api_tree(module, max_depth=max_depth, docstring=(verbose >= 1))
 
-    if args.json:
+    if as_json:
         import json
 
         print(json.dumps(df, indent=2))
@@ -212,8 +219,8 @@ def cmd_api(args: argparse.Namespace) -> int:
             name_s = _style(name, fg=TYPE_COLORS.get(t, "white"), bold=True)
             print(f"{indent}{type_s} {name_s}")
 
-        if args.verbose >= 1 and row.get("Docstring"):
-            if args.verbose == 1:
+        if verbose >= 1 and row.get("Docstring"):
+            if verbose == 1:
                 doc = row["Docstring"].split("\n")[0][:60]
                 print(f"{indent}    - {doc}")
             else:
@@ -223,107 +230,16 @@ def cmd_api(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_list_python_apis(args: argparse.Namespace) -> int:
-    """List Python APIs (alias for introspect api scitex_stats)."""
-    args.dotted_path = "scitex_stats"
-    return cmd_api(args)
-
-
-def register_parser(subparsers) -> argparse.ArgumentParser:
-    """Register `python-api` noun group (replaces verb-shaped `introspect`)."""
-    intro_help = """Python package introspection — `python-api list` / `show`.
-
-Quick start:
-  scitex-stats python-api list scitex_stats       # Full API tree
-  scitex-stats python-api list scitex_stats -v    # With docstrings
-  scitex-stats python-api list scitex_stats --json  # JSON output
-"""
-    intro_parser = subparsers.add_parser(
-        "python-api",
-        help="Python package introspection (list API tree).",
-        description=intro_help,
-        formatter_class=argparse.RawDescriptionHelpFormatter,
+def cmd_list_python_apis(
+    *, verbose: int = 0, max_depth: int = 5, as_json: bool = False
+) -> int:
+    """List Python APIs (alias for: python-api list scitex_stats)."""
+    return cmd_api(
+        dotted_path="scitex_stats",
+        verbose=verbose,
+        max_depth=max_depth,
+        as_json=as_json,
     )
-    intro_sub = intro_parser.add_subparsers(dest="python_api_command", title="Verbs")
-
-    api_parser = intro_sub.add_parser(
-        "list",
-        help="List API tree of a Python module.",
-        description=(
-            "List the public API tree of a Python module (modules, classes,\n"
-            "functions, variables) up to the requested depth.\n"
-            "\n"
-            "Example:\n"
-            "  $ scitex-stats python-api list scitex_stats\n"
-            "  $ scitex-stats python-api list scitex_stats -v --max-depth 3\n"
-            "  $ scitex-stats python-api list scitex_stats.correct --json"
-        ),
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
-    api_parser.add_argument(
-        "dotted_path", help="Python dotted path (e.g., scitex_stats)"
-    )
-    api_parser.add_argument(
-        "-v",
-        "--verbose",
-        action="count",
-        default=0,
-        help="Verbosity: -v +doc, -vv full doc",
-    )
-    api_parser.add_argument(
-        "-d",
-        "--max-depth",
-        type=int,
-        default=5,
-        help="Max recursion depth (default: 5)",
-    )
-    api_parser.add_argument(
-        "--json",
-        action="store_true",
-        default=False,
-        help="Output as JSON",
-    )
-    api_parser.set_defaults(func=cmd_api)
-
-    return intro_parser
-
-
-def register_list_python_apis(parent_parser) -> None:
-    """Register list-python-apis convenience alias on a parent parser."""
-    lst_parser = parent_parser.add_parser(
-        "list-python-apis",
-        help="List Python APIs (alias for: scitex-stats python-api list scitex_stats)",
-        description=(
-            "List the public API tree of scitex_stats (alias for `python-api list`).\n"
-            "\n"
-            "Example:\n"
-            "  $ scitex-stats list-python-apis\n"
-            "  $ scitex-stats list-python-apis -v --max-depth 3\n"
-            "  $ scitex-stats list-python-apis --json"
-        ),
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
-    lst_parser.add_argument(
-        "-v",
-        "--verbose",
-        action="count",
-        default=0,
-        help="Verbosity: -v +doc, -vv full doc",
-    )
-    lst_parser.add_argument(
-        "-d",
-        "--max-depth",
-        type=int,
-        default=5,
-        help="Max recursion depth",
-    )
-    lst_parser.add_argument(
-        "--json",
-        action="store_true",
-        default=False,
-        help="Output as JSON",
-    )
-    lst_parser.set_defaults(func=cmd_list_python_apis)
 
 
 # EOF

@@ -38,6 +38,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 dependencies = [
+    "click>=8.0",
     "matplotlib>=3.5.0",
     "mcp",
     "numpy>=1.21.0",
