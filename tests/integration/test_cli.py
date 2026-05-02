@@ -96,8 +96,16 @@ class TestMCPCLI:
     """Test MCP-related CLI subcommands."""
 
     def test_mcp_help(self):
+        # Click groups invoked without a subcommand exit 2 by default
+        # and print the help text to stderr; if the group is configured
+        # `invoke_without_command=True`, exit is 0 and help goes to
+        # stdout. Both rc and stream are acceptable as long as the help
+        # body actually rendered somewhere.
         result = _run_cli("mcp")
-        assert result.returncode == 0
+        assert result.returncode in (0, 2)
+        combined = result.stdout + result.stderr
+        assert "list-tools" in combined
+        assert "doctor" in combined
 
     @pytest.mark.xfail(
         reason="CLI uses _tool_manager which does not exist in FastMCP 3.x",
@@ -140,16 +148,22 @@ class TestMainEntryPoint:
     """Test the CLI main() function directly."""
 
     def test_main_help_returns_zero(self):
+        # Click's group.main() raises SystemExit(0) on success rather
+        # than returning. The post-Click contract is "exits cleanly",
+        # so the assertion is on the SystemExit code, matching
+        # test_main_version below.
         from scitex_stats._cli import main
 
-        ret = main(["--help-recursive"])
-        assert ret == 0
+        with pytest.raises(SystemExit) as exc_info:
+            main(["--help-recursive"])
+        assert exc_info.value.code == 0
 
     def test_main_no_args_returns_zero(self):
         from scitex_stats._cli import main
 
-        ret = main([])
-        assert ret == 0
+        with pytest.raises(SystemExit) as exc_info:
+            main([])
+        assert exc_info.value.code == 0
 
     def test_main_version(self):
         from scitex_stats._cli import main
