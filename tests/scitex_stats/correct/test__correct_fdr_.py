@@ -1,4 +1,13 @@
-# Add your tests here
+"""Smoke test for the demo/CLI variant ``_correct_fdr_`` module."""
+
+
+def test_module_importable():
+    """The demo variant module imports and exposes ``correct_fdr``."""
+    from scitex_stats.correct import _correct_fdr_ as mod
+
+    assert hasattr(mod, "correct_fdr")
+    assert callable(mod.correct_fdr)
+
 
 if __name__ == "__main__":
     import os
