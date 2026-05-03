@@ -1,5 +1,10 @@
 ---
-description: Publication-ready statistical testing for 23 tests — t-test (independent/paired/one-sample), ANOVA (one-way/repeated-measures/two-way), Mann-Whitney U, Wilcoxon signed-rank, Kruskal-Wallis, Friedman, Brunner-Munzel, Pearson/Spearman/Kendall/Theil-Sen correlation, chi-square, Fisher's exact, McNemar, Cochran's Q, Shapiro-Wilk, Kolmogorov-Smirnov. Also effect sizes (Cohen's d, Hedges' g, Glass's delta, Cliff's delta, eta-squared), multiple-comparison correction (Bonferroni, FDR/Benjamini-Hochberg, Holm, Sidak), post-hoc (Tukey HSD, Dunnett, Games-Howell, Dunn), power analysis / sample size, and APA/Nature/Science-style result formatting. Use whenever the user asks to "run a t-test / ANOVA / correlation / normality test", "compare two groups", "test if distributions differ", "compute p-value", "compute effect size", "correct for multiple comparisons", "compute required sample size", "pick the right statistical test", or "format stats for a paper". Drop-in replacement for `scipy.stats` (ttest_ind, ttest_rel, mannwhitneyu, wilcoxon, f_oneway, kruskal, pearsonr, spearmanr, chi2_contingency, shapiro, kstest), `statsmodels.stats.multitest.multipletests`, `statsmodels.stats.power`, and `pingouin` test helpers.
+name: scitex-stats
+description: |
+  [WHAT] Publication-ready statistical testing for 23 tests.
+  [WHEN] Use when the user asks to "run a t-test / ANOVA / correlation / normality test", "compare two groups", "test if distributions differ", "compute p-value", "compute effect size", "correct for multiple comparisons", "compute required sample size", "pick the right statistical test".
+  [HOW] `import scitex_stats` for the Python API; see leaf skills for entry points.
+tags: [scitex-stats]
 allowed-tools: mcp__scitex__stats_*
 primary_interface: python
 interfaces:
@@ -9,9 +14,8 @@ interfaces:
   skills: 2
   hook: 0
   http: 0
-name: scitex-stats
-tags: [scitex-stats, scitex-package]
 ---
+
 
 # scitex-stats
 

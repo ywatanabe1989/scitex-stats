@@ -1,8 +1,10 @@
 ---
-description: Common statistical analysis workflows — group comparisons, correlations, normality, post-hoc, power.
-name: workflows
-tags: [scitex-stats, scitex-package]
+description: |
+  [TOPIC] Workflows
+  [DETAILS] group comparisons, correlations, normality, post-hoc, power.
+tags: [scitex-stats-workflows, scitex-stats]
 ---
+
 
 # Common Workflows
 

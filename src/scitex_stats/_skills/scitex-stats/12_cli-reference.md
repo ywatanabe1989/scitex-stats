@@ -1,8 +1,10 @@
 ---
-description: CLI commands for scitex-stats — run tests, recommend, describe, power analysis from the terminal.
-name: cli-reference
-tags: [scitex-stats, scitex-package]
+description: |
+  [TOPIC] Cli Reference
+  [DETAILS] run tests, recommend, describe, power analysis from the terminal.
+tags: [scitex-stats-cli-reference, scitex-stats]
 ---
+
 
 # CLI Reference
 
