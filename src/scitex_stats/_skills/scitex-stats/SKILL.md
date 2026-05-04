@@ -47,15 +47,21 @@ rule and empirical verification table.
 
 ## Sub-skills
 
-### Core
-- [01_test-catalog.md](01_test-catalog.md) — All 23 statistical tests with categories
-- [02_effect-sizes.md](02_effect-sizes.md) — Effect size measures and interpretation
+### Mandatory (per ecosystem spec)
+- [01_installation.md](01_installation.md) — pip install, extras, verification
+- [02_quick-start.md](02_quick-start.md) — Smallest end-to-end t-test example
+- [03_python-api.md](03_python-api.md) — Public callables (dispatcher + 23 tests)
+- [04_cli-reference.md](04_cli-reference.md) — Full CLI command surface
 
 ### Workflows
-- [10_quick-start.md](10_quick-start.md) — Basic usage and core patterns
+- [10_quick-start.md](10_quick-start.md) — Extended Python patterns (run_test, return_as)
 - [11_workflows.md](11_workflows.md) — Common analysis patterns
-- [12_cli-reference.md](12_cli-reference.md) — CLI commands
+- [12_cli-reference.md](12_cli-reference.md) — Extended CLI patterns
 - [13_mcp-tools.md](13_mcp-tools.md) — MCP tools for AI agents
+
+### Reference
+- [20_test-catalog.md](20_test-catalog.md) — All 23 statistical tests with categories
+- [21_effect-sizes.md](21_effect-sizes.md) — Effect size measures and interpretation
 
 ## CLI
 
