@@ -41,6 +41,7 @@ from .mcp import (
 from .mcp import (
     cmd_start as _cmd_start,
 )
+from .skills_group import skills_group as _skills_group
 from .stats import (
     run_format_pvalue as _run_format_pvalue,
 )
@@ -468,6 +469,13 @@ def format_pvalue(p, style):
 
 
 # ----------------------------------------------------------------------------
+# skills group (self-contained — list / get / install bundled _skills/)
+# ----------------------------------------------------------------------------
+
+main.add_command(_skills_group, name="skills")
+
+
+# ----------------------------------------------------------------------------
 # Optional docs/skills subcommands from scitex-dev
 # ----------------------------------------------------------------------------
 
@@ -490,7 +498,7 @@ try:
 
     if _has_click_register:
         register_docs_click_command(main, package="scitex-stats")
-        register_skills_click_command(main, package="scitex-stats")
+        # Skills group is owned locally (skills_group.py) — do not override.
 except ImportError:
     pass
 
