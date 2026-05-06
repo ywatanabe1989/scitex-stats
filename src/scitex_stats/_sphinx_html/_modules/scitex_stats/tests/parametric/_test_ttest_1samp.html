@@ -265,10 +265,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>  <span class="c1"># noqa: E402</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>  <span class="c1"># noqa: E402</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">scitex</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stx</span>  <span class="c1"># noqa: E402</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">stx</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_mpl_plt</span>  <span class="c1"># noqa: E402</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">getLogger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._utils._formatters</span><span class="w"> </span><span class="kn">import</span> <span class="n">fmt_stat</span><span class="p">,</span> <span class="n">fmt_sym</span>  <span class="c1"># noqa: E402</span>
 
@@ -437,7 +434,7 @@
     <span class="c1"># Generate plot if requested</span>
     <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">stx</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">_mpl_plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
         <span class="n">_plot_ttest_1samp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">popmean</span><span class="p">,</span> <span class="n">var_x</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
 
     <span class="c1"># Convert to requested format</span>
@@ -485,6 +482,7 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Demonstrate one-sample t-test functionality.&quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">scitex</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stx</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Demonstrating one-sample t-test&quot;</span><span class="p">)</span>
 
     <span class="c1"># Set random seed</span>
@@ -529,6 +527,8 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">run_main</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize SciTeX framework and run main.&quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">scitex</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stx</span>
+
     <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>  <span class="c1"># noqa: E402</span>
 
     <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># noqa: E402</span>
