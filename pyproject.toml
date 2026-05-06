@@ -48,7 +48,6 @@ dependencies = [
     "tabulate>=0.9.0",
     "figrecipe>=0.28.0",
     "scitex-linter>=0.3.0",
-    "scitex",
 ]
 
 [project.optional-dependencies]
@@ -63,7 +62,6 @@ plot = [
 ]
 dev = [
     "fastmcp",
-    "scitex",
     "scitex-dev",
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",

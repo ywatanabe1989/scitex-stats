@@ -29,10 +29,7 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
+import matplotlib.pyplot as _mpl_plt  # noqa: E402
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._formatters import fmt_stat, fmt_sym
 
@@ -259,7 +256,7 @@ def test_brunner_munzel(
     # Generate plot if requested
     if plot:
         if ax is None:
-            _fig, ax = stx.plt.subplots()
+            _fig, ax = _mpl_plt.subplots()
         _plot_brunner_munzel(x, y, var_x, var_y, result, ax)
 
     # Convert to requested format

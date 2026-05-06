@@ -26,10 +26,7 @@ from typing import Literal, Optional, Union
 import matplotlib.axes
 import numpy as np
 import pandas as pd
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
+import matplotlib.pyplot as _mpl_plt  # noqa: E402
 from scipy import stats
 
 from scitex_stats._logging import getLogger
@@ -325,7 +322,7 @@ def test_kendall(  # noqa: C901
     # Generate plot if requested
     if plot:
         if ax is None:
-            fig, ax = stx.plt.subplots()
+            fig, ax = _mpl_plt.subplots()
         _plot_kendall(x, y, result, var_x, var_y, ax)
 
     # Convert to requested format
@@ -366,6 +363,7 @@ def _plot_kendall(x, y, result, var_x, var_y, ax) -> None:
 
 def main(args) -> int:
     """Run Kendall tau correlation examples."""
+    import scitex as stx
     logger.info("=" * 70)
     logger.info("Kendall's Tau Correlation Examples")
     logger.info("=" * 70)
@@ -381,8 +379,8 @@ def main(args) -> int:
     test_kendall(
         x, y, var_x="Treatment Dose", var_y="Response", plot=True, verbose=True
     )
-    stx.io.save(stx.plt.gcf(), "kendall_example1.jpg")
-    stx.plt.close()
+    stx.io.save(_mpl_plt.gcf(), "kendall_example1.jpg")
+    _mpl_plt.close()
 
     # Example 2: Comparison with Spearman
     logger.info("\n[Example 2] Kendall vs Spearman comparison")
@@ -405,8 +403,8 @@ def main(args) -> int:
 
     logger.info("With small samples, Kendall's tau is preferred over Spearman")
     test_kendall(x_small, y_small, plot=True, verbose=True)
-    stx.io.save(stx.plt.gcf(), "kendall_example3.jpg")
-    stx.plt.close()
+    stx.io.save(_mpl_plt.gcf(), "kendall_example3.jpg")
+    _mpl_plt.close()
 
     # Example 4: Ordinal data (Likert scale)
     logger.info("\n[Example 4] Ordinal data (Likert scales)")
@@ -424,8 +422,8 @@ def main(args) -> int:
         plot=True,
         verbose=True,
     )
-    stx.io.save(stx.plt.gcf(), "kendall_example4.jpg")
-    stx.plt.close()
+    stx.io.save(_mpl_plt.gcf(), "kendall_example4.jpg")
+    _mpl_plt.close()
 
     # Example 5: One-sided test
     logger.info("\n[Example 5] One-sided test (positive association)")
@@ -465,6 +463,8 @@ def parse_args():
 
 def run_main() -> None:
     """Initialize SciTeX framework and run main."""
+    import scitex as stx
+
     import sys
 
     import matplotlib.pyplot as plt

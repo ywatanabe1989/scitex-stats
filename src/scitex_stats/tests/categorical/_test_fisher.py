@@ -17,10 +17,7 @@ from typing import Literal, Optional, Tuple, Union
 import matplotlib.axes
 import numpy as np
 import pandas as pd
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
+import matplotlib.pyplot as _mpl_plt  # noqa: E402
 from scipy import stats
 
 from scitex_stats._logging import getLogger
@@ -336,7 +333,7 @@ def test_fisher(  # noqa: C901
     # Generate plot if requested
     if plot:
         if ax is None:
-            fig, axes = stx.plt.subplots(1, 2, figsize=(12, 5))
+            fig, axes = _mpl_plt.subplots(1, 2, figsize=(12, 5))
             _plot_fisher_full(
                 [[a, b], [c, d]],
                 or_val,
@@ -397,7 +394,7 @@ def _plot_fisher_full(
                 color="white",
             )
 
-    stx.plt.colorbar(im, ax=ax)
+    _mpl_plt.colorbar(im, ax=ax)
 
     # Panel 2: Odds ratio with confidence interval
     ax = axes[1]

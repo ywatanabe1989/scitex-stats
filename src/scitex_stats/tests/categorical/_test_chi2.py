@@ -17,10 +17,7 @@ from typing import Literal, Optional, Union
 import matplotlib.axes
 import numpy as np
 import pandas as pd
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
+import matplotlib.pyplot as _mpl_plt  # noqa: E402
 from scipy import stats
 
 from scitex_stats._logging import getLogger
@@ -343,7 +340,7 @@ def test_chi2(  # noqa: C901
     if plot:
         if ax is None:
             # For chi2, we need 3 panels, so create a figure with subplots
-            fig, axes = stx.plt.subplots(1, 3, figsize=(15, 5))
+            fig, axes = _mpl_plt.subplots(1, 3, figsize=(15, 5))
             _plot_chi2_full(
                 observed,
                 expected,
@@ -389,7 +386,7 @@ def _plot_chi2_full(observed, expected, chi2_stat, pvalue, v, var_row, var_col, 
         for j in range(cols):
             ax.text(j, i, f"{observed[i, j]:.0f}", ha="center", va="center")
 
-    stx.plt.colorbar(im1, ax=ax)
+    _mpl_plt.colorbar(im1, ax=ax)
 
     # Panel 2: Expected frequencies heatmap
     ax = axes[1]
@@ -407,7 +404,7 @@ def _plot_chi2_full(observed, expected, chi2_stat, pvalue, v, var_row, var_col, 
         for j in range(cols):
             ax.text(j, i, f"{expected[i, j]:.1f}", ha="center", va="center")
 
-    stx.plt.colorbar(im2, ax=ax)
+    _mpl_plt.colorbar(im2, ax=ax)
 
     # Panel 3: Residuals (standardized)
     ax = axes[2]
@@ -436,7 +433,7 @@ def _plot_chi2_full(observed, expected, chi2_stat, pvalue, v, var_row, var_col, 
                 color=color,
             )
 
-    stx.plt.colorbar(im3, ax=ax)
+    _mpl_plt.colorbar(im3, ax=ax)
 
     # Add stats text box
     stars_text = p2stars(pvalue).replace("ns", "$n$s")
@@ -484,7 +481,7 @@ def _plot_chi2_simple(observed, expected, chi2_stat, pvalue, v, var_row, var_col
                 color=color,
             )
 
-    stx.plt.colorbar(im, ax=ax)
+    _mpl_plt.colorbar(im, ax=ax)
 
     # Add stats text box
     stars_text = p2stars(pvalue).replace("ns", "$n$s")

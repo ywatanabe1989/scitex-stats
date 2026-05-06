@@ -32,10 +32,7 @@ from typing import Literal, Optional, Union  # noqa: E402
 import matplotlib.axes  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
+import matplotlib.pyplot as _mpl_plt  # noqa: E402
 from scipy import stats  # noqa: E402
 
 from scitex_stats._logging import getLogger
@@ -224,7 +221,7 @@ def test_shapiro(  # noqa: C901
     # Generate plot if requested
     if plot:
         if ax is None:
-            fig, axes = stx.plt.subplots(1, 2, figsize=(12, 5))
+            fig, axes = _mpl_plt.subplots(1, 2, figsize=(12, 5))
             _plot_qq_full(x, var_x, result, axes)
         else:
             _plot_qq_simple(x, var_x, result, ax)

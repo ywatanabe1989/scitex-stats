@@ -30,10 +30,7 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
+import matplotlib.pyplot as _mpl_plt  # noqa: E402
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._formatters import fmt_stat, fmt_sym
 
@@ -269,7 +266,7 @@ def test_wilcoxon(  # noqa: C901
     # Generate plot if requested
     if plot:
         if ax is None:
-            _fig, ax = stx.plt.subplots()
+            _fig, ax = _mpl_plt.subplots()
         _plot_wilcoxon(x, y, var_x, var_y, result, ax)
 
     # Convert to requested format
@@ -305,6 +302,7 @@ def _plot_wilcoxon(x, y, var_x, var_y, result, ax):
 
 def main(args):  # noqa: C901
     """Demonstrate Wilcoxon signed-rank test functionality."""
+    import scitex as stx
     logger.info("Demonstrating Wilcoxon signed-rank test")
 
     # Set random seed
@@ -392,8 +390,8 @@ def main(args):  # noqa: C901
     )
 
     # Save the figure using plt.gcf()
-    stx.io.save(stx.plt.gcf(), "./wilcoxon_demo.jpg")
-    stx.plt.close()
+    stx.io.save(_mpl_plt.gcf(), "./wilcoxon_demo.jpg")
+    _mpl_plt.close()
     logger.info("Figure saved to wilcoxon_demo.jpg")
 
     # Example 7: Compare with paired t-test
@@ -448,6 +446,8 @@ def parse_args():
 
 def run_main():
     """Initialize SciTeX framework and run main."""
+    import scitex as stx
+
     import sys
 
     import matplotlib.pyplot as plt

@@ -35,10 +35,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 from scipy import stats  # noqa: E402
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
+import matplotlib.pyplot as _mpl_plt  # noqa: E402
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._formatters import fmt_stat, fmt_sym  # noqa: E402
 
@@ -208,7 +205,7 @@ def test_ks_2samp(
     # Generate plot if requested
     if plot:
         if ax is None:
-            fig, axes = stx.plt.subplots(1, 2, figsize=(14, 6))
+            fig, axes = _mpl_plt.subplots(1, 2, figsize=(14, 6))
             _plot_ks_2samp_full(x, y, var_x, var_y, result, axes)
         else:
             _plot_ks_2samp_simple(x, y, var_x, var_y, result, ax)
@@ -315,6 +312,7 @@ def _plot_ks_2samp_simple(x, y, var_x, var_y, result, ax):
 
 def main(args):
     """Demonstrate two-sample Kolmogorov-Smirnov test functionality."""
+    import scitex as stx
     logger.info("Demonstrating two-sample Kolmogorov-Smirnov test")
 
     # Set random seed
@@ -375,6 +373,8 @@ def parse_args():
 
 def run_main():
     """Initialize SciTeX framework and run main."""
+    import scitex as stx
+
     import sys  # noqa: E402
 
     import matplotlib.pyplot as plt  # noqa: E402
