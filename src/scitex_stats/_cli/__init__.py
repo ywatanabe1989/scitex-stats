@@ -547,3 +547,14 @@ if __name__ == "__main__":
     sys.exit(_entry())
 
 # EOF
+
+
+# audit §4 — inject version into root --help
+try:
+    from importlib.metadata import version as _v
+    main.help = (
+        f"scitex-stats (v{_v('scitex-stats')}) — "
+        + (main.help or "").lstrip()
+    )
+except Exception:
+    pass
