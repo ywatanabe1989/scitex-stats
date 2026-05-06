@@ -492,6 +492,15 @@ def format_pvalue(p, style):
 main.add_command(_skills_group, name="skills")
 
 
+# §1a: install-shell-completion + print-shell-completion (canonical leaves)
+try:
+    from scitex_dev._cli._completion import attach_shell_completion
+
+    attach_shell_completion(main, prog_name="scitex-stats")
+except ImportError:
+    pass
+
+
 # ----------------------------------------------------------------------------
 # Optional docs/skills subcommands from scitex-dev
 # ----------------------------------------------------------------------------
