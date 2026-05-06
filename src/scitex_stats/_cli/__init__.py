@@ -164,7 +164,10 @@ def mcp_show_installation_deprecated(ctx):
 
 @mcp.command("install")
 @click.option("--json", "as_json", is_flag=True, default=False, help="Emit JSON.")
-def mcp_install(as_json):
+@click.option("--dry-run", is_flag=True, help="Accepted for §2; this verb is informational, never mutates state.")
+@click.option("--yes", "-y", is_flag=True, help="Accepted for §2; this verb is informational, never mutates state.")
+def mcp_install(as_json, dry_run, yes):
+    del dry_run, yes  # audit §2 — no-op flags
     """Print the Claude Desktop config snippet for the scitex-stats MCP server.
 
     (rename of show-installation)
