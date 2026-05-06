@@ -4,7 +4,7 @@
 """scitex-stats CLI (Click).
 
 Subcommand groups:
-    mcp                 - MCP server commands (start / list-tools / doctor / show-installation)
+    mcp                 - MCP server commands (start / list-tools / doctor / install)
     tests               - Statistical tests (list / execute / describe / recommend)
     python-api          - Python package introspection (list)
     list-python-apis    - Convenience alias for: python-api list scitex_stats
@@ -142,20 +142,37 @@ def mcp():
     Quick start:
       scitex-stats mcp list-tools
       scitex-stats mcp doctor
-      scitex-stats mcp show-installation
+      scitex-stats mcp install
       scitex-stats mcp start
     """
 
 
-@mcp.command("show-installation")
+@mcp.command(
+    "show-installation", hidden=True, context_settings={"ignore_unknown_options": True}
+)
+@click.pass_context
+def mcp_show_installation_deprecated(ctx):
+    """(deprecated) Renamed to `install`."""
+    click.echo(
+        "error: `scitex-stats mcp show-installation` was renamed to "
+        "`scitex-stats mcp install`.\n"
+        "Re-run with: scitex-stats mcp install",
+        err=True,
+    )
+    ctx.exit(2)
+
+
+@mcp.command("install")
 @click.option("--json", "as_json", is_flag=True, default=False, help="Emit JSON.")
-def mcp_show_installation(as_json):
+def mcp_install(as_json):
     """Print the Claude Desktop config snippet for the scitex-stats MCP server.
+
+    (rename of show-installation)
 
     \b
     Example:
-        $ scitex-stats mcp show-installation
-        $ scitex-stats mcp show-installation --json
+        $ scitex-stats mcp install
+        $ scitex-stats mcp install --json
     """
     return _cmd_config(as_json=as_json)
 
