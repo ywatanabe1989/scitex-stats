@@ -6,7 +6,7 @@
 import logging as _stdlib_logging
 
 try:
-    from scitex.logging import getLogger
+    from scitex_logging import getLogger
 
     _SCITEX_LOGGING_AVAILABLE = True
 except ImportError:
