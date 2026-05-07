@@ -1,0 +1,11 @@
+ID: 2026Y-05M-07D-11h54m50s_Z89i
+PID: 261667
+START_DATETIME: 2026-05-07 11:54:50.459873
+FILE: /home/ywatanabe/proj/scitex-stats/examples/02_test_recommendation.py
+SDIR_OUT: /home/ywatanabe/proj/scitex-stats/examples/02_test_recommendation_out
+SDIR_RUN: 
+    /home/ywatanabe/proj/scitex-stats/examples/02_test_recommendation_out/RUNNING/2026Y-05M-07D-11h54m50s_Z89i-main
+ARGS: {}
+EXIT_STATUS: 0
+END_DATETIME: 2026-05-07 11:54:52.535219
+RUN_DURATION: 00:00:02

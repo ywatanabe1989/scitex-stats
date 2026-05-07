@@ -1,0 +1,23 @@
+[94m
+========================================
+SciTeX v2.27.3 | 2026Y-05M-07D-11h54m58s_bQCN (PID: 263352)
+
+/home/ywatanabe/proj/scitex-stats/examples/03_multiple_comparison.py
+
+Arguments:
+========================================
+[0m
+Multiple Comparison Correction (FDR-BH)
+==================================================
+Comparison   Original   Adjusted   Rejected
+---------------------------------------------
+       AvB     0.0100     0.0300        Yes
+       AvC     0.0400     0.0600         No
+       AvD     0.0300     0.0600         No
+       BvC     0.2000     0.2000         No
+       BvD     0.0050     0.0300        Yes
+       CvD     0.0800     0.0960         No
+
+Saved to /home/ywatanabe/proj/scitex-stats/examples/03_multiple_comparison_out/
+  results.txt  — human-readable summary
+  results.json — structured data

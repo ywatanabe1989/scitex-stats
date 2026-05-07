@@ -1,0 +1,18 @@
+[94m
+========================================
+SciTeX v2.27.3 | 2026Y-05M-07D-11h54m50s_Z89i (PID: 261667)
+
+/home/ywatanabe/proj/scitex-stats/examples/02_test_recommendation.py
+
+Arguments:
+========================================
+[0m
+Test Recommendations
+========================================
+  1. brunner_munzel
+  2. ttest_ind
+  3. mannwhitneyu
+
+Saved to /home/ywatanabe/proj/scitex-stats/examples/02_test_recommendation_out/
+  results.txt  — human-readable summary
+  results.json — structured data
