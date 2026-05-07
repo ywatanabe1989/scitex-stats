@@ -92,6 +92,51 @@ Every test returns a **unified result dictionary** with consistent keys:
 
 *Table 3. Unified result format. All 23 tests return the same dictionary structure with test statistics, p-value, effect size with interpretation, statistical power, and APA-formatted string.*
 
+## Architecture
+
+```
+scitex_stats/
+├── _recommend.py        # StatContext + recommend_tests()
+├── _run_test.py         # Unified test runner (23 tests)
+├── effect_sizes/        # Cohen's d, Cliff's delta, eta², etc.
+├── power/               # Power analysis + sample-size calculators
+├── correct/             # FDR / Bonferroni / Holm corrections
+├── posthoc/             # Tukey, Dunn, Nemenyi
+├── format/              # APA / MLA / LaTeX / Nature formatters
+├── _cli/                # Click group: scitex-stats ...
+└── _mcp/                # MCP server: scitex-stats mcp start
+```
+
+```mermaid
+flowchart TB
+    Data[Raw arrays / DataFrame] --> Ctx[StatContext]
+    Ctx --> Rec[recommend_tests]
+    Rec --> Run[run_test]
+    Run --> ES[effect_sizes]
+    Run --> Pw[power]
+    Run --> Res[Unified result dict]
+    Res --> Corr[correct: FDR/Bonferroni]
+    Res --> Post[posthoc: Tukey/Dunn]
+    Res --> Fmt[format: APA/Nature/LaTeX]
+    Fmt --> Pub[Publication-ready string]
+
+    subgraph Surfaces ["Four surfaces — same engine"]
+        Py[Python API]
+        Cli[CLI]
+        Mcp[MCP server]
+        Sk[Skills]
+    end
+    Py -.-> Run
+    Cli -.-> Run
+    Mcp -.-> Run
+    Sk -.-> Run
+
+    style Pub fill:#27ae60,stroke:#2c3e50,color:#fff
+    style Res fill:#4a90d9,stroke:#2c3e50,color:#fff
+```
+
+<p align="center"><sub><b>Figure 2.</b> Module + surface architecture. Every interface (Python, CLI, MCP, Skills) calls the same <code>run_test</code> engine; outputs are a unified dict that downstream formatters and corrections consume.</sub></p>
+
 ## Installation
 
 Requires Python >= 3.10.
@@ -231,6 +276,36 @@ scitex-dev skills export --package scitex-stats  # Export to Claude Code
 | `mcp-tools` | MCP tools for AI agents |
 
 </details>
+
+## Demo
+
+Three runnable examples ship under `examples/` — each one writes its outputs (CSV + JSON + figures) to a sibling `_out/` folder so GitHub viewers see real artefacts:
+
+| Example | What it shows | Gallery |
+|---------|---------------|---------|
+| **`01_basic_ttest.py`** | Independent-samples t-test → APA-formatted result + box plot | <img src="docs/example_ttest_figure.png" alt="t-test demo" width="180"> |
+| **`02_test_recommendation.py`** | `recommend_tests` selects the right test from a `StatContext` | see `examples/02_test_recommendation_out/results.txt` |
+| **`03_multiple_comparison.py`** | Run-test → posthoc → FDR correction pipeline | see `examples/03_multiple_comparison_out/results.json` |
+
+```mermaid
+flowchart LR
+    Data[Group 1 / Group 2 arrays] --> R[run_test 'ttest_ind']
+    R --> Dict[Unified result dict]
+    Dict --> APA[formatted: 't = -3.21, p = .002, **']
+    Dict --> Box[scitex.plt box plot]
+    Box --> Png[docs/example_ttest_figure.png]
+    style APA fill:#27ae60,stroke:#2c3e50,color:#fff
+    style Png fill:#27ae60,stroke:#2c3e50,color:#fff
+```
+
+<p align="center"><sub><b>Figure 3.</b> Demo flow. One <code>run_test</code> call yields APA strings <em>and</em> the data needed to draw the publication figure — both backed by the same unified result dict.</sub></p>
+
+```bash
+# Reproduce locally — outputs land in examples/01_basic_ttest_out/
+python examples/01_basic_ttest.py
+python examples/02_test_recommendation.py
+python examples/03_multiple_comparison.py
+```
 
 ## Choosing the Right Test
 
