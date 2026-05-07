@@ -1,0 +1,19 @@
+[94m
+========================================
+SciTeX v2.27.3 | 2026Y-05M-07D-11h54m37s_g0Ub (PID: 258300)
+
+/home/ywatanabe/proj/scitex-stats/examples/01_basic_ttest.py
+
+Arguments:
+========================================
+[0m
+Independent t-test
+========================================
+t-statistic: -2.9233
+p-value: 0.0049
+Effect size (Cohen's d): -0.7548
+Formatted: t = -2.923, p = 0.0049, Cohen's d = -0.755, **
+
+Saved to /home/ywatanabe/proj/scitex-stats/examples/01_basic_ttest_out/
+  results.txt  — human-readable summary
+  results.json — full unified result dict

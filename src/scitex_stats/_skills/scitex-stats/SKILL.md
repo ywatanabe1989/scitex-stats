@@ -1,5 +1,10 @@
 ---
-description: Publication-ready statistical testing for 23 tests — t-test (independent/paired/one-sample), ANOVA (one-way/repeated-measures/two-way), Mann-Whitney U, Wilcoxon signed-rank, Kruskal-Wallis, Friedman, Brunner-Munzel, Pearson/Spearman/Kendall/Theil-Sen correlation, chi-square, Fisher's exact, McNemar, Cochran's Q, Shapiro-Wilk, Kolmogorov-Smirnov. Also effect sizes (Cohen's d, Hedges' g, Glass's delta, Cliff's delta, eta-squared), multiple-comparison correction (Bonferroni, FDR/Benjamini-Hochberg, Holm, Sidak), post-hoc (Tukey HSD, Dunnett, Games-Howell, Dunn), power analysis / sample size, and APA/Nature/Science-style result formatting. Use whenever the user asks to "run a t-test / ANOVA / correlation / normality test", "compare two groups", "test if distributions differ", "compute p-value", "compute effect size", "correct for multiple comparisons", "compute required sample size", "pick the right statistical test", or "format stats for a paper". Drop-in replacement for `scipy.stats` (ttest_ind, ttest_rel, mannwhitneyu, wilcoxon, f_oneway, kruskal, pearsonr, spearmanr, chi2_contingency, shapiro, kstest), `statsmodels.stats.multitest.multipletests`, `statsmodels.stats.power`, and `pingouin` test helpers.
+name: scitex-stats
+description: |
+  [WHAT] Publication-ready statistical testing for 23 tests.
+  [WHEN] Use when the user asks to "run a t-test / ANOVA / correlation / normality test", "compare two groups", "test if distributions differ", "compute p-value", "compute effect size", "correct for multiple comparisons", "compute required sample size", "pick the right statistical test".
+  [HOW] `import scitex_stats` for the Python API; see leaf skills for entry points.
+tags: [scitex-stats]
 allowed-tools: mcp__scitex__stats_*
 primary_interface: python
 interfaces:
@@ -9,9 +14,8 @@ interfaces:
   skills: 2
   hook: 0
   http: 0
-name: scitex-stats
-tags: [scitex-stats, scitex-package]
 ---
+
 
 # scitex-stats
 
@@ -43,15 +47,21 @@ rule and empirical verification table.
 
 ## Sub-skills
 
-### Core
-- [01_test-catalog.md](01_test-catalog.md) — All 23 statistical tests with categories
-- [02_effect-sizes.md](02_effect-sizes.md) — Effect size measures and interpretation
+### Mandatory (per ecosystem spec)
+- [01_installation.md](01_installation.md) — pip install, extras, verification
+- [02_quick-start.md](02_quick-start.md) — Smallest end-to-end t-test example
+- [03_python-api.md](03_python-api.md) — Public callables (dispatcher + 23 tests)
+- [04_cli-reference.md](04_cli-reference.md) — Full CLI command surface
 
 ### Workflows
-- [10_quick-start.md](10_quick-start.md) — Basic usage and core patterns
+- [10_quick-start.md](10_quick-start.md) — Extended Python patterns (run_test, return_as)
 - [11_workflows.md](11_workflows.md) — Common analysis patterns
-- [12_cli-reference.md](12_cli-reference.md) — CLI commands
+- [12_cli-reference.md](12_cli-reference.md) — Extended CLI patterns
 - [13_mcp-tools.md](13_mcp-tools.md) — MCP tools for AI agents
+
+### Reference
+- [20_test-catalog.md](20_test-catalog.md) — All 23 statistical tests with categories
+- [21_effect-sizes.md](21_effect-sizes.md) — Effect size measures and interpretation
 
 ## CLI
 

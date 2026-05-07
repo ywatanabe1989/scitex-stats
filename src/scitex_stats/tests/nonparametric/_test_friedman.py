@@ -27,10 +27,7 @@ from typing import List, Literal, Optional, Union
 import matplotlib.axes
 import numpy as np
 import pandas as pd
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
+import matplotlib.pyplot as _mpl_plt  # noqa: E402
 from scipy import stats
 
 from scitex_stats._logging import getLogger
@@ -339,7 +336,7 @@ def test_friedman(  # noqa: C901
     # Generate plot if requested
     if plot:
         if ax is None:
-            _fig, ax = stx.plt.subplots()
+            _fig, ax = _mpl_plt.subplots()
         _plot_friedman(data_array, ranks, result, condition_names, ax)
 
     # Return based on format

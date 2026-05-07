@@ -29,10 +29,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 from scipy import stats  # noqa: E402
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
+import matplotlib.pyplot as _mpl_plt  # noqa: E402
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._formatters import fmt_stat, fmt_sym  # noqa: E402
 
@@ -333,7 +330,7 @@ def test_anova(  # noqa: C901
     # Generate plot if requested
     if plot:
         if ax is None:
-            fig, ax = stx.plt.subplots()
+            fig, ax = _mpl_plt.subplots()
         _plot_anova(groups, var_names, result, ax)
 
     # Convert to requested format

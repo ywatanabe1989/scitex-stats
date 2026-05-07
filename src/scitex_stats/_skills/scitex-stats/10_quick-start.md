@@ -1,8 +1,10 @@
 ---
-description: Basic usage of scitex-stats — run_test, recommend_tests, describe, effect sizes.
-name: quick-start
-tags: [scitex-stats, scitex-package]
+description: |
+  [TOPIC] Quick Start
+  [DETAILS] run_test, recommend_tests, describe, effect sizes.
+tags: [scitex-stats-quick-start, scitex-stats]
 ---
+
 
 # Quick Start
 

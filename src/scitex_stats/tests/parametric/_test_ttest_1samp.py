@@ -30,10 +30,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 from scipy import stats  # noqa: E402
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
+import matplotlib.pyplot as _mpl_plt  # noqa: E402
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._formatters import fmt_stat, fmt_sym  # noqa: E402
 
@@ -200,7 +197,7 @@ def test_ttest_1samp(
     # Generate plot if requested
     if plot:
         if ax is None:
-            _, ax = stx.plt.subplots()
+            _, ax = _mpl_plt.subplots()
         _plot_ttest_1samp(x, popmean, var_x, result, ax)
 
     # Convert to requested format
@@ -247,6 +244,7 @@ def _plot_ttest_1samp(x, popmean, var_x, result, ax):
 
 def main(args):
     """Demonstrate one-sample t-test functionality."""
+    import scitex as stx
     logger.info("Demonstrating one-sample t-test")
 
     # Set random seed
@@ -291,6 +289,8 @@ def parse_args():
 
 def run_main():
     """Initialize SciTeX framework and run main."""
+    import scitex as stx
+
     import sys  # noqa: E402
 
     import matplotlib.pyplot as plt  # noqa: E402

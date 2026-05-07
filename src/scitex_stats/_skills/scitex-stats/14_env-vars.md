@@ -1,8 +1,10 @@
 ---
-name: scitex-stats-env-vars
-description: Environment variables read by scitex-stats at import / runtime. Follow SCITEX_<MODULE>_* convention — see general/10_arch-environment-variables.md.
-tags: [scitex-stats, scitex-package]
+description: |
+  [TOPIC] Env Vars
+  [DETAILS] see general/10_arch-environment-variables.md.
+tags: [scitex-stats-env-vars, scitex-stats]
 ---
+
 
 # scitex-stats — Environment Variables
 

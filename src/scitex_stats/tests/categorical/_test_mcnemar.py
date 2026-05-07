@@ -27,10 +27,7 @@ from typing import Literal, Optional, Union
 import matplotlib.axes
 import numpy as np
 import pandas as pd
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
+import matplotlib.pyplot as _mpl_plt  # noqa: E402
 from scipy import stats
 
 from scitex_stats._logging import getLogger
@@ -329,7 +326,7 @@ def test_mcnemar(  # noqa: C901
     # Generate plot if requested
     if plot:
         if ax is None:
-            fig, axes = stx.plt.subplots(1, 3, figsize=(12, 4))
+            fig, axes = _mpl_plt.subplots(1, 3, figsize=(12, 4))
             _plot_mcnemar_full(observed_array, result, var_before, var_after, axes)
         else:
             _plot_mcnemar_simple(observed_array, result, var_before, var_after, ax)
@@ -371,7 +368,7 @@ def _plot_mcnemar_full(observed, result, var_before, var_after, axes):
     ax.set_xlabel(var_after)
     ax.set_ylabel(var_before)
     ax.set_title("Contingency Table")
-    stx.plt.colorbar(im, ax=ax)
+    _mpl_plt.colorbar(im, ax=ax)
 
     # Panel 2: Discordant pairs comparison
     ax = axes[1]

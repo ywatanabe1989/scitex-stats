@@ -18,10 +18,7 @@ from typing import Literal, Optional, Union
 import matplotlib.axes
 import numpy as np
 import pandas as pd
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
+import matplotlib.pyplot as _mpl_plt  # noqa: E402
 from scipy import stats
 
 from scitex_stats._logging import getLogger
@@ -247,7 +244,7 @@ def test_spearman(  # noqa: C901
     # Generate plot if requested
     if plot:
         if ax is None:
-            fig, ax = stx.plt.subplots()
+            fig, ax = _mpl_plt.subplots()
         _plot_spearman(x, y, result, var_x, var_y, ax)
 
     # Convert to requested format
@@ -289,6 +286,7 @@ def _plot_spearman(x, y, result, var_x, var_y, ax) -> None:
 
 def main(args) -> int:
     """Demonstrate Spearman correlation test functionality."""
+    import scitex as stx
     logger.info("=" * 70)
     logger.info("Spearman's Rank Correlation Test - Examples")
     logger.info("=" * 70)
@@ -302,8 +300,8 @@ def main(args) -> int:
     logger.info(force_dataframe(result1))
 
     # Save the figure using plt.gcf()
-    stx.io.save(stx.plt.gcf(), "example1_perfect_monotonic.jpg")
-    stx.plt.close()
+    stx.io.save(_mpl_plt.gcf(), "example1_perfect_monotonic.jpg")
+    _mpl_plt.close()
 
     # Example 2: Outlier comparison
     logger.info("\nExample 2: Robustness to outliers")
@@ -328,8 +326,8 @@ def main(args) -> int:
     y3 = np.log(x3) + np.random.normal(0, 0.2, size=50)
     result3 = test_spearman(x3, y3, var_x="x", var_y="log(x)", plot=True, verbose=True)
     logger.info(force_dataframe(result3))
-    stx.io.save(stx.plt.gcf(), "example3_logarithmic.jpg")
-    stx.plt.close()
+    stx.io.save(_mpl_plt.gcf(), "example3_logarithmic.jpg")
+    _mpl_plt.close()
 
     # Example 4: Ordinal data
     logger.info("\nExample 4: Ordinal data (Likert scales)")
@@ -347,8 +345,8 @@ def main(args) -> int:
         verbose=True,
     )
     logger.info(force_dataframe(result4))
-    stx.io.save(stx.plt.gcf(), "example4_ordinal.jpg")
-    stx.plt.close()
+    stx.io.save(_mpl_plt.gcf(), "example4_ordinal.jpg")
+    _mpl_plt.close()
 
     # Example 5: One-tailed test
     logger.info("\nExample 5: One-tailed test (expect positive correlation)")
@@ -371,8 +369,8 @@ def main(args) -> int:
         x6, y6, var_x="x", var_y="exp(0.5x)", plot=True, verbose=True
     )
     logger.info(force_dataframe(result6))
-    stx.io.save(stx.plt.gcf(), "example6_exponential.jpg")
-    stx.plt.close()
+    stx.io.save(_mpl_plt.gcf(), "example6_exponential.jpg")
+    _mpl_plt.close()
 
     # Example 7: No correlation
     logger.info("\nExample 7: No correlation")
@@ -426,8 +424,8 @@ def main(args) -> int:
         x10, y10, var_x="Predictor", var_y="Outcome", plot=True, verbose=True
     )
     logger.info(force_dataframe(result10))
-    stx.io.save(stx.plt.gcf(), "example10_large_dataset.jpg")
-    stx.plt.close()
+    stx.io.save(_mpl_plt.gcf(), "example10_large_dataset.jpg")
+    _mpl_plt.close()
 
     logger.info(f"\n{'=' * 70}")
     logger.info("All examples completed")
@@ -445,6 +443,8 @@ def parse_args():
 
 def run_main() -> None:
     """Initialize SciTeX framework and run main."""
+    import scitex as stx
+
     import sys
 
     import matplotlib.pyplot as plt

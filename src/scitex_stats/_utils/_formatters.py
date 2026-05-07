@@ -25,10 +25,7 @@ from typing import Union  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
+import matplotlib.pyplot as _mpl_plt  # noqa: E402
 from scitex_stats._logging import getLogger
 
 logger = getLogger(__name__)
@@ -312,6 +309,7 @@ def _p2stars_scalar(
 
 def main(args):
     """Demonstrate p2stars functionality."""
+    import scitex as stx
     logger.info("Demonstrating p2stars functionality")
 
     # Example 1: Single p-values
@@ -357,7 +355,7 @@ def main(args):
 
     # Create visualization
     logger.info("\n=== Creating visualization ===")
-    fig, ax = stx.plt.subplots(figsize=(10, 6))
+    fig, ax = _mpl_plt.subplots(figsize=(10, 6))
 
     # Generate range of p-values
     pvals = np.logspace(-4, 0, 100)  # 0.0001 to 1.0
@@ -415,6 +413,8 @@ def parse_args():
 
 def run_main():
     """Initialize SciTeX framework and run main."""
+    import scitex as stx
+
     global CONFIG, sys, plt, rng
 
     import sys

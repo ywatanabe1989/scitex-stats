@@ -4,12 +4,14 @@
 
 from pathlib import Path
 
+import scitex as stx
 from scitex_stats import correct
 
 OUT_DIR = Path(__file__).parent / "03_multiple_comparison_out"
 
 
-def main():
+@stx.session
+def main(CONFIG=stx.session.INJECTED, logger=stx.session.INJECTED):
     OUT_DIR.mkdir(exist_ok=True)
 
     # Simulate p-values from multiple tests
