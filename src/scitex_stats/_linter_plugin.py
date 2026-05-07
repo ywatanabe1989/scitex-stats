@@ -7,7 +7,7 @@ discovers these rules automatically when scitex-stats is installed.
 
 def get_plugin():
     """Return scitex-stats linter rules and call mappings."""
-    from scitex_linter._rules._base import Rule
+    from scitex_dev.linter._rules._base import Rule
 
     ST001 = Rule(
         id="STX-ST001",
