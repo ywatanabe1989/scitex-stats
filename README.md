@@ -9,7 +9,7 @@
 <p align="center"><b>Publication-ready statistical testing with 23 tests, effect sizes, power analysis, and APA formatting</b></p>
 
 <p align="center">
-  <a href="https://scitex-stats.readthedocs.io/">Full Documentation</a> · <code>pip install scitex-stats</code>
+  <a href="https://scitex-stats.readthedocs.io/">Full Documentation</a> · <code>uv pip install scitex-stats[all]</code>
 </p>
 
 <!-- scitex-badges:start -->
