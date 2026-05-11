@@ -116,6 +116,21 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 addopts = "-v --tb=short --cov=scitex_stats --cov-report=term-missing"
 
+[tool.coverage.run]
+# parallel + multiprocessing concurrency so child Python interpreters
+# (test_demos spawns demos via `python -m`, test_examples_smoke runs
+# `jupyter nbconvert --execute`) emit their own `.coverage.<host>.<pid>`
+# data files. pytest-cov combines them at session end.
+parallel = true
+source = ["scitex_stats"]
+concurrency = ["multiprocessing", "thread"]
+
+[tool.coverage.report]
+exclude_also = [
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+
 [tool.ruff]
 line-length = 88
 target-version = "py310"
