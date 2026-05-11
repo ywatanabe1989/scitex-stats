@@ -1,27 +1,34 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# File: /home/ywatanabe/proj/scitex-stats/tests/examples/test_01_basic_ttest.py
+"""Smoke test for examples/01_basic_ttest.ipynb.
 
-"""Smoke test for examples/01_basic_ttest.py.
-
-Per scitex-dev audit-project PS303: every example must have a matching
-test under tests/examples/. Validates the example parses cleanly without
-running the full demo.
+PS-505: notebook smoke-tests must drive `jupyter nbconvert --execute`
+(or pytest-nbval) so cells actually run end-to-end.
 """
 
 import subprocess
 import sys
 from pathlib import Path
 
-EXAMPLE = Path(__file__).resolve().parents[2] / "examples" / "01_basic_ttest.py"
+NOTEBOOK = Path(__file__).resolve().parents[2] / "examples" / "01_basic_ttest.ipynb"
 
 
-def test_example_exists():
-    assert EXAMPLE.exists(), f"missing example: {EXAMPLE}"
+def test_notebook_exists():
+    assert NOTEBOOK.exists(), f"missing notebook: {NOTEBOOK}"
 
 
-def test_compiles():
+def test_notebook_executes(tmp_path):
     subprocess.run(
-        [sys.executable, "-m", "py_compile", str(EXAMPLE)],
+        [
+            sys.executable,
+            "-m",
+            "jupyter",
+            "nbconvert",
+            "--to",
+            "notebook",
+            "--execute",
+            "--output",
+            str(tmp_path / "out.ipynb"),
+            str(NOTEBOOK),
+        ],
         check=True,
+        timeout=180,
     )

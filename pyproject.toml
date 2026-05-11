@@ -72,6 +72,8 @@ dev = [
     # _skills/general/01_ecosystem_02_dependency-and-version-pinning.md
     # `[dev]` extras completeness.
     "figrecipe",          # tested via [figrecipe] integration tests
+    "nbconvert>=7.0",     # executes example .ipynb in tests (PS-505)
+    "ipykernel>=6.0",     # kernel for nbconvert --execute
 ]
 docs = [
     "sphinx>=7.0",

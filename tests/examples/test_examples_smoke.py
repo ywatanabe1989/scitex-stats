@@ -1,20 +1,34 @@
-"""Smoke tests: every example script must run to completion."""
+"""Smoke tests: every example notebook must execute end-to-end.
+
+PS-505: drive `jupyter nbconvert --execute` so cells actually run.
+"""
 
 import subprocess
 import sys
 from pathlib import Path
 
-EXAMPLES = sorted(Path(__file__).resolve().parents[2].joinpath("examples").glob("*.py"))
+import pytest
+
+NOTEBOOKS = sorted(
+    Path(__file__).resolve().parents[2].joinpath("examples").glob("*.ipynb")
+)
 
 
-def test_examples_smoke(tmp_path):
-    assert EXAMPLES, "no example scripts found"
-    for ex in EXAMPLES:
-        r = subprocess.run(
-            [sys.executable, str(ex)],
-            cwd=tmp_path,
-            capture_output=True,
-            text=True,
-            timeout=120,
-        )
-        assert r.returncode == 0, f"{ex.name} failed: {r.stderr}"
+@pytest.mark.parametrize("nb", NOTEBOOKS, ids=lambda p: p.name)
+def test_notebook_executes(nb, tmp_path):
+    subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "jupyter",
+            "nbconvert",
+            "--to",
+            "notebook",
+            "--execute",
+            "--output",
+            str(tmp_path / nb.name),
+            str(nb),
+        ],
+        check=True,
+        timeout=180,
+    )
