@@ -163,6 +163,8 @@ flowchart TB
     style Res fill:#4a90d9,stroke:#2c3e50,color:#fff
 ```
 
+<p align="center"><sub><b>Figure 1.</b> Data flow and the four surfaces (Python, CLI, MCP, Skills) that share the same <code>run_test</code> engine. Every interface emits the unified result dict, which downstream formatters and corrections consume.</sub></p>
+
 ### 3. Effect sizes, power, corrections
 
 Every numeric result is built from the same primitives. Use them
@@ -225,19 +227,47 @@ ss.run_test("shapiro", data=group1)         # normality check, same result dict 
 
 ## Available Tests
 
-| Category | Tests |
-|----------|-------|
-| **Parametric** | t-test (ind, paired, 1-sample), ANOVA (1-way, RM, 2-way) |
-| **Nonparametric** | Mann-Whitney U, Wilcoxon, Kruskal-Wallis, Friedman, Brunner-Munzel |
-| **Correlation** | Pearson, Spearman, Kendall, Theil-Sen |
-| **Categorical** | Chi-squared, Fisher exact, McNemar, Cochran's Q |
-| **Normality** | Shapiro-Wilk, Kolmogorov-Smirnov (1-sample, 2-sample) |
+```mermaid
+flowchart LR
+    All[23 tests] --> P[Parametric]
+    All --> N[Nonparametric]
+    All --> C[Correlation]
+    All --> Cat[Categorical]
+    All --> Norm[Normality]
+
+    P --> P1[t-test ind / paired / 1-samp]
+    P --> P2[ANOVA 1-way / RM / 2-way]
+
+    N --> N1[Mann-Whitney U]
+    N --> N2[Wilcoxon]
+    N --> N3[Kruskal-Wallis]
+    N --> N4[Friedman]
+    N --> N5[Brunner-Munzel]
+
+    C --> C1[Pearson]
+    C --> C2[Spearman]
+    C --> C3[Kendall]
+    C --> C4[Theil-Sen]
+
+    Cat --> Cat1[Chi-squared]
+    Cat --> Cat2[Fisher exact]
+    Cat --> Cat3[McNemar]
+    Cat --> Cat4[Cochran's Q]
+
+    Norm --> Norm1[Shapiro-Wilk]
+    Norm --> Norm2[Kolmogorov-Smirnov 1-samp]
+    Norm --> Norm3[Kolmogorov-Smirnov 2-samp]
+
+    style All fill:#4a90d9,stroke:#2c3e50,color:#fff
+```
+
+<p align="center"><sub><b>Figure 2.</b> The 23 tests grouped by family. Every leaf is callable through the same <code>run_test(name, ...)</code> dispatcher and returns the unified result dict (Figure 1).</sub></p>
 
 <p align="center">
   <img src="docs/decision_flowchart.png" alt="Statistical test decision flowchart" width="700">
 </p>
 
-<p align="center"><sub><b>Figure 2.</b> Decision flowchart for choosing a statistical test. Start with your data type, then follow the branches based on number of groups and study design. Brunner-Munzel is the recommended default for two-group comparisons — robust to unequal variances and non-normality.</sub></p>
+<p align="center"><sub><b>Figure 3.</b> Decision flowchart for choosing a statistical test. Start with your data type, then follow the branches based on number of groups and study design. Brunner-Munzel is the recommended default for two-group comparisons — robust to unequal variances and non-normality.</sub></p>
 
 ## Examples
 
