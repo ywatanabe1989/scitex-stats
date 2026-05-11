@@ -34,39 +34,6 @@
 | 2 | **Test selection requires expertise** -- non-parametric vs parametric, paired vs independent, one-way vs repeated ANOVA | **Auto-recommend** -- `stx.stats.recommend_tests(data)` inspects distributions and suggests the right 2-3 tests |
 | 3 | **APA formatting is manual** -- every paper spells out `t(58) = 2.34, p = .021, d = 0.60` by hand | **`format_results(style="apa")`** -- typed output strings in APA, MLA, or LaTeX directly from the result dataframe |
 
-## Problem
-
-Statistical testing in Python is fragmented across `scipy`, `statsmodels`, and `pingouin` — each with different interfaces and output conventions. Getting publication-ready results requires substantial manual work: computing effect sizes, running power analysis, formatting to APA or journal standards. AI agents face a further barrier: they cannot call Python libraries directly and need structured, tool-based access.
-
-## Solution
-
-scitex-stats provides a unified interface that covers the full statistical workflow:
-
-- **23 statistical tests** with automatic recommendation based on data characteristics
-- **Built-in effect sizes** (Cohen's d, Cliff's delta, eta squared), **power analysis**, and **APA-formatted output**
-- **Four interfaces** — Python API, CLI, MCP server, and Skills — so human researchers and AI agents use the same engine
-
-```mermaid
-flowchart LR
-    A[Raw Data] --> B{Recommend Test}
-    B --> C[Run Test]
-    C --> D[Effect Size]
-    C --> E[Power Analysis]
-    D --> F[APA Format]
-    E --> F
-    F --> G[Publication-Ready Result]
-
-    style A fill:#4a90d9,stroke:#2c3e50,color:#fff
-    style B fill:#f5a623,stroke:#2c3e50,color:#fff
-    style C fill:#27ae60,stroke:#2c3e50,color:#fff
-    style D fill:#8e44ad,stroke:#2c3e50,color:#fff
-    style E fill:#8e44ad,stroke:#2c3e50,color:#fff
-    style F fill:#e74c3c,stroke:#2c3e50,color:#fff
-    style G fill:#2c3e50,stroke:#1a252f,color:#fff
-```
-
-*Figure 1. Statistical testing workflow. scitex-stats automates the full pipeline from raw data to publication-ready results: test recommendation based on data characteristics, test execution with effect size and power analysis, and APA-formatted output.*
-
 Every test returns a **unified result dictionary** with consistent keys:
 
 ```json
@@ -93,19 +60,6 @@ Every test returns a **unified result dictionary** with consistent keys:
 *Table 3. Unified result format. All 23 tests return the same dictionary structure with test statistics, p-value, effect size with interpretation, statistical power, and APA-formatted string.*
 
 ## Architecture
-
-```
-scitex_stats/
-├── _recommend.py        # StatContext + recommend_tests()
-├── _run_test.py         # Unified test runner (23 tests)
-├── effect_sizes/        # Cohen's d, Cliff's delta, eta², etc.
-├── power/               # Power analysis + sample-size calculators
-├── correct/             # FDR / Bonferroni / Holm corrections
-├── posthoc/             # Tukey, Dunn, Nemenyi
-├── format/              # APA / MLA / LaTeX / Nature formatters
-├── _cli/                # Click group: scitex-stats ...
-└── _mcp/                # MCP server: scitex-stats mcp start
-```
 
 ```mermaid
 flowchart TB
@@ -142,14 +96,24 @@ flowchart TB
 Requires Python >= 3.10.
 
 ```bash
-pip install scitex-stats
+uv pip install scitex-stats[all]
+```
+
+<details>
+<summary>Other install options</summary>
+
+```bash
+# Core only
+uv pip install scitex-stats
 
 # With MCP server for AI agents
-pip install scitex-stats[mcp]
+uv pip install scitex-stats[mcp]
 
-# Everything
+# pip (slower resolver)
 pip install scitex-stats[all]
 ```
+
+</details>
 
 ## Quickstart
 
