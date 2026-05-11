@@ -1,10 +1,6 @@
 #!/bin/bash
 # File: examples/00_run_all.sh
 # Re-execute every example notebook in place (refreshes outputs).
-#
-# Each notebook is paired with a jupytext percent-format .py file
-# (see the YAML front-matter in 0*.py). Edit either side — they sync
-# whenever jupytext or jupyter touches the file.
 
 set -e
 
