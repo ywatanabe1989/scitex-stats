@@ -7,6 +7,11 @@ name: Sync main with release tag
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to sync main with (e.g. v0.2.18)'
+        required: true
 
 jobs:
   ff-main:
@@ -25,12 +30,16 @@ jobs:
           set -e
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          TAG="${{ github.ref_name }}"
+          TAG="${{ inputs.tag || github.ref_name }}"
           git fetch origin --tags
           if git merge --ff-only "$TAG"; then
             echo "Fast-forwarded main to $TAG."
           else
-            git merge --no-ff "$TAG" -m "merge: sync main with $TAG"
+            # Tag wins on binary-file conflicts (e.g. generated
+            # sphinx pickles where main and develop both rewrote
+            # the same opaque bytes). The tag is the canonical
+            # release artifact, so `-X theirs` is correct.
+            git merge --no-ff -X theirs "$TAG" -m "merge: sync main with $TAG"
             echo "Created merge commit for $TAG."
           fi
           git push origin main
