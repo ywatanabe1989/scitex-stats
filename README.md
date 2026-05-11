@@ -263,11 +263,51 @@ flowchart LR
 
 <p align="center"><sub><b>Figure 2.</b> The 23 tests grouped by family. Every leaf is callable through the same <code>run_test(name, ...)</code> dispatcher and returns the unified result dict (Figure 1).</sub></p>
 
-<p align="center">
-  <img src="docs/decision_flowchart.png" alt="Statistical test decision flowchart" width="700">
-</p>
+```mermaid
+flowchart TB
+    Start([Choose a test]) --> Outcome{Outcome type?}
 
-<p align="center"><sub><b>Figure 3.</b> Decision flowchart for choosing a statistical test. Start with your data type, then follow the branches based on number of groups and study design. Brunner-Munzel is the recommended default for two-group comparisons — robust to unequal variances and non-normality.</sub></p>
+    Outcome -->|Continuous| K{# groups?}
+    Outcome -->|Ordinal / ranked| K
+    Outcome -->|Categorical / counts| Cat{Design?}
+    Outcome -->|Correlation| Corr{Variable types?}
+
+    K -->|1| OneSamp{Normal?}
+    OneSamp -->|Yes| OS1[t-test 1-sample]
+    OneSamp -->|No| OS2[Wilcoxon signed-rank]
+
+    K -->|2| Two{Paired?}
+    Two -->|No| TwoInd{Normal + equal var?}
+    Two -->|Yes| TwoP{Normal diffs?}
+    TwoInd -->|Yes| TI1[t-test ind / Welch]
+    TwoInd -->|No| TI2["Brunner-Munzel <b>★ default</b>"]
+    TwoP -->|Yes| TP1[t-test paired]
+    TwoP -->|No| TP2[Wilcoxon signed-rank]
+
+    K -->|3+| Many{Design?}
+    Many -->|Between| MB{Normal + equal var?}
+    Many -->|Within| MW{Normal?}
+    Many -->|2-factor| M2[ANOVA 2-way]
+    MB -->|Yes| MB1[ANOVA 1-way]
+    MB -->|No| MB2[Kruskal-Wallis]
+    MW -->|Yes| MW1[ANOVA repeated-measures]
+    MW -->|No| MW2[Friedman]
+
+    Cat -->|"2×2 unpaired"| Cat1[Fisher exact]
+    Cat -->|"larger contingency"| Cat2[Chi-squared]
+    Cat -->|"2×2 paired"| Cat3[McNemar]
+    Cat -->|"3+ repeated binary"| Cat4["Cochran's Q"]
+
+    Corr -->|Continuous + linear| Co1[Pearson]
+    Corr -->|Monotonic / ranks| Co2[Spearman]
+    Corr -->|Small n, ties| Co3[Kendall τ]
+    Corr -->|With outliers| Co4[Theil-Sen]
+
+    style TI2 fill:#27ae60,stroke:#2c3e50,color:#fff
+    style Start fill:#4a90d9,stroke:#2c3e50,color:#fff
+```
+
+<p align="center"><sub><b>Figure 3.</b> Decision flowchart for choosing a statistical test. Start from outcome type, branch by number of groups and study design. Brunner-Munzel (★) is the recommended default for two-group continuous comparisons — robust to unequal variances and non-normality.</sub></p>
 
 ## Examples
 

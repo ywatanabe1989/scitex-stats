@@ -218,7 +218,7 @@ def main(args):
     # Example 8: Export results
     logger.info("\n=== Example 8: Export results ===")
 
-    from scitex_stats._utils._normalizers import convert_results, force_dataframe
+    from scitex_stats._utils._normalizers import force_dataframe
 
     # Collect multiple test results
     test_results = [result1, result2, result3, result4, result5]
@@ -227,12 +227,12 @@ def main(args):
     df = force_dataframe(test_results)
     logger.info(f"\nDataFrame shape: {df.shape}")
 
-    # Export to Excel
-    convert_results(test_results, return_as="excel", path="./.dev/anova_tests.xlsx")  # type: ignore[arg-type]
+    # Export to Excel / CSV via pandas — convert_results doesn't emit
+    # those formats (dict / dataframe / markdown / json / latex / html / text only).
+    os.makedirs("./.dev", exist_ok=True)
+    df.to_excel("./.dev/anova_tests.xlsx", index=False)
     logger.info("Results exported to Excel")
-
-    # Export to CSV
-    convert_results(test_results, return_as="csv", path="./.dev/anova_tests.csv")  # type: ignore[arg-type]
+    df.to_csv("./.dev/anova_tests.csv", index=False)
     logger.info("Results exported to CSV")
 
     return 0

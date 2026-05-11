@@ -82,6 +82,11 @@ mgmt
 !examples/*_out/FINISHED_SUCCESS/**/202?Y-*
 !examples/*_out/FINISHED_SUCCESS/**/202?Y-*/**
 
+# In-package demo scripts (src/.../_demo_*.py) write _out/ siblings
+# next to themselves via scitex.io's caller-anchored routing. These
+# are runtime artefacts — don't track them.
+src/**/_demo_*_out/
+
 # TODO
 **/TODO.md
 

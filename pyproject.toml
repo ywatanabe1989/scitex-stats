@@ -74,6 +74,7 @@ dev = [
     "figrecipe",          # tested via [figrecipe] integration tests
     "nbconvert>=7.0",     # executes example .ipynb in tests (PS-505)
     "ipykernel>=6.0",     # kernel for nbconvert --execute
+    "openpyxl>=3.1",      # pandas to_excel used by _demo_*.py
 ]
 docs = [
     "sphinx>=7.0",

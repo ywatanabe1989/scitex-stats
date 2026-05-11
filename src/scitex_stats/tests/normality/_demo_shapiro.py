@@ -134,6 +134,8 @@ def run_main():
 
     import sys
 
+    import matplotlib.pyplot as plt  # noqa: E402, F401
+
     args = parse_args()
 
     CONFIG, sys.stdout, sys.stderr, plt, CC, rng_manager = stx.session.start(  # type: ignore[name-defined]
