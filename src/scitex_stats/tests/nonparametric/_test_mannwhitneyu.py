@@ -27,11 +27,11 @@ import os
 from typing import Literal, Optional, Union
 
 import matplotlib.axes
+import matplotlib.pyplot as _mpl_plt  # noqa: E402
 import numpy as np
 import pandas as pd
 from scipy import stats
 
-import matplotlib.pyplot as _mpl_plt  # noqa: E402
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._formatters import fmt_stat, fmt_sym
 
@@ -303,6 +303,7 @@ def _plot_mannwhitneyu(x, y, var_x, var_y, result, ax):
 def main(args):  # noqa: C901
     """Demonstrate Mann-Whitney U test functionality."""
     import scitex as stx
+
     logger.info("Demonstrating Mann-Whitney U test")
 
     # Set random seed
@@ -440,17 +441,16 @@ def main(args):  # noqa: C901
     # Example 9: Export results
     logger.info("\n=== Example 9: Export results ===")
 
-    from scitex_stats._utils._normalizers import convert_results, force_dataframe
+    from scitex_stats._utils._normalizers import force_dataframe
 
     test_results = [result1, result2, result3, result4, result6]
 
     df = force_dataframe(test_results)
     logger.info(f"\nDataFrame shape: {df.shape}")
 
-    convert_results(test_results, return_as="excel", path="./mannwhitneyu_tests.xlsx")  # type: ignore[arg-type]
+    df.to_excel("./mannwhitneyu_tests.xlsx", index=False)
     logger.info("Results exported to Excel")
-
-    convert_results(test_results, return_as="csv", path="./mannwhitneyu_tests.csv")  # type: ignore[arg-type]
+    df.to_csv("./mannwhitneyu_tests.csv", index=False)
     logger.info("Results exported to CSV")
 
     return 0
@@ -465,11 +465,10 @@ def parse_args():
 
 def run_main():
     """Initialize SciTeX framework and run main."""
-    import scitex as stx
-
     import sys
 
     import matplotlib.pyplot as plt
+    import scitex as stx
 
     args = parse_args()
 

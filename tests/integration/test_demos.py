@@ -16,6 +16,7 @@ import sys
 import pytest
 
 DEMOS = [
+    # `_demo_*.py` sibling files (extracted from oversized test modules).
     "scitex_stats.correct._demo_correct_bonferroni",
     "scitex_stats.correct._demo_correct_fdr",
     "scitex_stats.correct._demo_correct_sidak",
@@ -30,6 +31,18 @@ DEMOS = [
     "scitex_stats.tests.parametric._demo_anova",
     "scitex_stats.tests.parametric._demo_anova_2way",
     "scitex_stats.tests.parametric._demo_anova_rm",
+    # `_test_*.py` modules that embed their own demo via `if __name__
+    # == "__main__"`. Smoke-running them exercises the same paths a
+    # `_demo_*.py` would. Once a file is split, drop it from this list.
+    "scitex_stats.tests.correlation._test_kendall",
+    "scitex_stats.tests.correlation._test_spearman",
+    "scitex_stats.tests.nonparametric._test_kruskal",
+    "scitex_stats.tests.nonparametric._test_mannwhitneyu",
+    "scitex_stats.tests.normality._test_ks_1samp",
+    "scitex_stats.tests.normality._test_ks_2samp",
+    "scitex_stats.posthoc._dunnett",
+    "scitex_stats.posthoc._games_howell",
+    "scitex_stats.posthoc._tukey_hsd",
 ]
 
 

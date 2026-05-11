@@ -82,10 +82,14 @@ mgmt
 !examples/*_out/FINISHED_SUCCESS/**/202?Y-*
 !examples/*_out/FINISHED_SUCCESS/**/202?Y-*/**
 
-# In-package demo scripts (src/.../_demo_*.py) write _out/ siblings
-# next to themselves via scitex.io's caller-anchored routing. These
-# are runtime artefacts — don't track them.
+# In-package demo / test modules write _out/ siblings next to
+# themselves via scitex.io's caller-anchored routing when run via
+# `python -m`. These are runtime artefacts — don't track them.
 src/**/_demo_*_out/
+src/**/_test_*_out/
+src/**/_dunnett_out/
+src/**/_games_howell_out/
+src/**/_tukey_hsd_out/
 
 # TODO
 **/TODO.md

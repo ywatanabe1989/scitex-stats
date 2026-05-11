@@ -34,7 +34,6 @@ import pandas as pd
 from scipy import stats
 
 from scitex_stats._utils._formatters import p2stars
-from scitex_stats._utils._normalizers import convert_results
 
 
 def dunnett_critical_value(
@@ -474,7 +473,7 @@ if __name__ == "__main__":
     logger.info("\n[Example 7] Export results")
     logger.info("-" * 70)
 
-    convert_results(results, return_as="excel", path="./dunnett_results.xlsx")
+    pd.DataFrame(results).to_excel("./dunnett_results.xlsx", index=False)
     logger.info("Saved to: ./dunnett_results.xlsx")
 
     stx.session.close(

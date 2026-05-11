@@ -34,7 +34,6 @@ import pandas as pd
 from scipy import stats
 
 from scitex_stats._utils._formatters import p2stars
-from scitex_stats._utils._normalizers import convert_results
 
 
 def studentized_range_critical(k: int, df: int, alpha: float = 0.05) -> float:
@@ -366,7 +365,7 @@ if __name__ == "__main__":
     logger.info("\n[Example 4] Export results")
     logger.info("-" * 70)
 
-    convert_results(results, return_as="excel", path="./tukey_hsd_results.xlsx")
+    pd.DataFrame(results).to_excel("./tukey_hsd_results.xlsx", index=False)
     logger.info("Saved to: ./tukey_hsd_results.xlsx")
 
     stx.session.close(
