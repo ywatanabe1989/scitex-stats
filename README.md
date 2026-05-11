@@ -299,7 +299,7 @@ scitex-stats mcp start                       # Start MCP server
 </details>
 
 <details>
-<summary><strong>MCP Server ⭐</strong></summary>
+<summary><strong>MCP Server ⭐⭐</strong></summary>
 
 <br>
 
