@@ -1,6 +1,10 @@
 #!/bin/bash
 # File: examples/00_run_all.sh
-# Run all examples
+# Re-execute every example notebook in place (refreshes outputs).
+#
+# Each notebook is paired with a jupytext percent-format .py file
+# (see the YAML front-matter in 0*.py). Edit either side — they sync
+# whenever jupytext or jupyter touches the file.
 
 set -e
 
@@ -10,7 +14,7 @@ usage() {
     cat <<EOF
 Usage: $(basename "$0") [-h]
 
-Run all SciTeX Stats example scripts.
+Re-execute every example notebook in place via jupytext.
 
 Options:
   -h, --help    Show this help message and exit
@@ -27,11 +31,11 @@ esac
 echo "=== SciTeX Stats Examples ==="
 echo
 
-for script in "$SCRIPT_DIR"/[0-9][0-9]_*.py; do
-    [ -f "$script" ] || continue
-    echo "--- Running: $(basename "$script") ---"
-    python "$script"
+for nb in "$SCRIPT_DIR"/[0-9][0-9]_*.ipynb; do
+    [ -f "$nb" ] || continue
+    echo "--- Executing: $(basename "$nb") ---"
+    jupytext --execute --to ipynb "$nb" -o "$nb"
     echo
 done
 
-echo "=== All examples completed ==="
+echo "=== All notebooks executed ==="

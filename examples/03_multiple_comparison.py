@@ -1,72 +1,80 @@
-#!/usr/bin/env python3
-# File: examples/03_multiple_comparison.py
-"""Multiple comparison correction example."""
+# ---
+# jupyter:
+#   jupytext:
+#     formats: ipynb,py:percent
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#   kernelspec:
+#     display_name: Python 3
+#     language: python
+#     name: python3
+# ---
 
-from pathlib import Path
+# %% [markdown]
+# # scitex_stats — Multiple Comparison Correction Quick Start
+#
+# Running many tests inflates the false-positive rate. `scitex_stats.correct` adjusts p-values across a family of comparisons — FDR (Benjamini-Hochberg), Bonferroni, Holm, and more.
+#
+# **What this notebook covers**
+#
+# 1. Build a family of pairwise comparison results.
+# 2. Apply FDR (Benjamini-Hochberg) correction.
+# 3. Read off the adjusted p-values and rejection decisions.
+#
+# Companion notebooks:
+# - `01_basic_ttest.ipynb` — the unified result dict each entry comes from
+# - `02_test_recommendation.ipynb` — picking the right test in the first place
 
-import scitex as stx
+# %%
+import pandas as pd
+
 from scitex_stats import correct
 
-OUT_DIR = Path(__file__).parent / "03_multiple_comparison_out"
+# %% [markdown]
+# ## 1. A family of pairwise comparisons
+#
+# `correct_fdr` takes a list of result-dicts that each carry a `pvalue` key. The other keys (`var_x`, `var_y`, etc.) are preserved on the output so the corrected and original entries line up.
 
+# %%
+results = [
+    {"pvalue": 0.010, "var_x": "A", "var_y": "B"},
+    {"pvalue": 0.040, "var_x": "A", "var_y": "C"},
+    {"pvalue": 0.030, "var_x": "A", "var_y": "D"},
+    {"pvalue": 0.200, "var_x": "B", "var_y": "C"},
+    {"pvalue": 0.005, "var_x": "B", "var_y": "D"},
+    {"pvalue": 0.080, "var_x": "C", "var_y": "D"},
+]
+pd.DataFrame(results)
 
-@stx.session
-def main(CONFIG=stx.session.INJECTED, logger=stx.session.INJECTED):
-    OUT_DIR.mkdir(exist_ok=True)
+# %% [markdown]
+# ## 2. Apply FDR (Benjamini-Hochberg)
+#
+# BH controls the **false discovery rate** — the expected proportion of false positives among the rejected hypotheses — at level α. It is the default for exploratory pairwise comparisons.
 
-    # Simulate p-values from multiple tests
-    # correct_fdr expects a list of dicts with 'pvalue' keys
-    results = [
-        {"pvalue": 0.01, "var_x": "A", "var_y": "B"},
-        {"pvalue": 0.04, "var_x": "A", "var_y": "C"},
-        {"pvalue": 0.03, "var_x": "A", "var_y": "D"},
-        {"pvalue": 0.20, "var_x": "B", "var_y": "C"},
-        {"pvalue": 0.005, "var_x": "B", "var_y": "D"},
-        {"pvalue": 0.08, "var_x": "C", "var_y": "D"},
-    ]
+# %%
+corrected = correct.correct_fdr(results, alpha=0.05, method="bh", verbose=False)
+pd.DataFrame(corrected)
 
-    # Apply FDR correction (Benjamini-Hochberg)
-    corrected = correct.correct_fdr(results, alpha=0.05, method="bh", verbose=False)
+# %% [markdown]
+# ## 3. Read the adjusted decisions
+#
+# Side-by-side comparison of original and adjusted p-values, with the rejection decision at α=0.05.
 
-    lines = [
-        "Multiple Comparison Correction (FDR-BH)",
-        "=" * 50,
-        f"{'Comparison':>10} {'Original':>10} {'Adjusted':>10} {'Rejected':>10}",
-        "-" * 45,
-    ]
-    for orig, adj in zip(results, corrected):
-        label = f"{orig['var_x']}v{orig['var_y']}"
-        sig = "Yes" if adj["rejected"] else "No"
-        lines.append(
-            f"{label:>10} {orig['pvalue']:>10.4f} {adj['pvalue_adjusted']:>10.4f} {sig:>10}"
-        )
-    output = "\n".join(lines)
-    print(output)
-
-    (OUT_DIR / "results.txt").write_text(output + "\n")
-
-    # Save as JSON
-    import json
-
-    json_data = {
-        "method": "FDR (Benjamini-Hochberg)",
-        "alpha": 0.05,
-        "results": [
-            {
-                "comparison": f"{orig['var_x']}v{orig['var_y']}",
-                "pvalue_original": orig["pvalue"],
-                "pvalue_adjusted": adj["pvalue_adjusted"],
-                "rejected": adj["rejected"],
-            }
-            for orig, adj in zip(results, corrected)
-        ],
+# %%
+table = pd.DataFrame(
+    {
+        "comparison": [f"{o['var_x']} vs {o['var_y']}" for o in results],
+        "p (original)": [o["pvalue"] for o in results],
+        "p (adjusted)": [c["pvalue_adjusted"] for c in corrected],
+        "rejected": [c["rejected"] for c in corrected],
     }
-    (OUT_DIR / "results.json").write_text(json.dumps(json_data, indent=2) + "\n")
+)
+table
 
-    print(f"\nSaved to {OUT_DIR}/")
-    print("  results.txt  — human-readable summary")
-    print("  results.json — structured data")
-
-
-if __name__ == "__main__":
-    main()
+# %% [markdown]
+# ## Where to next
+#
+# - **`01_basic_ttest.ipynb`** — the unified result dict that feeds these comparisons.
+# - **`02_test_recommendation.ipynb`** — choosing the per-comparison test before correction.
+# - `correct.correct_bonferroni`, `correct.correct_holm` — same interface, stricter family-wise control.
