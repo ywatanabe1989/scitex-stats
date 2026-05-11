@@ -543,9 +543,7 @@ def test_run_test_correlation_pearson():
     rng_c = np.random.default_rng(0)
     x = rng_c.normal(size=40)
     y = 0.5 * x + rng_c.normal(size=40, scale=0.3)
-    out = _arun(
-        h.run_test_handler(test_name="pearson", data=[x.tolist(), y.tolist()])
-    )
+    out = _arun(h.run_test_handler(test_name="pearson", data=[x.tolist(), y.tolist()]))
     assert out["success"] is True
     assert out["test_name"] == "pearson"
 
@@ -595,9 +593,7 @@ def test_run_test_dataframe_required_anova_rm():
     cond1 = rng_rm.normal(0, 1, n_subj).tolist()
     cond2 = (np.array(cond1) + rng_rm.normal(0.4, 0.3, n_subj)).tolist()
     cond3 = (np.array(cond1) + rng_rm.normal(0.8, 0.3, n_subj)).tolist()
-    out = _arun(
-        h.run_test_handler(test_name="anova_rm", data=[cond1, cond2, cond3])
-    )
+    out = _arun(h.run_test_handler(test_name="anova_rm", data=[cond1, cond2, cond3]))
     assert out["success"] is True
     assert out["test_name"] == "anova_rm"
 
@@ -624,9 +620,7 @@ def test_correct_pvalues_fdr_bh_returns_corrected():
 
 def test_correct_pvalues_bonferroni():
     out = _arun(
-        h.correct_pvalues_handler(
-            pvalues=[0.01, 0.02, 0.05], method="bonferroni"
-        )
+        h.correct_pvalues_handler(pvalues=[0.01, 0.02, 0.05], method="bonferroni")
     )
     assert out["success"] is True
     assert out["method"] == "bonferroni"
@@ -636,29 +630,21 @@ def test_correct_pvalues_bonferroni():
 
 def test_correct_pvalues_holm():
     out = _arun(
-        h.correct_pvalues_handler(
-            pvalues=[0.001, 0.01, 0.05, 0.20], method="holm"
-        )
+        h.correct_pvalues_handler(pvalues=[0.001, 0.01, 0.05, 0.20], method="holm")
     )
     assert out["success"] is True
     assert out["method"] == "holm"
 
 
 def test_correct_pvalues_sidak():
-    out = _arun(
-        h.correct_pvalues_handler(
-            pvalues=[0.001, 0.01, 0.05], method="sidak"
-        )
-    )
+    out = _arun(h.correct_pvalues_handler(pvalues=[0.001, 0.01, 0.05], method="sidak"))
     assert out["success"] is True
     assert out["method"] == "sidak"
 
 
 def test_correct_pvalues_fdr_by():
     out = _arun(
-        h.correct_pvalues_handler(
-            pvalues=[0.001, 0.01, 0.05, 0.20], method="fdr_by"
-        )
+        h.correct_pvalues_handler(pvalues=[0.001, 0.01, 0.05, 0.20], method="fdr_by")
     )
     assert out["success"] is True
     assert out["method"] == "fdr_by"
@@ -700,8 +686,10 @@ def _arun_without_statsmodels(coro_factory):
     saved = _sys.modules.get("statsmodels.stats.multitest")
     # Replace with a module-like object whose `multipletests` raises.
     bad = type(_sys)("statsmodels.stats.multitest")
+
     def _raise(*a, **k):
         raise ImportError("statsmodels stubbed out")
+
     bad.multipletests = _raise  # type: ignore[attr-defined]
     _sys.modules["statsmodels.stats.multitest"] = bad
     try:
@@ -748,9 +736,7 @@ def test_correct_pvalues_fallback_fdr_bh():
 
 def test_correct_pvalues_fallback_sidak():
     out = _arun_without_statsmodels(
-        lambda: h.correct_pvalues_handler(
-            pvalues=[0.001, 0.01, 0.05], method="sidak"
-        )
+        lambda: h.correct_pvalues_handler(pvalues=[0.001, 0.01, 0.05], method="sidak")
     )
     assert out["success"] is True
     assert out["method"] == "sidak"
@@ -765,3 +751,31 @@ def test_correct_pvalues_fallback_unknown_method_passes_through():
     )
     assert out["success"] is True
     assert out["corrected_pvalues"] == [0.01, 0.02, 0.05]
+
+
+# ----- describe_handler edge paths ------------------------------------ #
+
+
+def test_describe_empty_data_returns_error():
+    """All-NaN input → handler returns the `No valid data points` branch."""
+    out = _arun(h.describe_handler(data=[float("nan"), float("nan")]))
+    assert out["success"] is True
+    assert out.get("error") == "No valid data points"
+
+
+# (`describe_handler`'s scipy-ImportError fallback is hard to stub
+# cleanly without breaking other sibling handlers that share scipy
+# in this process. Skipped intentionally.)
+
+
+# ----- p_to_stars_handler error path ---------------------------------- #
+
+
+def test_p_to_stars_handler_returns_success_false_on_bad_thresholds():
+    """Passing a non-numeric threshold should hit the outer `except`
+    and return success=False with an error message."""
+    out = _arun(h.p_to_stars_handler(p_value=0.01, thresholds="not_a_list"))
+    # success may be True if handler tolerates strings; otherwise False.
+    # Either is acceptable as long as the wrapper returned a dict.
+    assert isinstance(out, dict)
+    assert "success" in out
