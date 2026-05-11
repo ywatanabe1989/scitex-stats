@@ -498,3 +498,105 @@ def test_run_test_rejects_missing_data():
     out = _arun(h.run_test_handler(test_name="ttest_ind"))
     assert out["success"] is False
     assert "data" in out["error"].lower()
+
+
+# ----- run_test_handler: remaining branches ---------------------------- #
+
+
+_T_RNG = np.random.default_rng(11)
+
+
+def test_run_test_multi_group_anova():
+    groups = [_T_RNG.normal(0, 1, 25).tolist() for _ in range(3)]
+    out = _arun(h.run_test_handler(test_name="anova", data=groups))
+    assert out["success"] is True
+    assert out["test_name"] == "anova"
+    assert "statistic" in out
+
+
+def test_run_test_multi_group_kruskal():
+    groups = [_T_RNG.normal(0, 1, 25).tolist() for _ in range(3)]
+    out = _arun(h.run_test_handler(test_name="kruskal", data=groups))
+    assert out["success"] is True
+    assert out["test_name"] == "kruskal"
+
+
+def test_run_test_contingency_chi2():
+    table = [[10, 20], [30, 40]]
+    out = _arun(h.run_test_handler(test_name="chi2", data=table))
+    assert out["success"] is True
+    assert out["test_name"] == "chi2"
+
+
+def test_run_test_contingency_fisher_exact():
+    table = [[2, 5], [8, 3]]
+    out = _arun(
+        h.run_test_handler(
+            test_name="fisher_exact", data=table, alternative="two-sided"
+        )
+    )
+    assert out["success"] is True
+    assert out["test_name"] == "fisher_exact"
+
+
+def test_run_test_correlation_pearson():
+    rng_c = np.random.default_rng(0)
+    x = rng_c.normal(size=40)
+    y = 0.5 * x + rng_c.normal(size=40, scale=0.3)
+    out = _arun(
+        h.run_test_handler(test_name="pearson", data=[x.tolist(), y.tolist()])
+    )
+    assert out["success"] is True
+    assert out["test_name"] == "pearson"
+
+
+def test_run_test_data_file_path(tmp_path):
+    import pandas as _pd
+
+    csv = tmp_path / "two_cols.csv"
+    _pd.DataFrame(
+        {"a": [1.0, 2.0, 3.0, 4.0, 5.0], "b": [2.0, 3.0, 5.0, 6.0, 7.0]}
+    ).to_csv(csv, index=False)
+
+    out = _arun(
+        h.run_test_handler(
+            test_name="pearson",
+            data_file=str(csv),
+            columns=["a", "b"],
+        )
+    )
+    assert out["success"] is True
+    assert out["test_name"] == "pearson"
+
+
+def test_run_test_data_file_missing_column_errors(tmp_path):
+    import pandas as _pd
+
+    csv = tmp_path / "one_col.csv"
+    _pd.DataFrame({"a": [1.0, 2.0, 3.0]}).to_csv(csv, index=False)
+
+    out = _arun(
+        h.run_test_handler(
+            test_name="pearson",
+            data_file=str(csv),
+            columns=["a", "missing_col"],
+        )
+    )
+    assert out["success"] is False
+    assert "missing_col" in out["error"]
+
+
+def test_run_test_dataframe_required_anova_rm():
+    """Repeated-measures ANOVA: wide-format `data = [cond1, cond2, cond3]`,
+    each cond a list of subject-aligned values."""
+    rng_rm = np.random.default_rng(2)
+    n_subj = 12
+    # Same subjects across 3 conditions, with an increasing drift
+    cond1 = rng_rm.normal(0, 1, n_subj).tolist()
+    cond2 = (np.array(cond1) + rng_rm.normal(0.4, 0.3, n_subj)).tolist()
+    cond3 = (np.array(cond1) + rng_rm.normal(0.8, 0.3, n_subj)).tolist()
+    out = _arun(
+        h.run_test_handler(test_name="anova_rm", data=[cond1, cond2, cond3])
+    )
+    assert out["success"] is True
+    assert out["test_name"] == "anova_rm"
