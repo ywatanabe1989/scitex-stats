@@ -9,18 +9,19 @@
 <p align="center"><b>Publication-ready statistical testing with 23 tests, effect sizes, power analysis, and APA formatting</b></p>
 
 <p align="center">
-  <a href="https://scitex-stats.readthedocs.io/">Full Documentation</a> · <code>uv pip install scitex-stats[all]</code>
+  <a href="https://scitex-stats.readthedocs.io/">Full Documentation</a> · <code>uv pip install "scitex-stats[all]"</code>
 </p>
 
 <!-- scitex-badges:start -->
 <p align="center">
   <a href="https://pypi.org/project/scitex-stats/"><img src="https://img.shields.io/pypi/v/scitex-stats.svg" alt="PyPI"></a>
   <a href="https://pypi.org/project/scitex-stats/"><img src="https://img.shields.io/pypi/pyversions/scitex-stats.svg" alt="Python"></a>
+  <a href="https://scitex-stats.readthedocs.io/en/latest/"><img src="https://readthedocs.org/projects/scitex-stats/badge/?version=latest" alt="Read the Docs"></a>
+</p>
+<p align="center">
   <a href="https://github.com/ywatanabe1989/scitex-stats/actions/workflows/test.yml"><img src="https://github.com/ywatanabe1989/scitex-stats/actions/workflows/test.yml/badge.svg" alt="Tests"></a>
   <a href="https://github.com/ywatanabe1989/scitex-stats/actions/workflows/install-test.yml"><img src="https://github.com/ywatanabe1989/scitex-stats/actions/workflows/install-test.yml/badge.svg" alt="Install Test"></a>
   <a href="https://codecov.io/gh/ywatanabe1989/scitex-stats"><img src="https://codecov.io/gh/ywatanabe1989/scitex-stats/graph/badge.svg" alt="Coverage"></a>
-  <a href="https://scitex-stats.readthedocs.io/en/latest/"><img src="https://readthedocs.org/projects/scitex-stats/badge/?version=latest" alt="Docs"></a>
-  <a href="https://www.gnu.org/licenses/agpl-3.0"><img src="https://img.shields.io/badge/license-AGPL_v3-blue.svg" alt="License: AGPL v3"></a>
 </p>
 <!-- scitex-badges:end -->
 
@@ -30,11 +31,35 @@
 
 | # | Problem | Solution |
 |---|---------|----------|
-| 1 | **Bare scipy returns `(statistic, p)`** -- effect size, CI, normality check, power each need manual follow-up calls | **Publication-ready** -- `stx.stats.run_test("ttest_ind", g1, g2, return_as="dataframe")` yields statistic + effect size (Cohen's d) + CI + normality + power in one DataFrame |
-| 2 | **Test selection requires expertise** -- non-parametric vs parametric, paired vs independent, one-way vs repeated ANOVA | **Auto-recommend** -- `stx.stats.recommend_tests(data)` inspects distributions and suggests the right 2-3 tests |
-| 3 | **APA formatting is manual** -- every paper spells out `t(58) = 2.34, p = .021, d = 0.60` by hand | **`format_results(style="apa")`** -- typed output strings in APA, MLA, or LaTeX directly from the result dataframe |
+| 1 | **Bare `scipy.stats` returns `(statistic, p)`** — effect size, CI, normality check, power each need manual follow-up calls. | **One call, one dict** — `ss.run_test("ttest_ind", g1, g2)` returns statistic, p, Cohen's d, power, and an APA string in a unified result dict. |
+| 2 | **Test selection requires expertise** — parametric vs non-parametric, paired vs independent, one-way vs repeated-measures. | **Auto-recommend** — `ss.recommend_tests(StatContext(...))` ranks the appropriate tests from the design alone. |
+| 3 | **APA formatting is manual** — every paper spells out `t(58) = 2.34, p = .021, d = 0.60` by hand. | **`result["formatted"]`** — APA / Nature / LaTeX strings live on the same result dict every test returns. |
 
-Every test returns a **unified result dictionary** with consistent keys:
+
+## Quick Start
+
+```python
+import numpy as np
+import scitex_stats as ss
+
+rng = np.random.default_rng(42)
+group1 = rng.normal(0.0, 1.0, 30)
+group2 = rng.normal(0.5, 1.0, 30)
+
+# Unified test API — same dict shape for every one of the 23 tests
+result = ss.run_test("ttest_ind", data=group1, data2=group2)
+
+assert result["stat_symbol"] == "t"
+assert result["effect_size_metric"] == "Cohen's d"
+assert result["significant"] is True
+print(result["formatted"])
+# → t = -3.2101, p = 0.0022, Cohen's d = -0.829, **
+```
+
+<details>
+<summary><b>Unified result dictionary (every test returns this shape)</b></summary>
+
+<br>
 
 ```json
 {
@@ -57,9 +82,58 @@ Every test returns a **unified result dictionary** with consistent keys:
 }
 ```
 
-*Table 3. Unified result format. All 23 tests return the same dictionary structure with test statistics, p-value, effect size with interpretation, statistical power, and APA-formatted string.*
+</details>
 
-## Architecture
+## Installation
+
+```bash
+uv pip install "scitex-stats[all]"
+```
+
+<details>
+<summary><b>Per-module extras</b></summary>
+
+<br>
+
+| Extra | Pulls in |
+|---|---|
+| `mcp` | fastmcp (MCP server for AI agents) |
+| `plot` | matplotlib (for the optional plotting helpers) |
+| `figrecipe` | figrecipe (publication figures + auto CSV export) |
+| `all` | `mcp` + `plot` + `figrecipe` (recommended) |
+| `dev` | pytest, pytest-cov, nbconvert, ipykernel, + every optional dep so the test suite runs |
+| `docs` | Sphinx + RTD theme + myst-parser (docs build only) |
+
+```bash
+uv pip install "scitex-stats[mcp]"        # MCP server only
+uv pip install -e ".[dev]"                # editable install for contributors
+pip install scitex-stats[all]             # pip works too, just slower
+```
+
+</details>
+
+## How it works
+
+### 1. Describe the design, recommend the test
+
+`StatContext` captures the experimental design — number of groups, sample
+sizes, outcome type, paired vs between. `recommend_tests` ranks the
+appropriate tests from that context alone, before any data is touched.
+
+```python
+ctx = ss.StatContext(
+    n_groups=2, sample_sizes=[30, 30],
+    outcome_type="continuous", design="between", paired=False,
+)
+ss.recommend_tests(ctx, top_k=3)
+# → ['ttest_ind', 'welch_t', 'brunner_munzel']
+```
+
+### 2. Run the test, get the unified result
+
+`run_test` is the single dispatcher for all 23 tests. The same result
+dict shape (`statistic`, `pvalue`, `effect_size`, `power`, `formatted`,
+…) makes the downstream code test-agnostic.
 
 ```mermaid
 flowchart TB
@@ -69,8 +143,8 @@ flowchart TB
     Run --> ES[effect_sizes]
     Run --> Pw[power]
     Run --> Res[Unified result dict]
-    Res --> Corr[correct: FDR/Bonferroni]
-    Res --> Post[posthoc: Tukey/Dunn]
+    Res --> Corr[correct: FDR/Bonferroni/Holm]
+    Res --> Post[posthoc: Tukey/Dunn/Nemenyi]
     Res --> Fmt[format: APA/Nature/LaTeX]
     Fmt --> Pub[Publication-ready string]
 
@@ -89,80 +163,117 @@ flowchart TB
     style Res fill:#4a90d9,stroke:#2c3e50,color:#fff
 ```
 
-<p align="center"><sub><b>Figure 2.</b> Module + surface architecture. Every interface (Python, CLI, MCP, Skills) calls the same <code>run_test</code> engine; outputs are a unified dict that downstream formatters and corrections consume.</sub></p>
+### 3. Effect sizes, power, corrections
 
-## Installation
+Every numeric result is built from the same primitives. Use them
+standalone when the dispatcher's defaults aren't quite right.
 
-Requires Python >= 3.10.
+```python
+from scitex_stats import effect_sizes, power, correct
+
+effect_sizes.cohens_d(group1, group2)            # → -0.829
+power.sample_size_ttest(effect_size=0.5,
+                        alpha=0.05, power=0.8)   # → required n per group
+correct.correct_fdr(results, alpha=0.05,
+                    method="bh")                 # BH adjusted p-values
+```
+
+### 4. Linter for migration and hooks
+
+`scitex-stats` ships 6 stats-specific lint rules (`STX-ST001..006`).
+They are detected automatically by
+[`scitex-dev`](https://github.com/ywatanabe1989/scitex-dev)'s linter,
+already a hard dependency — no extra install.
 
 ```bash
-uv pip install scitex-stats[all]
+scitex-dev linter check-files src/                # lint a tree
+scitex-dev linter list-rules --category stats     # show live rule definitions
 ```
 
 <details>
-<summary>Other install options</summary>
+<summary><b>Rule reference (STX-ST001..006)</b></summary>
 
-```bash
-# Core only
-uv pip install scitex-stats
+<br>
 
-# With MCP server for AI agents
-uv pip install scitex-stats[mcp]
+| Rule | Severity | Trigger |
+|------|----------|---------|
+| `STX-ST001` | warning | `scipy.stats.ttest_ind()` — use `ss.run_test("ttest_ind", ...)` for auto effect size + CI + power |
+| `STX-ST002` | warning | `scipy.stats.mannwhitneyu()` — use `ss.run_test("mannwhitneyu", ...)` for auto effect size |
+| `STX-ST003` | warning | `scipy.stats.pearsonr()` — use `ss.run_test("pearsonr", ...)` for auto CI + power |
+| `STX-ST004` | warning | `scipy.stats.f_oneway()` — use `ss.run_test("anova_oneway", ...)` for post-hoc + effect sizes |
+| `STX-ST005` | warning | `scipy.stats.wilcoxon()` — use `ss.run_test("wilcoxon", ...)` for auto effect size |
+| `STX-ST006` | warning | `scipy.stats.kruskal()` — use `ss.run_test("kruskal", ...)` for post-hoc + effect sizes |
 
-# pip (slower resolver)
-pip install scitex-stats[all]
+</details>
+
+### 5. Etc.
+
+<details>
+<summary><b>Descriptive statistics, post-hoc, normality checks</b></summary>
+
+<br>
+
+```python
+from scitex_stats import describe, posthoc
+
+describe(data)                              # mean, sd, median, IQR, skew, kurtosis
+posthoc.posthoc_tukey([g1, g2, g3])         # pairwise Tukey HSD
+ss.run_test("shapiro", data=group1)         # normality check, same result dict shape
 ```
 
 </details>
 
-## Quickstart
+## Available Tests
 
-```python
-import scitex_stats as ss
+| Category | Tests |
+|----------|-------|
+| **Parametric** | t-test (ind, paired, 1-sample), ANOVA (1-way, RM, 2-way) |
+| **Nonparametric** | Mann-Whitney U, Wilcoxon, Kruskal-Wallis, Friedman, Brunner-Munzel |
+| **Correlation** | Pearson, Spearman, Kendall, Theil-Sen |
+| **Categorical** | Chi-squared, Fisher exact, McNemar, Cochran's Q |
+| **Normality** | Shapiro-Wilk, Kolmogorov-Smirnov (1-sample, 2-sample) |
 
-# Get test recommendation
-ctx = ss.StatContext(n_groups=2, sample_sizes=[30, 30], outcome_type="continuous", design="between", paired=False)
-recs = ss.recommend_tests(ctx)
+<p align="center">
+  <img src="docs/decision_flowchart.png" alt="Statistical test decision flowchart" width="700">
+</p>
 
-# Run a test
-result = ss.run_test("ttest_ind", data=group1, data2=group2)
+<p align="center"><sub><b>Figure 2.</b> Decision flowchart for choosing a statistical test. Start with your data type, then follow the branches based on number of groups and study design. Brunner-Munzel is the recommended default for two-group comparisons — robust to unequal variances and non-normality.</sub></p>
 
-# APA-formatted output
-print(result["formatted"])
+## Examples
+
+Three runnable notebooks under [`examples/`](./examples/) — each one
+executes end-to-end in CI and is the canonical reference for its
+workflow.
+
+| Notebook | Workflow |
+|----------|----------|
+| [`01_basic_ttest.ipynb`](./examples/01_basic_ttest.ipynb) | `run_test("ttest_ind", ...)` → unified result dict → APA string |
+| [`02_test_recommendation.ipynb`](./examples/02_test_recommendation.ipynb) | `StatContext` → `recommend_tests` → top recommendation through `run_test` |
+| [`03_multiple_comparison.ipynb`](./examples/03_multiple_comparison.ipynb) | Family of comparisons → `correct.correct_fdr` (Benjamini-Hochberg) |
+
+```bash
+# Re-execute every notebook in place (refreshes outputs)
+bash examples/00_run_all.sh
 ```
 
 ## Four Interfaces
 
-<details open>
-<summary><strong>Python API</strong></summary>
+<details>
+<summary><strong>Python API ⭐⭐⭐</strong></summary>
 
 <br>
 
 ```python
 import scitex_stats as ss
+from scitex_stats import effect_sizes, power, correct, posthoc
 
-# Automatic test recommendation
-ctx = ss.StatContext(n_groups=2, sample_sizes=[30, 30], outcome_type="continuous", design="between", paired=False)
-recs = ss.recommend_tests(ctx)
-
-# Run a test
-result = ss.run_test("ttest_ind", data=group1, data2=group2)
-
-# Effect sizes
-from scitex_stats import effect_sizes
-d = effect_sizes.cohens_d(group1, group2)
-
-# Power analysis
-from scitex_stats import power
-n = power.sample_size_ttest(effect_size=0.5, alpha=0.05, power=0.8)
-
-# Multiple comparison correction
-from scitex_stats import correct
-corrected = correct.correct_fdr(results)
-
-# Post-hoc tests
-from scitex_stats import posthoc
-results = posthoc.posthoc_tukey(groups)
+ss.run_test("ttest_ind", data=g1, data2=g2)             # 23 tests, one dispatcher
+ss.recommend_tests(ss.StatContext(n_groups=2, ...))     # design-driven test selection
+effect_sizes.cohens_d(g1, g2)                           # standalone effect size
+power.sample_size_ttest(effect_size=0.5,
+                        alpha=0.05, power=0.8)          # power / sample size
+correct.correct_fdr(results, alpha=0.05, method="bh")   # multiple-comparison correction
+posthoc.posthoc_tukey([g1, g2, g3])                     # post-hoc pairwise tests
 ```
 
 > **[Full API reference](https://scitex-stats.readthedocs.io/en/latest/api/scitex_stats.html)**
@@ -170,7 +281,7 @@ results = posthoc.posthoc_tukey(groups)
 </details>
 
 <details>
-<summary><strong>CLI Commands</strong></summary>
+<summary><strong>CLI Commands ⭐</strong></summary>
 
 <br>
 
@@ -188,26 +299,25 @@ scitex-stats mcp start                       # Start MCP server
 </details>
 
 <details>
-<summary><strong>MCP Server — for AI Agents</strong></summary>
+<summary><strong>MCP Server ⭐</strong></summary>
 
 <br>
 
-AI agents can run statistical tests and format publication-ready results autonomously.
+AI agents can run statistical tests and format publication-ready
+results autonomously.
 
 | Tool | Description |
 |------|-------------|
-| `recommend_tests` | Recommend appropriate tests based on data characteristics |
-| `run_test` | Execute a statistical test on provided data |
-| `format_results` | Format results in journal style (APA, Nature, etc.) |
-| `power_analysis` | Calculate statistical power or required sample size |
-| `correct_pvalues` | Apply multiple comparison correction |
-| `describe` | Calculate descriptive statistics |
-| `effect_size` | Calculate effect size between groups |
-| `normality_test` | Test whether data follows normal distribution |
+| `recommend_tests` | Recommend appropriate tests from a `StatContext` |
+| `run_test` | Execute any of the 23 statistical tests |
+| `format_results` | Format results in journal style (APA, Nature, LaTeX) |
+| `power_analysis` | Compute statistical power or required sample size |
+| `correct_pvalues` | Apply multiple-comparison correction |
+| `describe` | Compute descriptive statistics |
+| `effect_size` | Compute effect size between groups |
+| `normality_test` | Test whether data follows a normal distribution |
 | `posthoc_test` | Run post-hoc pairwise comparisons |
 | `p_to_stars` | Convert p-value to significance stars |
-
-*Table 1. MCP tools available for AI agent integration via `scitex-stats mcp start`.*
 
 ```bash
 scitex-stats mcp start
@@ -218,16 +328,17 @@ scitex-stats mcp start
 </details>
 
 <details>
-<summary><strong>Skills — for AI Agent Discovery</strong></summary>
+<summary><strong>Skills ⭐⭐</strong></summary>
 
 <br>
 
-Skills provide workflow-oriented guides that AI agents query to discover capabilities and usage patterns.
+Skills are workflow-oriented guides AI agents query to discover
+package capabilities and usage patterns.
 
 ```bash
-scitex-stats skills list              # List available skill pages
-scitex-stats skills get SKILL         # Show main skill page
-scitex-dev skills export --package scitex-stats  # Export to Claude Code
+scitex-stats skills list                              # list available skill pages
+scitex-stats skills get SKILL                         # show a skill page
+scitex-dev skills export --package scitex-stats       # export to Claude Code
 ```
 
 | Skill | Content |
@@ -239,70 +350,9 @@ scitex-dev skills export --package scitex-stats  # Export to Claude Code
 | `cli-reference` | CLI commands |
 | `mcp-tools` | MCP tools for AI agents |
 
+Also available via MCP: `stats_skills_list()` / `stats_skills_get(name)`.
+
 </details>
-
-## Demo
-
-Three runnable examples ship under `examples/` — each one writes its outputs (CSV + JSON + figures) to a sibling `_out/` folder so GitHub viewers see real artefacts:
-
-| Example | What it shows | Gallery |
-|---------|---------------|---------|
-| **`01_basic_ttest.py`** | Independent-samples t-test → APA-formatted result + box plot | <img src="docs/example_ttest_figure.png" alt="t-test demo" width="180"> |
-| **`02_test_recommendation.py`** | `recommend_tests` selects the right test from a `StatContext` | see `examples/02_test_recommendation_out/results.txt` |
-| **`03_multiple_comparison.py`** | Run-test → posthoc → FDR correction pipeline | see `examples/03_multiple_comparison_out/results.json` |
-
-```mermaid
-flowchart LR
-    Data[Group 1 / Group 2 arrays] --> R[run_test 'ttest_ind']
-    R --> Dict[Unified result dict]
-    Dict --> APA[formatted: 't = -3.21, p = .002, **']
-    Dict --> Box[scitex.plt box plot]
-    Box --> Png[docs/example_ttest_figure.png]
-    style APA fill:#27ae60,stroke:#2c3e50,color:#fff
-    style Png fill:#27ae60,stroke:#2c3e50,color:#fff
-```
-
-<p align="center"><sub><b>Figure 3.</b> Demo flow. One <code>run_test</code> call yields APA strings <em>and</em> the data needed to draw the publication figure — both backed by the same unified result dict.</sub></p>
-
-```bash
-# Reproduce locally — outputs land in examples/01_basic_ttest_out/
-python examples/01_basic_ttest.py
-python examples/02_test_recommendation.py
-python examples/03_multiple_comparison.py
-```
-
-## Choosing the Right Test
-
-<p align="center">
-  <img src="docs/decision_flowchart.png" alt="Statistical test decision flowchart" width="700">
-</p>
-
-*Figure 2. Decision flowchart for choosing a statistical test. Start with your data type, then follow the branches based on number of groups and study design. Brunner-Munzel is recommended as the default for two-group comparisons due to its robustness to unequal variances and non-normality.*
-
-## Available Tests
-
-| Category | Tests |
-|----------|-------|
-| **Parametric** | t-test (ind, paired, 1-sample), ANOVA (1-way, RM, 2-way) |
-| **Nonparametric** | Mann-Whitney U, Wilcoxon, Kruskal-Wallis, Friedman, Brunner-Munzel |
-| **Correlation** | Pearson, Spearman, Kendall, Theil-Sen |
-| **Categorical** | Chi-squared, Fisher exact, McNemar, Cochran's Q |
-| **Normality** | Shapiro-Wilk, Kolmogorov-Smirnov (1-sample, 2-sample) |
-
-*Table 2. All 23 statistical tests organized by category.*
-
-## Lint Rules
-
-Detected by [scitex-linter](https://github.com/ywatanabe1989/scitex-linter) when this package is installed.
-
-| Rule | Severity | Message |
-|------|----------|---------|
-| `STX-ST001` | warning | `scipy.stats.ttest_ind()` — use `stx.stats.ttest_ind()` for auto effect size + CI |
-| `STX-ST002` | warning | `scipy.stats.mannwhitneyu()` — use `stx.stats.mannwhitneyu()` for auto effect size |
-| `STX-ST003` | warning | `scipy.stats.pearsonr()` — use `stx.stats.pearsonr()` for auto CI + power |
-| `STX-ST004` | warning | `scipy.stats.f_oneway()` — use `stx.stats.anova_oneway()` for post-hoc + effect sizes |
-| `STX-ST005` | warning | `scipy.stats.wilcoxon()` — use `stx.stats.wilcoxon()` for auto effect size |
-| `STX-ST006` | warning | `scipy.stats.kruskal()` — use `stx.stats.kruskal()` for post-hoc + effect sizes |
 
 ## Part of SciTeX
 
@@ -315,29 +365,20 @@ import scitex
 
 @scitex.session
 def main(CONFIG=scitex.INJECTED, plt=scitex.INJECTED):
-    # Load data
     data = scitex.io.load("measurements.csv")
-
-    # Run statistical test
-    result = scitex.stats.run_test("ttest_ind", data=group1, data2=group2)
+    result = scitex.stats.run_test("ttest_ind", data=data["g1"], data2=data["g2"])
     scitex.io.save(result, "stats_result.csv")
 
-    # Visualize with figrecipe (scitex.plt)
     fig, ax = scitex.plt.subplots()
-    ax.plot_box([group1, group2], labels=["Control", "Treatment"])
+    ax.plot_box([data["g1"], data["g2"]], labels=["Control", "Treatment"])
     ax.set_xyt("Group", "Value", f"p = {result['pvalue']:.4f} {result['stars']}")
-    scitex.io.save(fig, "comparison.png")  # Saves plot + CSV data
-
+    scitex.io.save(fig, "comparison.png")              # saves plot + CSV data
     return 0
 ```
 
-<p align="center">
-  <img src="docs/example_ttest_figure.png" alt="Example t-test visualization" width="450">
-</p>
+`scitex.stats` delegates to `scitex_stats` — same API, same registry.
 
-*Figure 3. Example output combining scitex.stats (statistical test) with scitex.plt (publication-ready figure). The box plot shows group comparison with individual data points, significance bracket, p-value, and effect size — all generated from the unified result dictionary.*
-
-The ecosystem modules work together:
+The ecosystem modules compose:
 
 | Module | Package | Role |
 |--------|---------|------|
@@ -346,7 +387,7 @@ The ecosystem modules work together:
 | `scitex.io` | [scitex-io](https://github.com/ywatanabe1989/scitex-io) | Universal file I/O (30+ formats) |
 | `scitex.clew` | [scitex-clew](https://github.com/ywatanabe1989/scitex-clew) | Reproducibility verification via hash DAGs |
 
-The SciTeX system follows the Four Freedoms for Research below, inspired by [the Free Software Definition](https://www.gnu.org/philosophy/free-sw.en.html):
+The SciTeX system follows the Four Freedoms for Research, inspired by [the Free Software Definition](https://www.gnu.org/philosophy/free-sw.en.html):
 
 >Four Freedoms for Research
 >
