@@ -115,3 +115,172 @@ def test_describe_skewness_present_when_scipy_available():
     # scipy is a hard dep of scitex-stats, so skewness should be present.
     assert "skewness" in out
     assert isinstance(out["skewness"], float)
+
+
+# ----- posthoc_test_handler ------------------------------------------------ #
+
+import numpy as np
+
+_RNG = np.random.default_rng(0)
+_G1 = _RNG.normal(0.0, 1.0, 30).tolist()
+_G2 = _RNG.normal(0.5, 1.0, 30).tolist()
+_G3 = _RNG.normal(1.0, 1.0, 30).tolist()
+
+
+def test_posthoc_tukey_returns_three_comparisons_for_three_groups():
+    out = _arun(
+        h.posthoc_test_handler(
+            groups=[_G1, _G2, _G3],
+            group_names=["A", "B", "C"],
+            method="tukey",
+        )
+    )
+    assert out["success"] is True
+    assert out["method"] == "tukey"
+    assert out["n_groups"] == 3
+    assert out["n_comparisons"] == 3
+    pair_keys = {(c.get("group1"), c.get("group2")) for c in out["comparisons"]}
+    assert ("A", "B") in pair_keys or ("B", "A") in pair_keys
+
+
+def test_posthoc_games_howell_handles_unequal_variances():
+    g_hi_var = _RNG.normal(0.0, 3.0, 30).tolist()
+    out = _arun(
+        h.posthoc_test_handler(
+            groups=[_G1, g_hi_var, _G3],
+            group_names=["A", "B", "C"],
+            method="games_howell",
+        )
+    )
+    assert out["success"] is True
+    assert out["method"] == "games_howell"
+    assert out["n_comparisons"] == 3
+
+
+def test_posthoc_dunnett_compares_each_to_control():
+    out = _arun(
+        h.posthoc_test_handler(
+            groups=[_G1, _G2, _G3],
+            group_names=["ctrl", "B", "C"],
+            method="dunnett",
+            control_group=0,
+        )
+    )
+    assert out["success"] is True
+    assert out["method"] == "dunnett"
+    # Dunnett: control vs each other => k-1 comparisons.
+    assert out["n_comparisons"] == 2
+
+
+def test_posthoc_dunn_runs_for_nonparametric_use():
+    out = _arun(
+        h.posthoc_test_handler(
+            groups=[_G1, _G2, _G3],
+            group_names=["A", "B", "C"],
+            method="dunn",
+        )
+    )
+    assert out["success"] is True
+    assert out["method"] == "dunn"
+    assert out["n_comparisons"] == 3
+
+
+def test_posthoc_rejects_unknown_method():
+    out = _arun(
+        h.posthoc_test_handler(
+            groups=[_G1, _G2], method="not_a_real_method"
+        )
+    )
+    assert out["success"] is False
+    assert "not_a_real_method" in out["error"]
+
+
+def test_posthoc_default_group_names_are_indexed_one_based():
+    out = _arun(h.posthoc_test_handler(groups=[_G1, _G2, _G3]))
+    assert out["success"] is True
+    names = {c.get("group1") for c in out["comparisons"]} | {
+        c.get("group2") for c in out["comparisons"]
+    }
+    assert names == {"Group_1", "Group_2", "Group_3"}
+
+
+# ----- power_analysis_handler --------------------------------------------- #
+
+
+def test_power_ttest_calculates_power_when_n_and_effect_given():
+    out = _arun(
+        h.power_analysis_handler(
+            test_type="ttest", effect_size=0.5, n=30, alpha=0.05
+        )
+    )
+    assert out["success"] is True
+    assert out["mode"] == "power_calculation"
+    assert 0.0 < out["power"] < 1.0
+    assert out["n1"] == 30
+    assert out["effect_size"] == 0.5
+
+
+def test_power_ttest_calculates_sample_size_when_only_effect_given():
+    out = _arun(
+        h.power_analysis_handler(
+            test_type="ttest", effect_size=0.5, power=0.8, alpha=0.05
+        )
+    )
+    assert out["success"] is True
+    assert out["mode"] == "sample_size_calculation"
+    assert out["required_n1"] > 0
+    assert out["required_n2"] > 0
+    assert out["total_n"] == out["required_n1"] + out["required_n2"]
+
+
+def test_power_ttest_errors_when_neither_n_nor_effect_given():
+    out = _arun(h.power_analysis_handler(test_type="ttest"))
+    assert out["success"] is False
+    assert "n or effect_size" in out["error"]
+
+
+def test_power_anova_returns_a_dict():
+    out = _arun(
+        h.power_analysis_handler(
+            test_type="anova",
+            effect_size=0.3,
+            power=0.8,
+            alpha=0.05,
+            n_groups=3,
+        )
+    )
+    assert out["success"] is True
+    assert out["test_type"] == "anova"
+
+
+def test_power_correlation_returns_a_dict():
+    out = _arun(
+        h.power_analysis_handler(
+            test_type="correlation",
+            effect_size=0.3,
+            power=0.8,
+            alpha=0.05,
+        )
+    )
+    assert out["success"] is True
+    assert out["test_type"] == "correlation"
+
+
+def test_power_chi2_returns_a_dict():
+    out = _arun(
+        h.power_analysis_handler(
+            test_type="chi2",
+            effect_size=0.3,
+            power=0.8,
+            alpha=0.05,
+            n_groups=4,
+        )
+    )
+    assert out["success"] is True
+    assert out["test_type"] == "chi2"
+
+
+def test_power_rejects_unknown_test_type():
+    out = _arun(h.power_analysis_handler(test_type="not_a_real_test"))
+    assert out["success"] is False
+    assert "not_a_real_test" in out["error"]
