@@ -33,9 +33,9 @@ class TestCircularMean:
         if result.numel() == 1:
             val = result.item()
             # Circular mean wraps around, so close to 0 or 2π
-            assert (
-                abs(val) < 0.1 or abs(val - 2 * np.pi) < 0.1
-            ), f"Expected ~0, got {val}"
+            assert abs(val) < 0.1 or abs(val - 2 * np.pi) < 0.1, (
+                f"Expected ~0, got {val}"
+            )
         else:
             # Check all values close to 0 or 2π
             assert (

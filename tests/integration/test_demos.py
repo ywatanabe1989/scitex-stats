@@ -16,7 +16,9 @@ import sys
 import pytest
 
 DEMOS = [
+    "scitex_stats.correct._demo_correct_bonferroni",
     "scitex_stats.correct._demo_correct_fdr",
+    "scitex_stats.correct._demo_correct_sidak",
     "scitex_stats.tests.categorical._demo_chi2",
     "scitex_stats.tests.categorical._demo_cochran_q",
     "scitex_stats.tests.categorical._demo_fisher",
