@@ -35,15 +35,37 @@ DEMOS = [
     # `_test_*.py` modules that embed their own demo via `if __name__
     # == "__main__"`. Smoke-running them exercises the same paths a
     # `_demo_*.py` would. Once a file is split, drop it from this list.
+    "scitex_stats.tests.categorical._test_chi2",
+    "scitex_stats.tests.categorical._test_cochran_q",
+    "scitex_stats.tests.categorical._test_fisher",
     "scitex_stats.tests.correlation._test_kendall",
+    "scitex_stats.tests.correlation._test_pearson",
     "scitex_stats.tests.correlation._test_spearman",
+    "scitex_stats.tests.correlation._test_theilsen",
+    "scitex_stats.tests.nonparametric._test_brunner_munzel",
+    "scitex_stats.tests.nonparametric._test_friedman",
     "scitex_stats.tests.nonparametric._test_kruskal",
     "scitex_stats.tests.nonparametric._test_mannwhitneyu",
+    "scitex_stats.tests.nonparametric._test_wilcoxon",
     "scitex_stats.tests.normality._test_ks_1samp",
     "scitex_stats.tests.normality._test_ks_2samp",
+    "scitex_stats.tests.normality._test_shapiro",
+    "scitex_stats.tests.parametric._test_ttest_1samp",
+    "scitex_stats.tests.parametric._test_ttest_ind",
+    "scitex_stats.tests.parametric._test_ttest_rel",
     "scitex_stats.posthoc._dunnett",
     "scitex_stats.posthoc._games_howell",
     "scitex_stats.posthoc._tukey_hsd",
+    # Standalone modules with __main__ demos (effect sizes, power).
+    "scitex_stats.effect_sizes._cliffs_delta",
+    "scitex_stats.effect_sizes._cohens_d",
+    "scitex_stats.effect_sizes._epsilon_squared",
+    "scitex_stats.effect_sizes._eta_squared",
+    "scitex_stats.effect_sizes._prob_superiority",
+    "scitex_stats.power._power",
+    "scitex_stats._utils._effect_size",
+    "scitex_stats._utils._formatters",
+    "scitex_stats._utils._power",
 ]
 
 

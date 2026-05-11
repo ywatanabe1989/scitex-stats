@@ -34,6 +34,11 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
+try:
+    import scitex as stx
+except ImportError:
+    stx = None
+
 from scitex_stats._logging import getLogger
 
 logger = getLogger(__name__)
