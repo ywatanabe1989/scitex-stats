@@ -34,7 +34,6 @@ import pandas as pd
 from scipy import stats
 
 from scitex_stats._utils._formatters import p2stars
-from scitex_stats._utils._normalizers import convert_results
 
 
 def welch_satterthwaite_df(var_i: float, n_i: int, var_j: float, n_j: int) -> float:
@@ -392,7 +391,7 @@ if __name__ == "__main__":
     logger.info("\n[Example 5] Export results")
     logger.info("-" * 70)
 
-    convert_results(results, return_as="excel", path="./games_howell_results.xlsx")
+    pd.DataFrame(results).to_excel("./games_howell_results.xlsx", index=False)
     logger.info("Saved to: ./games_howell_results.xlsx")
 
     stx.session.close(

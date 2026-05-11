@@ -1313,3 +1313,94 @@ if __name__ == "__main__":
 # --------------------------------------------------------------------------------
 # End of Source Code from: /home/ywatanabe/proj/scitex-code/src/scitex/stats/auto/_selector.py
 # --------------------------------------------------------------------------------
+
+
+# ============================================================
+# run_all_applicable_tests + _pretty_label
+# ============================================================
+
+
+class TestRunAllApplicableTests:
+    """Parallel-dispatch entrypoint for the recommender."""
+
+    def test_runs_only_applicable_backends(self):
+        from scitex_stats.auto import StatContext
+        from scitex_stats.auto._selector import run_all_applicable_tests
+
+        ctx = StatContext(
+            n_groups=2,
+            sample_sizes=[30, 30],
+            outcome_type="continuous",
+            design="between",
+            paired=False,
+        )
+        backends = {
+            "ttest_ind": lambda d: {"test_name": "ttest_ind", "stat": 1.0, "p_raw": 0.04},
+            "mannwhitneyu": lambda d: {"test_name": "mannwhitneyu", "stat": 50, "p_raw": 0.05},
+        }
+        results = run_all_applicable_tests(ctx, data=None, test_backend=backends)
+        assert isinstance(results, list) and results
+        names = {r["test_name"] for r in results}
+        # both backends are valid for an unpaired two-group continuous design
+        assert names & set(backends.keys())
+
+    def test_errors_in_backend_become_result_entries(self):
+        from scitex_stats.auto import StatContext
+        from scitex_stats.auto._selector import run_all_applicable_tests
+
+        ctx = StatContext(
+            n_groups=2,
+            sample_sizes=[30, 30],
+            outcome_type="continuous",
+            design="between",
+            paired=False,
+        )
+
+        def _boom(_data):
+            raise RuntimeError("boom")
+
+        backends = {"ttest_ind": _boom}
+        results = run_all_applicable_tests(ctx, data=None, test_backend=backends)
+        assert results
+        errored = next(r for r in results if r["test_name"] == "ttest_ind")
+        assert errored["error"] == "boom"
+
+    def test_results_sorted_by_priority_descending(self):
+        from scitex_stats.auto import StatContext
+        from scitex_stats.auto._selector import run_all_applicable_tests
+        from scitex_stats.auto._rules import TEST_RULES
+
+        ctx = StatContext(
+            n_groups=2,
+            sample_sizes=[30, 30],
+            outcome_type="continuous",
+            design="between",
+            paired=False,
+        )
+        # All applicable backends with constant trivial results
+        backends = {
+            name: (lambda d, n=name: {"test_name": n, "stat": 0.0, "p_raw": 0.5})
+            for name in ["ttest_ind", "mannwhitneyu", "brunner_munzel"]
+        }
+        results = run_all_applicable_tests(ctx, data=None, test_backend=backends)
+        # If 2+ results, priority is non-increasing.
+        if len(results) >= 2:
+            priorities = [
+                (TEST_RULES.get(r["test_name"]).priority if TEST_RULES.get(r["test_name"]) else 0)
+                for r in results
+            ]
+            assert priorities == sorted(priorities, reverse=True)
+
+
+def test_pretty_label_known_name_returns_canonical_form():
+    from scitex_stats.auto._selector import _pretty_label, _PRETTY_LABELS
+
+    if _PRETTY_LABELS:
+        any_known = next(iter(_PRETTY_LABELS))
+        assert _pretty_label(any_known) == _PRETTY_LABELS[any_known]
+
+
+def test_pretty_label_unknown_name_returns_raw_input():
+    from scitex_stats.auto._selector import _pretty_label
+
+    assert _pretty_label("definitely_unknown_test_name") == "definitely_unknown_test_name"

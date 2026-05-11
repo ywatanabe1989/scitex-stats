@@ -1174,3 +1174,94 @@ if __name__ == "__main__":
 # --------------------------------------------------------------------------------
 # End of Source Code from: /home/ywatanabe/proj/scitex-code/src/scitex/stats/utils/_normalizers.py
 # --------------------------------------------------------------------------------
+
+
+# ============================================================
+# Export functions — direct end-to-end tests
+# ============================================================
+
+import json as _json
+
+from scitex_stats._utils import _normalizers as _nrm
+
+
+_R1 = {"var_x": "A", "var_y": "B", "pvalue": 0.01, "statistic": 2.5}
+_R2 = {"var_x": "A", "var_y": "C", "pvalue": 0.20, "effect_size": 0.3}
+
+
+def test_export_results_csv(tmp_path):
+    out = _nrm.export_results([_R1, _R2], str(tmp_path / "r.csv"))
+    text = (tmp_path / "r.csv").read_text()
+    assert out.endswith(".csv") and "var_x" in text
+
+
+def test_export_results_tsv(tmp_path):
+    _nrm.export_results([_R1, _R2], str(tmp_path / "r.tsv"), format="tsv")
+    text = (tmp_path / "r.tsv").read_text()
+    assert "\t" in text
+
+
+def test_export_results_json(tmp_path):
+    _nrm.export_results([_R1, _R2], str(tmp_path / "r.json"))
+    payload = _json.loads((tmp_path / "r.json").read_text())
+    assert "data" in payload and "metadata" in payload
+
+
+def test_export_results_xlsx(tmp_path):
+    _nrm.export_results([_R1, _R2], str(tmp_path / "r.xlsx"))
+    assert (tmp_path / "r.xlsx").is_file()
+
+
+def test_export_results_latex(tmp_path):
+    _nrm.export_results([_R1, _R2], str(tmp_path / "r.tex"), format="latex")
+    text = (tmp_path / "r.tex").read_text()
+    assert "\\" in text
+
+
+def test_export_results_unsupported_format_raises(tmp_path):
+    with pytest.raises(ValueError, match="Unsupported format"):
+        _nrm.export_results([_R1], str(tmp_path / "r.bogus"), format="bogus")
+
+
+def test_export_results_accepts_dataframe(tmp_path):
+    df = _nrm.force_dataframe([_R1, _R2])
+    _nrm.export_results(df, str(tmp_path / "r.csv"))
+    assert (tmp_path / "r.csv").is_file()
+
+
+def test_export_summary_default_columns(tmp_path):
+    _nrm.export_summary([_R1, _R2], str(tmp_path / "summary.csv"))
+    text = (tmp_path / "summary.csv").read_text()
+    assert "var_x" in text and "pvalue" in text
+
+
+def test_export_summary_custom_columns(tmp_path):
+    _nrm.export_summary(
+        [_R1, _R2], str(tmp_path / "summary.csv"), columns=["var_x", "pvalue"]
+    )
+    header = (tmp_path / "summary.csv").read_text().splitlines()[0]
+    assert header == "var_x,pvalue"
+
+
+def test_export_report_markdown(tmp_path):
+    _nrm.export_report(
+        [_R1, _R2], str(tmp_path / "report.md"), title="Demo Report"
+    )
+    text = (tmp_path / "report.md").read_text()
+    assert "Demo Report" in text
+
+
+def test_export_report_html(tmp_path):
+    _nrm.export_report(
+        [_R1, _R2], str(tmp_path / "report.html"), title="HTML Report"
+    )
+    text = (tmp_path / "report.html").read_text()
+    assert "HTML Report" in text or "<html" in text.lower()
+
+
+def test_export_report_text(tmp_path):
+    _nrm.export_report(
+        [_R1, _R2], str(tmp_path / "report.txt"), title="Text Report"
+    )
+    text = (tmp_path / "report.txt").read_text()
+    assert "Text Report" in text

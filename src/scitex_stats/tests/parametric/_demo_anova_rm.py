@@ -48,7 +48,7 @@ def main(args):
     time_effects = np.array([0, 0.5, 1.0, 0.8])
     data = np.random.normal(5, 1, (n_subjects, 4)) + time_effects
 
-    result = test_anova_rm(
+    result, _fig = test_anova_rm(
         data,
         condition_names=["Baseline", "Week 1", "Week 2", "Week 3"],
         plot=True,
@@ -76,7 +76,7 @@ def main(args):
     data_spher[:, 1] += np.random.normal(0, 2, 15)  # High variance for condition 2
     data_spher[:, 2] += np.random.normal(0.5, 0.5, 15)
 
-    result_spher = test_anova_rm(
+    result_spher, _fig_spher = test_anova_rm(
         data_spher,
         condition_names=["T1", "T2", "T3", "T4"],
         correction="auto",
@@ -107,7 +107,7 @@ def main(args):
         {"Subject": subjects, "TimePoint": conditions, "Score": values}
     )
 
-    result_long = test_anova_rm(
+    result_long, _fig_long = test_anova_rm(
         df_long,
         subject_col="Subject",
         condition_col="TimePoint",
@@ -139,7 +139,7 @@ def main(args):
     for i, dose in enumerate([0, 5, 10, 15, 20]):
         df_wide.iloc[:, i] += dose * 0.5
 
-    result_wide = test_anova_rm(df_wide, plot=True, verbose=True)
+    result_wide, _fig_wide = test_anova_rm(df_wide, plot=True, verbose=True)
     stx.io.save(stx.plt.gcf(), "./.dev/anova_rm_example4.jpg")
     stx.plt.close()
 
@@ -150,9 +150,10 @@ def main(args):
     logger.info("\n[Example 5] Export results")
     logger.info("-" * 70)
 
-    from scitex_stats._utils._normalizers import convert_results
-
-    convert_results(result, return_as="excel", path="./.dev/anova_rm_results.xlsx")  # type: ignore[arg-type]
+    # Export via pandas — convert_results doesn't emit Excel/CSV
+    # (supported: dict / dataframe / markdown / json / latex / html / text).
+    os.makedirs("./.dev", exist_ok=True)
+    pd.DataFrame([result]).to_excel("./.dev/anova_rm_results.xlsx", index=False)
     logger.info("Saved to: ./.dev/anova_rm_results.xlsx")
 
     # EOF

@@ -27,7 +27,6 @@ IO:
 """
 
 """Imports"""
-import argparse
 from typing import Any, Dict, List, Optional, Union
 
 import matplotlib
@@ -276,7 +275,12 @@ def _plot_bonferroni(df, alpha, ax):
 
     # Add significance thresholds
     ax.axhline(
-        alpha, color="red", linestyle="--", linewidth=2, alpha=0.5, label=f"α = {alpha}"
+        alpha,
+        color="red",
+        linestyle="--",
+        linewidth=2,
+        alpha=0.5,
+        label=f"α = {alpha}",
     )
     ax.axhline(
         alpha / m,
@@ -299,7 +303,7 @@ def _plot_bonferroni(df, alpha, ax):
     ax.legend()
 
     # Set x-axis labels if there are comparison names
-    if m <= 20:  # Only show labels for reasonable number of tests
+    if m <= 20:
         labels = []
         for idx, row in df.iterrows():
             if "var_x" in row and "var_y" in row:
@@ -316,247 +320,6 @@ def _plot_bonferroni(df, alpha, ax):
         ax.set_xlabel(f"Test Index (1-{m})")
 
 
-"""Main function"""
-
-
-def main(args):
-    """Demonstrate Bonferroni correction."""
-    import scitex as stx
-    logger.info("Demonstrating Bonferroni correction")
-
-    # Example 1: Single test (no correction needed)
-    logger.info("\n=== Example 1: Single test ===")
-
-    single_result = {
-        "var_x": "Control",
-        "var_y": "Treatment",
-        "pvalue": 0.04,
-        "alpha": 0.05,
-    }
-
-    corrected_single = correct_bonferroni(single_result, verbose=args.verbose)
-
-    # Example 2: Multiple tests
-    logger.info("\n=== Example 2: Three pairwise comparisons ===")
-
-    multiple_results = [
-        {"var_x": "A", "var_y": "B", "pvalue": 0.01},
-        {"var_x": "A", "var_y": "C", "pvalue": 0.03},
-        {"var_x": "B", "var_y": "C", "pvalue": 0.05},
-    ]
-
-    corrected_multiple = correct_bonferroni(
-        multiple_results, alpha=0.05, verbose=args.verbose
-    )
-
-    # Example 3: Many tests (demonstrate conservativeness)
-    logger.info("\n=== Example 3: Many tests (m=20) ===")
-
-    np.random.seed(42)
-    many_results = []
-
-    for i in range(20):
-        # Mix of significant and non-significant
-        p = np.random.uniform(0.001, 0.1)
-        many_results.append({"var_x": f"Var_{i}", "var_y": "Control", "pvalue": p})
-
-    corrected_many = correct_bonferroni(many_results, verbose=args.verbose)
-
-    # Count rejections
-    n_rejected_before = sum(r["pvalue"] < 0.05 for r in many_results)
-    n_rejected_after = sum(r["rejected"] for r in corrected_many)
-
-    logger.info(f"Tests with p < 0.05 before correction: {n_rejected_before}")
-    logger.info(f"Tests rejected after correction:       {n_rejected_after}")
-
-    # Example 4: DataFrame input/output
-    logger.info("\n=== Example 4: DataFrame workflow ===")
-
-    df_input = pd.DataFrame(
-        {
-            "var_x": ["A", "A", "B"],
-            "var_y": ["B", "C", "C"],
-            "pvalue": [0.002, 0.025, 0.048],
-            "effect_size": [0.8, 0.5, 0.3],
-        }
-    )
-
-    if args.verbose:
-        logger.info("\nBefore correction:")
-        logger.info(df_input[["var_x", "var_y", "pvalue"]])
-
-    df_corrected = correct_bonferroni(df_input, verbose=args.verbose)
-
-    if args.verbose:
-        logger.info("\nAfter correction:")
-        logger.info(
-            df_corrected[
-                [
-                    "var_x",
-                    "var_y",
-                    "pvalue",
-                    "pvalue_adjusted",
-                    "alpha_adjusted",
-                    "pstars",
-                    "rejected",
-                ]
-            ]
-        )
-
-    # Create visualization
-    logger.info("\n=== Creating visualization ===")
-
-    fig, axes = stx.plt.subplots(2, 2, figsize=(12, 10))
-
-    # Plot 1: Adjusted vs original p-values
-    ax = axes[0, 0]
-
-    m_vals = [3, 5, 10, 20]
-    p_orig = 0.03
-
-    for m in m_vals:
-        p_adj = min(p_orig * m, 1.0)
-        ax.scatter(m, p_adj, s=100, label=f"m = {m}")
-
-    ax.axhline(0.05, color="red", linestyle="--", alpha=0.5, label="α = 0.05")
-    ax.axhline(p_orig, color="blue", linestyle="--", alpha=0.5, label="Original p")
-    ax.set_xlabel("Number of Tests (m)")
-    ax.set_ylabel("Adjusted P-value")
-    ax.set_title(f"Bonferroni Adjustment (p_original = {p_orig})")
-    ax.legend()
-    ax.grid(True, alpha=0.3)
-
-    # Plot 2: Power loss with increasing tests
-    ax = axes[0, 1]
-
-    m_range = np.arange(1, 51)
-    alpha = 0.05
-    alpha_adj = alpha / m_range
-
-    ax.plot(m_range, alpha_adj, linewidth=2)
-    ax.axhline(0.05, color="red", linestyle="--", alpha=0.5, label="Original α")
-    ax.set_xlabel("Number of Tests (m)")
-    ax.set_ylabel("Adjusted α Threshold")
-    ax.set_title("Bonferroni: Threshold Decreases Linearly")
-    ax.legend()
-    ax.grid(True, alpha=0.3)
-    ax.set_yscale("log")
-
-    # Plot 3: Before/after comparison
-    ax = axes[1, 0]
-
-    # Generate test results
-    np.random.seed(42)
-    n_tests = 15
-    p_values = np.random.beta(2, 20, n_tests)  # Mix of small p-values
-    p_adjusted = np.minimum(p_values * n_tests, 1.0)
-
-    x_pos = np.arange(n_tests)
-    width = 0.35
-
-    bars1 = ax.bar(x_pos - width / 2, p_values, width, label="Original", alpha=0.7)
-    bars2 = ax.bar(x_pos + width / 2, p_adjusted, width, label="Adjusted", alpha=0.7)
-
-    # Color bars by significance
-    for i, (p_orig, p_adj) in enumerate(zip(p_values, p_adjusted)):
-        if p_orig < 0.05:
-            bars1[i].set_color("green")
-        else:
-            bars1[i].set_color("gray")
-
-        if p_adj < 0.05:
-            bars2[i].set_color("green")
-        else:
-            bars2[i].set_color("gray")
-
-    ax.axhline(0.05, color="red", linestyle="--", alpha=0.5, linewidth=2)
-    ax.set_xlabel("Test Index")
-    ax.set_ylabel("P-value")
-    ax.set_title("Before vs After Bonferroni Correction")
-    ax.legend()
-    ax.grid(True, alpha=0.3, axis="y")
-
-    # Plot 4: Comparison table
-    ax = axes[1, 1]
-    ax.axis("off")
-
-    # Create comparison data
-    methods_data = [
-        ["Method", "Adjusted α\n(m=10)", "Power", "FWER Control"],
-        ["None", "0.050", "High", "No"],
-        ["Bonferroni", "0.005", "Low", "Strong"],
-        ["Holm", "0.005-0.05", "Medium", "Strong"],
-        ["FDR", "~0.05", "High", "Weak (FDR)"],
-    ]
-
-    table = ax.table(
-        cellText=methods_data,
-        cellLoc="center",
-        loc="center",
-        bbox=[0, 0, 1, 1],
-    )
-
-    table.auto_set_font_size(False)
-    table.set_fontsize(10)
-
-    # Header styling
-    for i in range(4):
-        table[(0, i)].set_facecolor("#40466e")
-        table[(0, i)].set_text_props(weight="bold", color="white")
-
-    # Row styling
-    for i in range(1, 5):
-        for j in range(4):
-            if i % 2 == 0:
-                table[(i, j)].set_facecolor("#f0f0f0")
-
-    ax.set_title("Multiple Comparison Methods Comparison", pad=20, fontweight="bold")
-
-    plt.tight_layout()
-
-    # Save
-    stx.io.save(fig, "./bonferroni_demo.jpg")
-    logger.info("Visualization saved")
-
-    return 0
-
-
-def parse_args():
-    """Parse command line arguments."""
-    parser = argparse.ArgumentParser(description="Demonstrate Bonferroni correction")
-    parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
-    return parser.parse_args()
-
-
-def run_main():
-    """Initialize SciTeX framework and run main."""
-    global CONFIG, sys, plt, rng
-
-    import sys
-
-    import matplotlib.pyplot as plt
-
-    args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng = stx.session.start(
-        sys,
-        plt,
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
-
-
-if __name__ == "__main__":
-    run_main()
+# Demo lives in _demo_correct_bonferroni.py.
 
 # EOF

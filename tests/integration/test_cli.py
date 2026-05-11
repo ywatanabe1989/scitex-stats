@@ -107,19 +107,14 @@ class TestMCPCLI:
         assert "list-tools" in combined
         assert "doctor" in combined
 
-    @pytest.mark.xfail(
-        reason="CLI uses _tool_manager which does not exist in FastMCP 3.x",
-        strict=False,
-    )
     def test_mcp_list_tools(self):
+        # The xfail markers that used to live here pre-date the
+        # `mcp.list_tools()` (async) rewrite — the CLI no longer
+        # depends on FastMCP 2.x's `_tool_manager`.
         result = _run_cli("mcp", "list-tools")
         assert result.returncode == 0
         assert "recommend_tests" in result.stdout or "run_test" in result.stdout
 
-    @pytest.mark.xfail(
-        reason="CLI uses _tool_manager which does not exist in FastMCP 3.x",
-        strict=False,
-    )
     def test_mcp_list_tools_json(self):
         result = _run_cli("mcp", "list-tools", "--json")
         assert result.returncode == 0
@@ -128,13 +123,8 @@ class TestMCPCLI:
         data = json.loads(result.stdout)
         assert "tools" in str(data)
 
-    @pytest.mark.xfail(
-        reason="CLI uses _tool_manager which does not exist in FastMCP 3.x",
-        strict=False,
-    )
     def test_mcp_doctor(self):
         result = _run_cli("mcp", "doctor", timeout=15)
-        # doctor may return 0 or 1 depending on environment
         assert result.returncode in (0, 1)
         assert "Health Check" in result.stdout or "fastmcp" in result.stdout
 

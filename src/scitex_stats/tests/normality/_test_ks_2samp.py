@@ -30,12 +30,12 @@ import argparse  # noqa: E402
 from typing import Literal, Optional, Union  # noqa: E402
 
 import matplotlib.axes  # noqa: E402
+import matplotlib.pyplot as _mpl_plt  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 from scipy import stats  # noqa: E402
 
-import matplotlib.pyplot as _mpl_plt  # noqa: E402
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._formatters import fmt_stat, fmt_sym  # noqa: E402
 
@@ -313,6 +313,7 @@ def _plot_ks_2samp_simple(x, y, var_x, var_y, result, ax):
 def main(args):
     """Demonstrate two-sample Kolmogorov-Smirnov test functionality."""
     import scitex as stx
+
     logger.info("Demonstrating two-sample Kolmogorov-Smirnov test")
 
     # Set random seed
@@ -349,14 +350,14 @@ def main(args):
     # Example 4: Export results
     logger.info("\n=== Example 4: Export results ===")
 
-    from scitex_stats._utils._normalizers import convert_results, force_dataframe
+    from scitex_stats._utils._normalizers import force_dataframe
 
     test_results = [result1, result2, result3]
 
     df = force_dataframe(test_results)
     logger.info(f"\nDataFrame shape: {df.shape}")
 
-    convert_results(test_results, return_as="excel", path="./ks_2samp_results.xlsx")  # type: ignore[arg-type]
+    df.to_excel("./ks_2samp_results.xlsx", index=False)
     logger.info("Results exported to ./ks_2samp_results.xlsx")
 
     return 0
@@ -373,11 +374,10 @@ def parse_args():
 
 def run_main():
     """Initialize SciTeX framework and run main."""
-    import scitex as stx
-
     import sys  # noqa: E402
 
     import matplotlib.pyplot as plt  # noqa: E402
+    import scitex as stx
 
     global CONFIG, sys, plt
 

@@ -69,10 +69,14 @@ def annotate(
     if isinstance(stats, list) or "comparisons" not in stats:
         stats = _fr_convert(stats)
 
-    # Unwrap scitex AxisWrapper
-    ax_mpl = getattr(ax, "_axis_mpl", getattr(ax, "_ax", ax))
+    # Unwrap scitex.plt.AxisWrapper to its inner figrecipe RecordingAxes,
+    # which is what `annotate_from_stats` needs (it calls
+    # `add_stat_annotation`, defined on RecordingAxes, not raw mpl.Axes).
+    # If `ax` is already a RecordingAxes, pass it straight through —
+    # `_ax` would unwrap one level too far and land on raw matplotlib.
+    fr_ax = getattr(ax, "_axis_mpl", ax)
 
-    return _fr_annotate(ax_mpl, stats, positions=positions, style=style, **kwargs)
+    return _fr_annotate(fr_ax, stats, positions=positions, style=style, **kwargs)
 
 
 def load_and_annotate(

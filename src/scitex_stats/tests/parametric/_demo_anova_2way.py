@@ -59,7 +59,7 @@ def main(args):
         }
     )
 
-    results = test_anova_2way(
+    results, _fig = test_anova_2way(
         data,
         factor_a="Drug",
         factor_b="Gender",
@@ -104,7 +104,7 @@ def main(args):
         }
     )
 
-    results2 = test_anova_2way(
+    results2, _fig2 = test_anova_2way(
         data2,
         factor_a="Temperature",
         factor_b="Time",
@@ -142,12 +142,11 @@ def main(args):
     logger.info("\n[Example 4] Export results")
     logger.info("-" * 70)
 
-    from scitex_stats._utils._normalizers import convert_results
-
-    convert_results(
-        results_df,
-        return_as="excel",  # type: ignore[arg-type]
-        path="./.dev/anova_2way_results.xlsx",
+    # Export via pandas — convert_results doesn't emit Excel/CSV
+    # (supported: dict / dataframe / markdown / json / latex / html / text).
+    os.makedirs("./.dev", exist_ok=True)
+    results_df.to_excel(  # type: ignore[union-attr]
+        "./.dev/anova_2way_results.xlsx", index=False
     )
     logger.info("Saved to: ./.dev/anova_2way_results.xlsx")
 

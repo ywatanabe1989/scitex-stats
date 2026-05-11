@@ -1,8 +1,0 @@
-{
-  "context": "StatContext(n_groups=2, sample_sizes=[30, 32], outcome_type='continuous', design='between', paired=False, has_control_group=False, n_factors=1, normality_ok=None, variance_homogeneity_ok=None, missing_allowed=False, group_names=['Group_1', 'Group_2'], control_group_name=None)",
-  "recommendations": [
-    "brunner_munzel",
-    "ttest_ind",
-    "mannwhitneyu"
-  ]
-}

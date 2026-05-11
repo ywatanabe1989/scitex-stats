@@ -201,9 +201,9 @@
 <p class="caption" role="heading"><span class="caption-text">Examples</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-1-basic-t-test">Example 1: Basic t-test</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-2-automatic-test-recommendation">Example 2: Automatic Test Recommendation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-3-multiple-comparison-correction">Example 3: Multiple Comparison Correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-1-basic-t-test">Example 1 — Basic t-test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-2-automatic-test-recommendation">Example 2 — Automatic test recommendation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-3-multiple-comparison-correction">Example 3 — Multiple comparison correction</a></li>
 </ul>
 </li>
 </ul>
@@ -265,12 +265,12 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># noqa: E402</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.axes</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_mpl_plt</span>  <span class="c1"># noqa: E402</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># noqa: E402</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>  <span class="c1"># noqa: E402</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>  <span class="c1"># noqa: E402</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>  <span class="c1"># noqa: E402</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_mpl_plt</span>  <span class="c1"># noqa: E402</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">getLogger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._utils._formatters</span><span class="w"> </span><span class="kn">import</span> <span class="n">fmt_stat</span><span class="p">,</span> <span class="n">fmt_sym</span>  <span class="c1"># noqa: E402</span>
 
@@ -551,6 +551,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Demonstrate two-sample Kolmogorov-Smirnov test functionality.&quot;&quot;&quot;</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">scitex</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stx</span>
+
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Demonstrating two-sample Kolmogorov-Smirnov test&quot;</span><span class="p">)</span>
 
     <span class="c1"># Set random seed</span>
@@ -587,14 +588,14 @@
     <span class="c1"># Example 4: Export results</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Example 4: Export results ===&quot;</span><span class="p">)</span>
 
-    <span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._utils._normalizers</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_results</span><span class="p">,</span> <span class="n">force_dataframe</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._utils._normalizers</span><span class="w"> </span><span class="kn">import</span> <span class="n">force_dataframe</span>
 
     <span class="n">test_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">result1</span><span class="p">,</span> <span class="n">result2</span><span class="p">,</span> <span class="n">result3</span><span class="p">]</span>
 
     <span class="n">df</span> <span class="o">=</span> <span class="n">force_dataframe</span><span class="p">(</span><span class="n">test_results</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">DataFrame shape: </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="n">convert_results</span><span class="p">(</span><span class="n">test_results</span><span class="p">,</span> <span class="n">return_as</span><span class="o">=</span><span class="s2">&quot;excel&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;./ks_2samp_results.xlsx&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="s2">&quot;./ks_2samp_results.xlsx&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Results exported to ./ks_2samp_results.xlsx&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="mi">0</span>
@@ -611,11 +612,10 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">run_main</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize SciTeX framework and run main.&quot;&quot;&quot;</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">scitex</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stx</span>
-
     <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>  <span class="c1"># noqa: E402</span>
 
     <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># noqa: E402</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">scitex</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">stx</span>
 
     <span class="k">global</span> <span class="n">CONFIG</span><span class="p">,</span> <span class="n">sys</span><span class="p">,</span> <span class="n">plt</span>
 
