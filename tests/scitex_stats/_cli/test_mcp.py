@@ -155,3 +155,67 @@ def test_cmd_doctor_returns_zero_or_one(capsys):
     # Always reports on fastmcp + MCP server + CLI
     assert "fastmcp" in out
     assert "CLI" in out
+
+
+# ----- cmd_list_tools (in-process, FastMCP 3.x compatible) ----------- #
+
+
+def test_cmd_list_tools_text_output(capsys):
+    rc = cli_mcp.cmd_list_tools(verbose=0)
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "SciTeX Stats MCP" in out
+    # verbose=0 emits one tool per line
+    assert "recommend_tests" in out
+    assert "run_test" in out
+
+
+def test_cmd_list_tools_json_output(capsys):
+    import json as _json
+
+    rc = cli_mcp.cmd_list_tools(verbose=0, as_json=True)
+    out = capsys.readouterr().out
+    assert rc == 0
+    payload = _json.loads(out)
+    assert payload["name"] == "scitex-stats"
+    assert payload["total"] >= 10
+    assert "modules" in payload
+
+
+def test_cmd_list_tools_verbose_1_emits_signatures(capsys):
+    rc = cli_mcp.cmd_list_tools(verbose=1)
+    out = capsys.readouterr().out
+    assert rc == 0
+    # verbose=1 prints function-like signatures; expect param names
+    assert "test_name" in out or "data" in out
+
+
+def test_cmd_list_tools_verbose_2_emits_descriptions(capsys):
+    rc = cli_mcp.cmd_list_tools(verbose=2, compact=True)
+    out = capsys.readouterr().out
+    assert rc == 0
+    # verbose=2 also prints the first description line per tool
+    assert "p_value" in out or "Statistical" in out or "test" in out
+
+
+def test_cmd_list_tools_verbose_3_emits_full_descriptions(capsys):
+    rc = cli_mcp.cmd_list_tools(verbose=3, compact=True)
+    out = capsys.readouterr().out
+    assert rc == 0
+    # verbose=3 prints multi-line descriptions
+    assert out
+
+
+def test_cmd_list_tools_module_filter_accepts_known_module(capsys):
+    rc = cli_mcp.cmd_list_tools(verbose=0, module_filter="auto")
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "recommend_tests" in out
+
+
+def test_cmd_list_tools_module_filter_rejects_unknown(capsys):
+    rc = cli_mcp.cmd_list_tools(verbose=0, module_filter="not_a_module")
+    out = capsys.readouterr().out
+    assert rc == 1
+    assert "Unknown module" in out
+    assert "Available modules" in out
