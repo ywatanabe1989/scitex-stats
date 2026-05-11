@@ -1,47 +1,60 @@
 Examples
 ========
 
-All examples are available in the ``examples/`` directory and produce both
-human-readable (``.txt``) and structured (``.json``) output.
+Three runnable Jupyter notebooks ship with the package under
+``examples/`` — each one executes end-to-end in CI and is the
+canonical reference for its workflow.
 
-Example 1: Basic t-test
-------------------------
+.. list-table::
+   :header-rows: 1
+   :widths: 35 65
+
+   * - Notebook
+     - Workflow
+   * - `01_basic_ttest.ipynb <https://github.com/ywatanabe1989/scitex-stats/blob/develop/examples/01_basic_ttest.ipynb>`__
+     - ``run_test("ttest_ind", …)`` → unified result dict → APA string
+   * - `02_test_recommendation.ipynb <https://github.com/ywatanabe1989/scitex-stats/blob/develop/examples/02_test_recommendation.ipynb>`__
+     - ``StatContext`` → ``recommend_tests`` → top recommendation through ``run_test``
+   * - `03_multiple_comparison.ipynb <https://github.com/ywatanabe1989/scitex-stats/blob/develop/examples/03_multiple_comparison.ipynb>`__
+     - Family of comparisons → ``correct.correct_fdr`` (Benjamini-Hochberg)
+
+To re-execute every notebook in place (refreshing outputs):
+
+.. code-block:: bash
+
+   bash examples/00_run_all.sh
+
+
+Example 1 — Basic t-test
+-------------------------
 
 .. figure:: _static/example_ttest_figure.png
    :alt: Example t-test visualization
    :align: center
    :width: 60%
 
-   **Figure 1.** Box plot with individual data points, significance bracket, p-value,
-   and effect size — generated from the unified result dictionary.
+   **Figure 1.** Box plot with individual data points, significance bracket,
+   p-value, and effect size — generated from the unified result dictionary.
 
 .. code-block:: python
 
-   import scitex_stats as ss
    import numpy as np
+   import scitex_stats as ss
 
    rng = np.random.default_rng(42)
-   group1 = rng.normal(loc=0.0, scale=1.0, size=30)
-   group2 = rng.normal(loc=0.5, scale=1.0, size=30)
+   group1 = rng.normal(0.0, 1.0, 30)
+   group2 = rng.normal(0.5, 1.0, 30)
 
    result = ss.run_test("ttest_ind", data=group1, data2=group2)
+
+   assert result["stat_symbol"] == "t"
+   assert result["effect_size_metric"] == "Cohen's d"
    print(result["formatted"])
-   # t = -2.923, p = 0.0049, Cohen's d = -0.755, **
-
-Output:
-
-.. code-block:: text
-
-   Independent t-test
-   ========================================
-   t-statistic: -2.9233
-   p-value: 0.0049
-   Effect size (Cohen's d): -0.7548
-   Formatted: t = -2.923, p = 0.0049, Cohen's d = -0.755, **
+   # → t = -3.2101, p = 0.0022, Cohen's d = -0.829, **
 
 
-Example 2: Automatic Test Recommendation
------------------------------------------
+Example 2 — Automatic test recommendation
+------------------------------------------
 
 .. code-block:: python
 
@@ -49,29 +62,16 @@ Example 2: Automatic Test Recommendation
 
    ctx = ss.StatContext(
        n_groups=2,
-       sample_sizes=[30, 32],
+       sample_sizes=[30, 30],
        outcome_type="continuous",
        design="between",
        paired=False,
-       has_control_group=False,
-       n_factors=1,
    )
-   recs = ss.recommend_tests(ctx, top_k=5)
-   print(recs)
-   # ['brunner_munzel', 'ttest_ind', 'mannwhitneyu']
-
-Output:
-
-.. code-block:: text
-
-   Test Recommendations
-   ========================================
-     1. brunner_munzel
-     2. ttest_ind
-     3. mannwhitneyu
+   ss.recommend_tests(ctx, top_k=3)
+   # → ['ttest_ind', 'welch_t', 'brunner_munzel']
 
 
-Example 3: Multiple Comparison Correction
+Example 3 — Multiple comparison correction
 -------------------------------------------
 
 .. code-block:: python
@@ -79,27 +79,13 @@ Example 3: Multiple Comparison Correction
    from scitex_stats import correct
 
    results = [
-       {"pvalue": 0.01, "var_x": "A", "var_y": "B"},
-       {"pvalue": 0.04, "var_x": "A", "var_y": "C"},
-       {"pvalue": 0.03, "var_x": "A", "var_y": "D"},
-       {"pvalue": 0.20, "var_x": "B", "var_y": "C"},
+       {"pvalue": 0.010, "var_x": "A", "var_y": "B"},
+       {"pvalue": 0.040, "var_x": "A", "var_y": "C"},
+       {"pvalue": 0.030, "var_x": "A", "var_y": "D"},
+       {"pvalue": 0.200, "var_x": "B", "var_y": "C"},
        {"pvalue": 0.005, "var_x": "B", "var_y": "D"},
-       {"pvalue": 0.08, "var_x": "C", "var_y": "D"},
+       {"pvalue": 0.080, "var_x": "C", "var_y": "D"},
    ]
 
    corrected = correct.correct_fdr(results, alpha=0.05, method="bh")
-
-Output:
-
-.. code-block:: text
-
-   Multiple Comparison Correction (FDR-BH)
-   ==================================================
-   Comparison   Original   Adjusted   Rejected
-   ---------------------------------------------
-          AvB     0.0100     0.0300        Yes
-          AvC     0.0400     0.0600         No
-          AvD     0.0300     0.0600         No
-          BvC     0.2000     0.2000         No
-          BvD     0.0050     0.0300        Yes
-          CvD     0.0800     0.0960         No
+   # → BH-adjusted p-values + rejection mask + α_adjusted per comparison
