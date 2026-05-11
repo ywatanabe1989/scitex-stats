@@ -90,6 +90,7 @@ src/**/_test_*_out/
 src/**/_dunnett_out/
 src/**/_games_howell_out/
 src/**/_tukey_hsd_out/
+src/**/_correct_*_out/
 # effect_sizes / power / _utils standalone demos
 src/scitex_stats/effect_sizes/_*_out/
 src/scitex_stats/power/_*_out/

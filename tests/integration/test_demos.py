@@ -18,7 +18,7 @@ import pytest
 DEMOS = [
     # `_demo_*.py` sibling files (extracted from oversized test modules).
     "scitex_stats.correct._demo_correct_bonferroni",
-    "scitex_stats.correct._demo_correct_fdr",
+    "scitex_stats.correct._correct_fdr",  # in-source __main__ demo
     "scitex_stats.correct._demo_correct_holm",
     "scitex_stats.correct._demo_correct_sidak",
     "scitex_stats.tests.categorical._demo_chi2",
