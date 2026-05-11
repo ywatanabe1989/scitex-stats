@@ -148,3 +148,155 @@ def test_select_column_missing_raises(tmp_path):
     df = pd.DataFrame({"a": [1, 2]})
     with pytest.raises(SystemExit):
         cli._select_column(df, name="nonexistent")
+
+
+# ----- run_tests_execute: --x/--y branches --------------------------------- #
+
+
+def test_run_tests_execute_x_and_y_columns(tmp_path, capsys):
+    p = tmp_path / "two.csv"
+    rng_e = np.random.default_rng(0)
+    pd.DataFrame(
+        {"g1": rng_e.normal(0, 1, 30), "g2": rng_e.normal(0.5, 1, 30)}
+    ).to_csv(p, index=False)
+    rc = cli.run_tests_execute(
+        test_name="ttest_ind", data=str(p), x="g1", y="g2", as_json=True
+    )
+    out = capsys.readouterr().out
+    assert rc == 0
+    payload = json.loads(out)
+    assert "p_value" in payload or "pvalue" in payload
+
+
+def test_run_tests_execute_x_only_one_sample(tmp_path, capsys):
+    p = tmp_path / "one.csv"
+    pd.DataFrame({"a": [1.0, 2.0, 3.0, 4.0, 5.0]}).to_csv(p, index=False)
+    rc = cli.run_tests_execute(
+        test_name="ttest_1samp",
+        data=str(p),
+        x="a",
+        popmean=3.0,
+        as_json=True,
+    )
+    out = capsys.readouterr().out
+    assert rc == 0
+    payload = json.loads(out)
+    assert "p_value" in payload or "pvalue" in payload
+
+
+def test_run_tests_execute_npy_data_fallback(tmp_path, capsys):
+    """No --x / --y / --groups → falls back to `df.to_numpy()` (or array)."""
+    p = tmp_path / "arr.npy"
+    np.save(p, np.array([1.0, 2.0, 3.0, 4.0, 5.0]))
+    rc = cli.run_tests_execute(
+        test_name="shapiro", data=str(p), as_json=True
+    )
+    out = capsys.readouterr().out
+    assert rc == 0
+    payload = json.loads(out)
+    assert "p_value" in payload or "pvalue" in payload
+
+
+# ----- run_tests_recommend ------------------------------------------------ #
+
+
+def test_run_tests_recommend_json(capsys):
+    rc = cli.run_tests_recommend(
+        n_groups=2,
+        sample_sizes="30,30",
+        outcome="continuous",
+        design="between",
+        paired=False,
+        top_k=3,
+        as_json=True,
+    )
+    out = capsys.readouterr().out
+    assert rc == 0
+    tests = json.loads(out)
+    assert isinstance(tests, list) and 0 < len(tests) <= 3
+
+
+def test_run_tests_recommend_plain_output(capsys):
+    rc = cli.run_tests_recommend(
+        n_groups=2,
+        sample_sizes="25,25",
+        outcome="continuous",
+        design="between",
+        paired=False,
+        top_k=2,
+        as_json=False,
+    )
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert out.strip()
+
+
+def test_run_tests_recommend_paired_forces_within(capsys):
+    """`paired=True` should override `design="between"` → "within"."""
+    rc = cli.run_tests_recommend(
+        n_groups=2,
+        sample_sizes="20,20",
+        outcome="continuous",
+        design="between",
+        paired=True,
+        top_k=3,
+        as_json=True,
+    )
+    out = capsys.readouterr().out
+    assert rc == 0
+    tests = json.loads(out)
+    # Paired designs should not recommend independent t-test as top pick.
+    assert "ttest_ind" not in tests[:1]
+
+
+# ----- _read_data: extra branches ----------------------------------------- #
+
+
+def test_read_data_json_file(tmp_path):
+    p = tmp_path / "x.json"
+    p.write_text(json.dumps([1, 2, 3]))
+    out = cli._read_data(str(p))
+    np.testing.assert_array_equal(out, [1, 2, 3])
+
+
+def test_read_data_stdin_path_reads_json(monkeypatch):
+    import io as _io
+
+    monkeypatch.setattr("sys.stdin", _io.StringIO(json.dumps([7, 8, 9])))
+    out = cli._read_data("-")
+    np.testing.assert_array_equal(out, [7, 8, 9])
+
+
+# ----- _emit -------------------------------------------------------------- #
+
+
+def test_emit_plain_dict(capsys):
+    cli._emit({"k": 1, "v": [1, 2, 3]}, as_json=False)
+    out = capsys.readouterr().out
+    assert "k" in out and "1" in out
+
+
+def test_emit_plain_list(capsys):
+    cli._emit(["one", "two"], as_json=False)
+    out = capsys.readouterr().out
+    assert "one" in out and "two" in out
+
+
+# ----- _select_column ----------------------------------------------------- #
+
+
+def test_select_column_pass_through_non_dataframe():
+    arr = np.array([1, 2, 3])
+    assert cli._select_column(arr, None) is arr
+
+
+def test_select_column_named_lookup_2col_df():
+    df = pd.DataFrame({"a": [1, 2], "b": [3, 4]})
+    out = cli._select_column(df, "b")
+    np.testing.assert_array_equal(out, [3, 4])
+
+
+def test_select_column_ambiguous_no_name_exits():
+    df = pd.DataFrame({"a": [1], "b": [2]})
+    with pytest.raises(SystemExit, match="specify --x"):
+        cli._select_column(df, None)
