@@ -44,6 +44,10 @@ def _enable_subprocess_coverage() -> None:
     os.environ.setdefault(
         "COVERAGE_PROCESS_START", str(_PROJECT_ROOT / "pyproject.toml")
     )
+    # Pin data-file location so children launched with `cwd=tmp_path`
+    # still write their `.coverage.<host>.<pid>` next to the parent's
+    # `.coverage`, where pytest-cov combines from.
+    os.environ.setdefault("COVERAGE_FILE", str(_PROJECT_ROOT / ".coverage"))
 
     candidates: list[pathlib.Path] = []
     for entry in site.getsitepackages():
