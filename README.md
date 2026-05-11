@@ -21,7 +21,7 @@
 <p align="center">
   <a href="https://github.com/ywatanabe1989/scitex-stats/actions/workflows/test.yml"><img src="https://github.com/ywatanabe1989/scitex-stats/actions/workflows/test.yml/badge.svg" alt="Tests"></a>
   <a href="https://github.com/ywatanabe1989/scitex-stats/actions/workflows/install-test.yml"><img src="https://github.com/ywatanabe1989/scitex-stats/actions/workflows/install-test.yml/badge.svg" alt="Install Test"></a>
-  <a href="https://codecov.io/gh/ywatanabe1989/scitex-stats"><img src="https://codecov.io/gh/ywatanabe1989/scitex-stats/graph/badge.svg" alt="Coverage"></a>
+  <a href="https://codecov.io/gh/ywatanabe1989/scitex-stats/branch/develop"><img src="https://codecov.io/gh/ywatanabe1989/scitex-stats/branch/develop/graph/badge.svg" alt="Coverage (develop)"></a>
 </p>
 <!-- scitex-badges:end -->
 
