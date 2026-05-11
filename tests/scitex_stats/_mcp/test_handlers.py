@@ -600,3 +600,168 @@ def test_run_test_dataframe_required_anova_rm():
     )
     assert out["success"] is True
     assert out["test_name"] == "anova_rm"
+
+
+# ----- correct_pvalues_handler ----------------------------------------- #
+
+
+def test_correct_pvalues_fdr_bh_returns_corrected():
+    out = _arun(
+        h.correct_pvalues_handler(
+            pvalues=[0.001, 0.04, 0.03, 0.20, 0.005], method="fdr_bh"
+        )
+    )
+    assert out["success"] is True
+    assert out["method"] == "fdr_bh"
+    assert out["n_tests"] == 5
+    assert len(out["corrected_pvalues"]) == 5
+    assert len(out["reject_null"]) == 5
+    # corrected p's are monotonic-ish and never below original raw p
+    raw_sorted = sorted(out["original_pvalues"])
+    adj_sorted = sorted(out["corrected_pvalues"])
+    assert all(a >= r - 1e-12 for r, a in zip(raw_sorted, adj_sorted))
+
+
+def test_correct_pvalues_bonferroni():
+    out = _arun(
+        h.correct_pvalues_handler(
+            pvalues=[0.01, 0.02, 0.05], method="bonferroni"
+        )
+    )
+    assert out["success"] is True
+    assert out["method"] == "bonferroni"
+    # Bonferroni multiplies by n=3
+    assert abs(out["corrected_pvalues"][0] - 0.03) < 1e-10
+
+
+def test_correct_pvalues_holm():
+    out = _arun(
+        h.correct_pvalues_handler(
+            pvalues=[0.001, 0.01, 0.05, 0.20], method="holm"
+        )
+    )
+    assert out["success"] is True
+    assert out["method"] == "holm"
+
+
+def test_correct_pvalues_sidak():
+    out = _arun(
+        h.correct_pvalues_handler(
+            pvalues=[0.001, 0.01, 0.05], method="sidak"
+        )
+    )
+    assert out["success"] is True
+    assert out["method"] == "sidak"
+
+
+def test_correct_pvalues_fdr_by():
+    out = _arun(
+        h.correct_pvalues_handler(
+            pvalues=[0.001, 0.01, 0.05, 0.20], method="fdr_by"
+        )
+    )
+    assert out["success"] is True
+    assert out["method"] == "fdr_by"
+
+
+def test_correct_pvalues_unknown_method_falls_back_to_fdr_bh():
+    """Handler's method_map.get(default='fdr_bh') maps unknown → fdr_bh."""
+    out = _arun(
+        h.correct_pvalues_handler(
+            pvalues=[0.01, 0.02, 0.03], method="not_a_real_method"
+        )
+    )
+    assert out["success"] is True
+    # The handler echoes the requested method back even though
+    # statsmodels was called with fdr_bh internally.
+    assert out["method"] == "not_a_real_method"
+
+
+def test_correct_pvalues_n_significant_counts_rejections_correctly():
+    out = _arun(
+        h.correct_pvalues_handler(
+            pvalues=[0.001, 0.5, 0.6, 0.7], method="bonferroni", alpha=0.05
+        )
+    )
+    assert out["success"] is True
+    # Only 0.001 stays significant after Bonferroni (× 4)
+    assert out["n_significant"] == 1
+    assert sum(out["reject_null"]) == 1
+
+
+# ----- correct_pvalues fallback path (statsmodels missing) ------------ #
+
+
+def _arun_without_statsmodels(coro_factory):
+    """Stub the statsmodels import inside `do_correct` to force the
+    handler's no-statsmodels fallback path (lines 62-107)."""
+    import sys as _sys
+
+    saved = _sys.modules.get("statsmodels.stats.multitest")
+    # Replace with a module-like object whose `multipletests` raises.
+    bad = type(_sys)("statsmodels.stats.multitest")
+    def _raise(*a, **k):
+        raise ImportError("statsmodels stubbed out")
+    bad.multipletests = _raise  # type: ignore[attr-defined]
+    _sys.modules["statsmodels.stats.multitest"] = bad
+    try:
+        return _arun(coro_factory())
+    finally:
+        if saved is None:
+            _sys.modules.pop("statsmodels.stats.multitest", None)
+        else:
+            _sys.modules["statsmodels.stats.multitest"] = saved
+
+
+def test_correct_pvalues_fallback_bonferroni():
+    out = _arun_without_statsmodels(
+        lambda: h.correct_pvalues_handler(
+            pvalues=[0.01, 0.02, 0.05], method="bonferroni"
+        )
+    )
+    assert out["success"] is True
+    assert out["method"] == "bonferroni"
+    assert abs(out["corrected_pvalues"][0] - 0.03) < 1e-10
+
+
+def test_correct_pvalues_fallback_holm():
+    out = _arun_without_statsmodels(
+        lambda: h.correct_pvalues_handler(
+            pvalues=[0.001, 0.01, 0.05, 0.20], method="holm"
+        )
+    )
+    assert out["success"] is True
+    assert out["method"] == "holm"
+    # Holm with n=4: smallest p * 4 = 0.004 → significant
+    assert out["reject_null"][0] is True
+
+
+def test_correct_pvalues_fallback_fdr_bh():
+    out = _arun_without_statsmodels(
+        lambda: h.correct_pvalues_handler(
+            pvalues=[0.001, 0.01, 0.05, 0.20], method="fdr_bh"
+        )
+    )
+    assert out["success"] is True
+    assert out["method"] == "fdr_bh"
+
+
+def test_correct_pvalues_fallback_sidak():
+    out = _arun_without_statsmodels(
+        lambda: h.correct_pvalues_handler(
+            pvalues=[0.001, 0.01, 0.05], method="sidak"
+        )
+    )
+    assert out["success"] is True
+    assert out["method"] == "sidak"
+
+
+def test_correct_pvalues_fallback_unknown_method_passes_through():
+    """Fallback's `else` branch returns the raw p-values unchanged."""
+    out = _arun_without_statsmodels(
+        lambda: h.correct_pvalues_handler(
+            pvalues=[0.01, 0.02, 0.05], method="not_a_real_method"
+        )
+    )
+    assert out["success"] is True
+    assert out["corrected_pvalues"] == [0.01, 0.02, 0.05]
