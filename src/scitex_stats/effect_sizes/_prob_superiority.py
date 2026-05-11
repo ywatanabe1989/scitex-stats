@@ -33,11 +33,6 @@ from typing import Union
 import numpy as np
 import pandas as pd
 
-try:
-    import scitex as stx
-except ImportError:
-    stx = None
-
 from scitex_stats._logging import getLogger
 
 logger = getLogger(__name__)
@@ -269,6 +264,11 @@ def parse_args():
 
 def run_main():
     """Initialize SciTeX framework and run main."""
+    try:
+        import scitex as stx
+    except ImportError:
+        stx = None
+
     global CONFIG, sys, plt, rng
 
     import sys
