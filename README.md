@@ -19,8 +19,9 @@
   <a href="https://scitex-stats.readthedocs.io/en/latest/"><img src="https://img.shields.io/readthedocs/scitex-stats?label=docs" alt="docs"></a>
 </p>
 <p align="center">
-  <a href="https://github.com/ywatanabe1989/scitex-stats/actions/workflows/test.yml"><img src="https://img.shields.io/github/actions/workflow/status/ywatanabe1989/scitex-stats/test.yml?branch=develop&label=tests" alt="tests"></a>
-  <a href="https://github.com/ywatanabe1989/scitex-stats/actions/workflows/install-test.yml"><img src="https://img.shields.io/github/actions/workflow/status/ywatanabe1989/scitex-stats/install-test.yml?branch=develop&label=install-check" alt="install-check"></a>
+  <a href="https://github.com/ywatanabe1989/scitex-stats/actions/workflows/pytest-matrix-on-ubuntu-py3-11-3-12-3-13.yml"><img src="https://img.shields.io/github/actions/workflow/status/ywatanabe1989/scitex-stats/pytest-matrix-on-ubuntu-py3-11-3-12-3-13.yml?branch=develop&label=tests" alt="tests"></a>
+  <a href="https://github.com/ywatanabe1989/scitex-stats/actions/workflows/import-smoke-on-ubuntu-py3-12.yml"><img src="https://img.shields.io/github/actions/workflow/status/ywatanabe1989/scitex-stats/import-smoke-on-ubuntu-py3-12.yml?branch=develop&label=install-check" alt="install-check"></a>
+  <a href="https://github.com/ywatanabe1989/scitex-stats/actions/workflows/newb-docs-quality-on-ubuntu-latest.yml"><img src="https://img.shields.io/github/actions/workflow/status/ywatanabe1989/scitex-stats/newb-docs-quality-on-ubuntu-latest.yml?branch=develop&label=quality" alt="quality"></a>
   <a href="https://codecov.io/gh/ywatanabe1989/scitex-stats"><img src="https://img.shields.io/codecov/c/github/ywatanabe1989/scitex-stats/develop?label=cov" alt="cov"></a>
 </p>
 <!-- scitex-badges:end -->
