@@ -1,0 +1,22 @@
+{
+  "test_method": "Student's t-test (independent)",
+  "statistic": -2.9233488968914667,
+  "stat_symbol": "t",
+  "alternative": "two-sided",
+  "n_x": 30,
+  "n_y": 30,
+  "var_x": "x",
+  "var_y": "y",
+  "pvalue": 0.004931310963264048,
+  "stars": "**",
+  "alpha": 0.05,
+  "significant": true,
+  "effect_size": -0.7548054395209651,
+  "effect_size_metric": "Cohen's d",
+  "effect_size_interpretation": "medium",
+  "power": 0.8198157906655894,
+  "H0": "\u03bc(x) = \u03bc(y)",
+  "p_value": 0.004931310963264048,
+  "test": "Student's t-test (independent)",
+  "formatted": "t = -2.923, p = 0.0049, Cohen's d = -0.755, **"
+}

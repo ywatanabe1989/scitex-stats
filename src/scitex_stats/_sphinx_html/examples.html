@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Examples &mdash; SciTeX Stats v0.2.18</title>
+  <title>Examples &mdash; SciTeX Stats v0.2.17</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=ae23a911"></script>
+      <script src="_static/documentation_options.js?v=46390ad3"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -203,9 +203,9 @@
 <p class="caption" role="heading"><span class="caption-text">Examples</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#example-1-basic-t-test">Example 1 — Basic t-test</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#example-2-automatic-test-recommendation">Example 2 — Automatic test recommendation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#example-3-multiple-comparison-correction">Example 3 — Multiple comparison correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-1-basic-t-test">Example 1: Basic t-test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-2-automatic-test-recommendation">Example 2: Automatic Test Recommendation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-3-multiple-comparison-correction">Example 3: Multiple Comparison Correction</a></li>
 </ul>
 </li>
 </ul>
@@ -236,92 +236,94 @@
              
   <section id="examples">
 <h1>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h1>
-<p>Three runnable Jupyter notebooks ship with the package under
-<code class="docutils literal notranslate"><span class="pre">examples/</span></code> — each one executes end-to-end in CI and is the
-canonical reference for its workflow.</p>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 35.0%" />
-<col style="width: 65.0%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Notebook</p></th>
-<th class="head"><p>Workflow</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><a class="reference external" href="https://github.com/ywatanabe1989/scitex-stats/blob/develop/examples/01_basic_ttest.ipynb">01_basic_ttest.ipynb</a></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">run_test(&quot;ttest_ind&quot;,</span> <span class="pre">…)</span></code> → unified result dict → APA string</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/ywatanabe1989/scitex-stats/blob/develop/examples/02_test_recommendation.ipynb">02_test_recommendation.ipynb</a></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">StatContext</span></code> → <code class="docutils literal notranslate"><span class="pre">recommend_tests</span></code> → top recommendation through <code class="docutils literal notranslate"><span class="pre">run_test</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference external" href="https://github.com/ywatanabe1989/scitex-stats/blob/develop/examples/03_multiple_comparison.ipynb">03_multiple_comparison.ipynb</a></p></td>
-<td><p>Family of comparisons → <code class="docutils literal notranslate"><span class="pre">correct.correct_fdr</span></code> (Benjamini-Hochberg)</p></td>
-</tr>
-</tbody>
-</table>
-<p>To re-execute every notebook in place (refreshing outputs):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>examples/00_run_all.sh
-</pre></div>
-</div>
+<p>All examples are available in the <code class="docutils literal notranslate"><span class="pre">examples/</span></code> directory and produce both
+human-readable (<code class="docutils literal notranslate"><span class="pre">.txt</span></code>) and structured (<code class="docutils literal notranslate"><span class="pre">.json</span></code>) output.</p>
 <section id="example-1-basic-t-test">
-<h2>Example 1 — Basic t-test<a class="headerlink" href="#example-1-basic-t-test" title="Link to this heading"></a></h2>
+<h2>Example 1: Basic t-test<a class="headerlink" href="#example-1-basic-t-test" title="Link to this heading"></a></h2>
 <figure class="align-center" id="id1">
 <a class="reference internal image-reference" href="_images/example_ttest_figure.png"><img alt="Example t-test visualization" src="_images/example_ttest_figure.png" style="width: 60%;" />
 </a>
 <figcaption>
-<p><span class="caption-text"><strong>Figure 1.</strong> Box plot with individual data points, significance bracket,
-p-value, and effect size — generated from the unified result dictionary.</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+<p><span class="caption-text"><strong>Figure 1.</strong> Box plot with individual data points, significance bracket, p-value,
+and effect size — generated from the unified result dictionary.</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
 </figcaption>
 </figure>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">scitex_stats</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ss</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">scitex_stats</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ss</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
-<span class="n">group1</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
-<span class="n">group2</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+<span class="n">group1</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">group2</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">run_test</span><span class="p">(</span><span class="s2">&quot;ttest_ind&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">group1</span><span class="p">,</span> <span class="n">data2</span><span class="o">=</span><span class="n">group2</span><span class="p">)</span>
-
-<span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;stat_symbol&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;t&quot;</span>
-<span class="k">assert</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;effect_size_metric&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Cohen&#39;s d&quot;</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;formatted&quot;</span><span class="p">])</span>
-<span class="c1"># → t = -3.2101, p = 0.0022, Cohen&#39;s d = -0.829, **</span>
+<span class="c1"># t = -2.923, p = 0.0049, Cohen&#39;s d = -0.755, **</span>
+</pre></div>
+</div>
+<p>Output:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Independent t-test
+========================================
+t-statistic: -2.9233
+p-value: 0.0049
+Effect size (Cohen&#39;s d): -0.7548
+Formatted: t = -2.923, p = 0.0049, Cohen&#39;s d = -0.755, **
 </pre></div>
 </div>
 </section>
 <section id="example-2-automatic-test-recommendation">
-<h2>Example 2 — Automatic test recommendation<a class="headerlink" href="#example-2-automatic-test-recommendation" title="Link to this heading"></a></h2>
+<h2>Example 2: Automatic Test Recommendation<a class="headerlink" href="#example-2-automatic-test-recommendation" title="Link to this heading"></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">scitex_stats</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ss</span>
 
 <span class="n">ctx</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">StatContext</span><span class="p">(</span>
     <span class="n">n_groups</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">sample_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span>
+    <span class="n">sample_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">32</span><span class="p">],</span>
     <span class="n">outcome_type</span><span class="o">=</span><span class="s2">&quot;continuous&quot;</span><span class="p">,</span>
     <span class="n">design</span><span class="o">=</span><span class="s2">&quot;between&quot;</span><span class="p">,</span>
     <span class="n">paired</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">has_control_group</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">n_factors</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">ss</span><span class="o">.</span><span class="n">recommend_tests</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="c1"># → [&#39;ttest_ind&#39;, &#39;welch_t&#39;, &#39;brunner_munzel&#39;]</span>
+<span class="n">recs</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">recommend_tests</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">recs</span><span class="p">)</span>
+<span class="c1"># [&#39;brunner_munzel&#39;, &#39;ttest_ind&#39;, &#39;mannwhitneyu&#39;]</span>
+</pre></div>
+</div>
+<p>Output:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Test Recommendations
+========================================
+  1. brunner_munzel
+  2. ttest_ind
+  3. mannwhitneyu
 </pre></div>
 </div>
 </section>
 <section id="example-3-multiple-comparison-correction">
-<h2>Example 3 — Multiple comparison correction<a class="headerlink" href="#example-3-multiple-comparison-correction" title="Link to this heading"></a></h2>
+<h2>Example 3: Multiple Comparison Correction<a class="headerlink" href="#example-3-multiple-comparison-correction" title="Link to this heading"></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">correct</span>
 
 <span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="mf">0.010</span><span class="p">,</span> <span class="s2">&quot;var_x&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;var_y&quot;</span><span class="p">:</span> <span class="s2">&quot;B&quot;</span><span class="p">},</span>
-    <span class="p">{</span><span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="mf">0.040</span><span class="p">,</span> <span class="s2">&quot;var_x&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;var_y&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">},</span>
-    <span class="p">{</span><span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="mf">0.030</span><span class="p">,</span> <span class="s2">&quot;var_x&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;var_y&quot;</span><span class="p">:</span> <span class="s2">&quot;D&quot;</span><span class="p">},</span>
-    <span class="p">{</span><span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="mf">0.200</span><span class="p">,</span> <span class="s2">&quot;var_x&quot;</span><span class="p">:</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;var_y&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span> <span class="s2">&quot;var_x&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;var_y&quot;</span><span class="p">:</span> <span class="s2">&quot;B&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="mf">0.04</span><span class="p">,</span> <span class="s2">&quot;var_x&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;var_y&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="mf">0.03</span><span class="p">,</span> <span class="s2">&quot;var_x&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;var_y&quot;</span><span class="p">:</span> <span class="s2">&quot;D&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="mf">0.20</span><span class="p">,</span> <span class="s2">&quot;var_x&quot;</span><span class="p">:</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;var_y&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">},</span>
     <span class="p">{</span><span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="mf">0.005</span><span class="p">,</span> <span class="s2">&quot;var_x&quot;</span><span class="p">:</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;var_y&quot;</span><span class="p">:</span> <span class="s2">&quot;D&quot;</span><span class="p">},</span>
-    <span class="p">{</span><span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="mf">0.080</span><span class="p">,</span> <span class="s2">&quot;var_x&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;var_y&quot;</span><span class="p">:</span> <span class="s2">&quot;D&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="mf">0.08</span><span class="p">,</span> <span class="s2">&quot;var_x&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;var_y&quot;</span><span class="p">:</span> <span class="s2">&quot;D&quot;</span><span class="p">},</span>
 <span class="p">]</span>
 
 <span class="n">corrected</span> <span class="o">=</span> <span class="n">correct</span><span class="o">.</span><span class="n">correct_fdr</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;bh&quot;</span><span class="p">)</span>
-<span class="c1"># → BH-adjusted p-values + rejection mask + α_adjusted per comparison</span>
+</pre></div>
+</div>
+<p>Output:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Multiple Comparison Correction (FDR-BH)
+==================================================
+Comparison   Original   Adjusted   Rejected
+---------------------------------------------
+       AvB     0.0100     0.0300        Yes
+       AvC     0.0400     0.0600         No
+       AvD     0.0300     0.0600         No
+       BvC     0.2000     0.2000         No
+       BvD     0.0050     0.0300        Yes
+       CvD     0.0800     0.0960         No
 </pre></div>
 </div>
 </section>

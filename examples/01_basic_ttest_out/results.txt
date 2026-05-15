@@ -1,0 +1,6 @@
+Independent t-test
+========================================
+t-statistic: -2.9233
+p-value: 0.0049
+Effect size (Cohen's d): -0.7548
+Formatted: t = -2.923, p = 0.0049, Cohen's d = -0.755, **
