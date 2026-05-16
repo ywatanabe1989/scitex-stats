@@ -42,43 +42,12 @@ except Exception:
 # Runtime path resolver: anything writable (cache, db, generated outputs)
 # lives under ~/.scitex/stats/runtime/<sub>/ rather than ~/.scitex/stats/<sub>/.
 # Config files (e.g. ~/.scitex/stats/config.yaml) stay at the top level.
-# One-shot migration: if the OLD ~/.scitex/stats/<sub>/ exists and NEW
-# ~/.scitex/stats/runtime/<sub>/ does not, mv to NEW on first import.
-# scitex-stats has minimal on-disk state (it's a statistical-tests package);
-# this is mostly a defensive code-level convention.
+# Implementation + one-shot migration live in _runtime_paths to keep
+# __init__.py thin and let the audit-mirror test (PS-204) find a real
+# src file to pair the test against.
 # ---------------------------------------------------------------------------
-_SCITEX_HOME = _Path.home() / ".scitex"
-_STATS_HOME = _SCITEX_HOME / "stats"
-_STATS_RUNTIME = _STATS_HOME / "runtime"
-# Names that should live under runtime/ when found at ~/.scitex/stats/<name>/.
-_RUNTIME_SUBDIRS = ("cache", "db", "workspace", "completion", "outputs", "logs")
-
-
-def _migrate_runtime_dirs() -> None:
-    """One-shot move of legacy ~/.scitex/stats/<sub>/ to runtime/<sub>/."""
-    try:
-        if not _STATS_HOME.exists():
-            return
-        for _name in _RUNTIME_SUBDIRS:
-            _old = _STATS_HOME / _name
-            _new = _STATS_RUNTIME / _name
-            if _old.exists() and not _new.exists():
-                _STATS_RUNTIME.mkdir(parents=True, exist_ok=True)
-                _old.rename(_new)
-    except Exception:
-        pass
-
-
-def _runtime_path(*parts: str) -> _Path:
-    """Resolve a runtime path under ~/.scitex/stats/runtime/<parts...>/.
-
-    Public helper for downstream submodules that need to write cache/db/
-    generated outputs. Always returns a path inside the runtime/ tree.
-    """
-    _p = _STATS_RUNTIME.joinpath(*parts)
-    _p.parent.mkdir(parents=True, exist_ok=True)
-    return _p
-
+from ._runtime_paths import migrate_runtime_dirs as _migrate_runtime_dirs
+from ._runtime_paths import runtime_path as _runtime_path  # re-export
 
 _migrate_runtime_dirs()
 

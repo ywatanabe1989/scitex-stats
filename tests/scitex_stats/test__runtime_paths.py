@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-# File: tests/scitex_stats/test___init__.py
+# File: tests/scitex_stats/test__runtime_paths.py
 
-"""Sanity tests for the .env-respect + runtime-separation pattern.
+"""Sanity tests for the runtime-separation path resolver.
 
-Each test covers exactly one observable contract of the path-resolver
-convention introduced in ``src/scitex_stats/__init__.py``.
+Mirrors ``src/scitex_stats/_runtime_paths.py``. Each test covers exactly
+one observable contract of the path-resolver convention.
 """
 
 from __future__ import annotations
@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 
 
-def test_import_exposes_runtime_path_callable():
+def test_runtime_path_is_exposed_at_package_level():
     # Arrange
     import scitex_stats
 
@@ -28,10 +28,10 @@ def test_import_exposes_runtime_path_callable():
 
 def test_runtime_path_returns_pathlib_path():
     # Arrange
-    from scitex_stats import _runtime_path
+    from scitex_stats._runtime_paths import runtime_path
 
     # Act
-    p = _runtime_path("cache", "demo.db")
+    p = runtime_path("cache", "demo.db")
 
     # Assert
     assert isinstance(p, Path)
@@ -39,12 +39,12 @@ def test_runtime_path_returns_pathlib_path():
 
 def test_runtime_path_lives_under_scitex_stats_runtime_dir():
     # Arrange
-    from scitex_stats import _runtime_path
+    from scitex_stats._runtime_paths import runtime_path
 
     expected_prefix = Path.home() / ".scitex" / "stats" / "runtime"
 
     # Act
-    p = _runtime_path("cache", "demo.db")
+    p = runtime_path("cache", "demo.db")
 
     # Assert
     assert str(p).startswith(str(expected_prefix))
@@ -52,10 +52,10 @@ def test_runtime_path_lives_under_scitex_stats_runtime_dir():
 
 def test_runtime_path_preserves_trailing_filename():
     # Arrange
-    from scitex_stats import _runtime_path
+    from scitex_stats._runtime_paths import runtime_path
 
     # Act
-    p = _runtime_path("cache", "demo.db")
+    p = runtime_path("cache", "demo.db")
 
     # Assert
     assert p.name == "demo.db"
@@ -63,10 +63,10 @@ def test_runtime_path_preserves_trailing_filename():
 
 def test_runtime_path_preserves_intermediate_subdir():
     # Arrange
-    from scitex_stats import _runtime_path
+    from scitex_stats._runtime_paths import runtime_path
 
     # Act
-    p = _runtime_path("cache", "demo.db")
+    p = runtime_path("cache", "demo.db")
 
     # Assert
     assert p.parent.name == "cache"
