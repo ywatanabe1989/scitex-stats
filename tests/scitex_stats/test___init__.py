@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# File: tests/scitex_stats/test_env_runtime_respect.py
+# File: tests/scitex_stats/test___init__.py
 
 """Sanity tests for the .env-respect + runtime-separation pattern.
 
