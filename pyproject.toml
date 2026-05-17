@@ -55,16 +55,18 @@ dependencies = [
     # MCP server stack — bundled in default install so `scitex-stats mcp …` works out-of-the-box
     "mcp",
     "fastmcp>=2.0.0",
+    # Pingouin — sphericity (Mauchly) in test_anova_rm and other advanced
+    # parametric paths. scitex-stats is a stats package; users expect these
+    # to work out-of-the-box, not via an extra.
+    "pingouin>=0.5",
 ]
 
 [project.optional-dependencies]
-# Convenience meta-extra: extra-quality test paths + cross-package integrations
+# Convenience meta-extra: cross-package integrations + alt-backend tests
 # - figrecipe: lazy-imported plot helpers + scitex_stats↔figrecipe integration
-# - pingouin:  Mauchly sphericity in test_anova_rm (scipy fallback if absent)
 # - torch:     tensor-preserving descriptive stats (numpy fallback if absent)
 all = [
     "figrecipe>=0.28.0",
-    "pingouin>=0.5",
     "torch>=2.0",
 ]
 dev = [
@@ -79,8 +81,7 @@ dev = [
     "nbconvert>=7.0",     # executes example .ipynb in tests (PS-505)
     "ipykernel>=6.0",     # kernel for nbconvert --execute
     "openpyxl>=3.1",      # pandas to_excel used by _demo_*.py
-    "pingouin>=0.5",      # _test_anova_rm imports it (try/except); PS-210 requires [dev] completeness
-    # Note: fastmcp / mcp / scitex-dev / scitex-logging come in via [project.dependencies].
+    # Note: fastmcp / mcp / scitex-dev / scitex-logging / pingouin come in via [project.dependencies].
 ]
 docs = [
     "sphinx>=7.0",
