@@ -1,21 +1,43 @@
 #!/usr/bin/env python3
 # File: src/scitex_stats/__init__.py
 
-"""SciTeX Stats - Publication-ready statistical testing framework.
+"""scitex-stats — Publication-ready statistical testing framework.
 
-Three Interfaces:
-    - Python API: import scitex_stats as ss
-    - CLI: scitex-stats <command>
-    - MCP: 10 tools for AI agents
+Functionalities
+---------------
+- `run_test(name, ...)` — single dispatcher across 23 tests (parametric,
+  nonparametric, correlation, categorical, normality) returning a unified
+  result dict (statistic, pvalue, effect_size, power, formatted, ...).
+- `recommend_tests(StatContext(...))` — design-driven test selection from
+  number of groups, sample sizes, outcome type, paired vs between.
+- `effect_sizes`, `power`, `correct`, `posthoc`, `descriptive`,
+  `auto` — submodules exposing the primitives behind `run_test`
+  (Cohen's d / Cliff's delta / eta-sq / sample-size-ttest /
+  Bonferroni / FDR / Tukey HSD / Dunn / ...).
+- APA / Nature / LaTeX formatting via `result["formatted"]`.
 
-Modules:
-    - tests: 23 statistical tests (parametric, nonparametric, correlation, categorical, normality)
-    - effect_sizes: Cohen's d, Cliff's delta, eta squared, epsilon squared, probability of superiority
-    - correct: Multiple comparison corrections (Bonferroni, FDR, Holm, Sidak)
-    - posthoc: Post-hoc tests (Tukey HSD, Dunnett, Games-Howell)
-    - power: Statistical power analysis and sample size calculation
-    - descriptive: Descriptive statistics and confidence intervals
-    - auto: Automatic test recommendation
+IO
+--
+- Reads: numeric arrays (`numpy.ndarray`, `pandas.DataFrame`,
+  `pandas.Series`, sequences); optional `.env` walk-up via
+  scitex-config; runtime cache under `$SCITEX_DIR/stats/runtime/`.
+- Writes: nothing by default — pure functions returning result dicts.
+  Caller persists via `scitex_io.save(...)` if desired.
+
+Dependencies
+------------
+- Hard: `numpy`, `scipy`, `pandas`, `scitex-dev`, `scitex-config`,
+  `scitex-logging`.
+- Optional (`[plot]`): `matplotlib`. (`[mcp]`): `fastmcp`.
+  (`[figrecipe]`): `figrecipe`.
+
+Standalone import::
+
+    import scitex_stats as ss
+    result = ss.run_test("ttest_ind", data=g1, data2=g2)
+    print(result["formatted"])  # APA-style summary
+
+CLI: ``scitex-stats <command>``. MCP: 10 tools for AI agents.
 """
 
 from __future__ import annotations
