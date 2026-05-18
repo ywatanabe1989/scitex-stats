@@ -19,8 +19,6 @@ interfaces:
 
 # scitex-stats
 
-> **Interfaces:** Python ⭐⭐⭐ (primary) · CLI ⭐ · MCP ⭐⭐ · Skills ⭐⭐ · Hook — · HTTP —
-
 Publication-ready statistical testing framework with 23 tests, effect sizes, power analysis, and automatic test recommendation.
 
 ## Installation & import (two equivalent paths)

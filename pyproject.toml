@@ -10,7 +10,7 @@ readme = "README.md"
 license = "AGPL-3.0-only"
 requires-python = ">=3.10"
 authors = [
-    { name = "Yusuke Watanabe", email = "ywatanabe@scitex.ai" },
+    { name = "Yusuke Watanabe", email = "noreply@scitex.ai" },
 ]
 keywords = [
     "statistics",
@@ -38,31 +38,38 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 dependencies = [
-    "click>=8.0",
-    "matplotlib>=3.5.0",
-    "mcp",
+    # Numerical / data / stats core — every test_* module touches these
     "numpy>=1.21.0",
-    "pandas>=1.3.0",
     "scipy>=1.7.0",
+    "pandas>=1.3.0",
     "statsmodels>=0.13.0",
-    "tabulate>=0.9.0",
-    "figrecipe>=0.28.0",
+    # 29 test modules import matplotlib at module top — effectively hard
+    "matplotlib>=3.5.0",
+    # CLI framework (scitex-stats <cmd>)
+    "click>=8.0",
+    # SciTeX ecosystem: linter plugin Rule class, skills installer, audit
     "scitex-dev>=0.11.7",
+    "scitex-config>=0.3.0",
+    # SciTeX logger — _logging.py prefers it over stdlib logging
+    "scitex-logging>=0.1",
+    # MCP server stack — bundled in default install so `scitex-stats mcp …` works out-of-the-box
+    "mcp",
+    "fastmcp>=2.0.0",
+    # Pingouin — sphericity (Mauchly) in test_anova_rm and other advanced
+    # parametric paths. scitex-stats is a stats package; users expect these
+    # to work out-of-the-box, not via an extra.
+    "pingouin>=0.5",
 ]
 
 [project.optional-dependencies]
-figrecipe = [
-    "figrecipe>=0.13.0",
-]
-mcp = [
-    "fastmcp>=2.0.0",
-]
-plot = [
-    "matplotlib>=3.5.0",
+# Convenience meta-extra: cross-package integrations + alt-backend tests
+# - figrecipe: lazy-imported plot helpers + scitex_stats↔figrecipe integration
+# - torch:     tensor-preserving descriptive stats (numpy fallback if absent)
+all = [
+    "figrecipe>=0.28.0",
+    "torch>=2.0",
 ]
 dev = [
-    "fastmcp",
-    "scitex-dev>=0.11.7",
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
     "pytest-xdist>=3.0.0",
@@ -71,10 +78,10 @@ dev = [
     # so a fresh `pip install -e .[dev]` runs the full suite. See
     # _skills/general/01_ecosystem_02_dependency-and-version-pinning.md
     # `[dev]` extras completeness.
-    "figrecipe",          # tested via [figrecipe] integration tests
     "nbconvert>=7.0",     # executes example .ipynb in tests (PS-505)
     "ipykernel>=6.0",     # kernel for nbconvert --execute
     "openpyxl>=3.1",      # pandas to_excel used by _demo_*.py
+    # Note: fastmcp / mcp / scitex-dev / scitex-logging / pingouin come in via [project.dependencies].
 ]
 docs = [
     "sphinx>=7.0",
@@ -82,11 +89,6 @@ docs = [
     "myst-parser>=2.0",
     "sphinx-copybutton>=0.5",
     "sphinx-autodoc-typehints>=1.25",
-]
-all = [
-    "scitex-stats[figrecipe]",
-    "scitex-stats[mcp]",
-    "scitex-stats[plot]",
 ]
 
 [project.scripts]

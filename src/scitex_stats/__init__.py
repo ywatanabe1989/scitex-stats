@@ -1,33 +1,81 @@
 #!/usr/bin/env python3
 # File: src/scitex_stats/__init__.py
 
-"""SciTeX Stats - Publication-ready statistical testing framework.
+"""scitex-stats — Publication-ready statistical testing framework.
 
-Three Interfaces:
-    - Python API: import scitex_stats as ss
-    - CLI: scitex-stats <command>
-    - MCP: 10 tools for AI agents
+Functionalities
+---------------
+- `run_test(name, ...)` — single dispatcher across 23 tests (parametric,
+  nonparametric, correlation, categorical, normality) returning a unified
+  result dict (statistic, pvalue, effect_size, power, formatted, ...).
+- `recommend_tests(StatContext(...))` — design-driven test selection from
+  number of groups, sample sizes, outcome type, paired vs between.
+- `effect_sizes`, `power`, `correct`, `posthoc`, `descriptive`,
+  `auto` — submodules exposing the primitives behind `run_test`
+  (Cohen's d / Cliff's delta / eta-sq / sample-size-ttest /
+  Bonferroni / FDR / Tukey HSD / Dunn / ...).
+- APA / Nature / LaTeX formatting via `result["formatted"]`.
 
-Modules:
-    - tests: 23 statistical tests (parametric, nonparametric, correlation, categorical, normality)
-    - effect_sizes: Cohen's d, Cliff's delta, eta squared, epsilon squared, probability of superiority
-    - correct: Multiple comparison corrections (Bonferroni, FDR, Holm, Sidak)
-    - posthoc: Post-hoc tests (Tukey HSD, Dunnett, Games-Howell)
-    - power: Statistical power analysis and sample size calculation
-    - descriptive: Descriptive statistics and confidence intervals
-    - auto: Automatic test recommendation
+IO
+--
+- Reads: numeric arrays (`numpy.ndarray`, `pandas.DataFrame`,
+  `pandas.Series`, sequences); optional `.env` walk-up via
+  scitex-config; runtime cache under `$SCITEX_DIR/stats/runtime/`.
+- Writes: nothing by default — pure functions returning result dicts.
+  Caller persists via `scitex_io.save(...)` if desired.
+
+Dependencies
+------------
+- Hard: `numpy`, `scipy`, `pandas`, `scitex-dev`, `scitex-config`,
+  `scitex-logging`.
+- Optional (`[plot]`): `matplotlib`. (`[mcp]`): `fastmcp`.
+  (`[figrecipe]`): `figrecipe`.
+
+Standalone import::
+
+    import scitex_stats as ss
+    result = ss.run_test("ttest_ind", data=g1, data2=g2)
+    print(result["formatted"])  # APA-style summary
+
+CLI: ``scitex-stats <command>``. MCP: 10 tools for AI agents.
 """
 
 from __future__ import annotations
 
 from importlib.metadata import PackageNotFoundError as _PackageNotFoundError
 from importlib.metadata import version as _version
+from pathlib import Path as _Path
+
+# ---------------------------------------------------------------------------
+# .env-respect: walk parent dirs from cwd up to $HOME, load any .env files.
+# Closer-to-cwd .env wins; process env always wins. Helper landed on
+# scitex-config develop at eb9507e1 (load_dotenv walk_up + stop_at).
+# Wrapped in try/except so the import never breaks if scitex-config is
+# missing or older than 0.3.0.
+# ---------------------------------------------------------------------------
+try:
+    from scitex_config import PriorityConfig as _PC
+
+    _PC.load_dotenv(walk_up=True, stop_at=str(_Path.home()))
+except Exception:
+    pass
+
+# ---------------------------------------------------------------------------
+# Runtime path resolver: anything writable (cache, db, generated outputs)
+# lives under ~/.scitex/stats/runtime/<sub>/ rather than ~/.scitex/stats/<sub>/.
+# Config files (e.g. ~/.scitex/stats/config.yaml) stay at the top level.
+# Implementation + one-shot migration live in _runtime_paths to keep
+# __init__.py thin and let the audit-mirror test (PS-204) find a real
+# src file to pair the test against.
+# ---------------------------------------------------------------------------
+from ._runtime_paths import migrate_runtime_dirs as _migrate_runtime_dirs
+from ._runtime_paths import runtime_path as _runtime_path  # re-export
+
+_migrate_runtime_dirs()
 
 try:
     __version__ = _version("scitex-stats")
 except _PackageNotFoundError:
-    from pathlib import Path as _Path
-
     _pyproject = _Path(__file__).parent.parent.parent / "pyproject.toml"
     __version__ = "0.0.0+local"
     if _pyproject.exists():
