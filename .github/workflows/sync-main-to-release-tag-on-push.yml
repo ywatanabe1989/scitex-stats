@@ -2,16 +2,13 @@ name: sync
 
 # When a v*.*.* tag is pushed (always created on develop), fast-forward
 # main to that tag so `main` always = "the latest released commit".
-# See _skills/general/05_development_01_version-control.md for cadence.
+# Removes the easy-to-forget manual `git checkout main && merge develop`
+# step. See _skills/general/05_development_01_version-control.md for
+# the cadence rule.
 
 on:
   push:
     tags: ['v*']
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Tag to sync main with (e.g. v0.2.18)'
-        required: true
 
 jobs:
   ff-main:
@@ -30,16 +27,13 @@ jobs:
           set -e
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          TAG="${{ inputs.tag || github.ref_name }}"
+
+          TAG="${{ github.ref_name }}"
           git fetch origin --tags
           if git merge --ff-only "$TAG"; then
             echo "Fast-forwarded main to $TAG."
           else
-            # Tag wins on binary-file conflicts (e.g. generated
-            # sphinx pickles where main and develop both rewrote
-            # the same opaque bytes). The tag is the canonical
-            # release artifact, so `-X theirs` is correct.
-            git merge --no-ff -X theirs "$TAG" -m "merge: sync main with $TAG"
+            git merge --no-ff "$TAG" -m "merge: sync main with $TAG"
             echo "Created merge commit for $TAG."
           fi
           git push origin main
