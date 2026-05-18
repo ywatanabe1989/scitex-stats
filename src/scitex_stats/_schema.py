@@ -167,17 +167,15 @@ class StatPositioning:
 
 def _to_native(value: Any) -> Any:
     """Recursively convert numpy/special types to native Python types."""
-    try:
-        import numpy as np
+    # `numpy` is a hard dep — plain import (the prior try/except was dead).
+    import numpy as np
 
-        if isinstance(value, (np.integer,)):
-            return int(value)
-        if isinstance(value, (np.floating,)):
-            return float(value)
-        if isinstance(value, np.ndarray):
-            return value.tolist()
-    except ImportError:
-        pass
+    if isinstance(value, (np.integer,)):
+        return int(value)
+    if isinstance(value, (np.floating,)):
+        return float(value)
+    if isinstance(value, np.ndarray):
+        return value.tolist()
 
     if isinstance(value, dict):
         return {k: _to_native(v) for k, v in value.items()}

@@ -67,44 +67,24 @@ def _tukey_hsd(group_arrays, names):
 
     comparisons = []
 
-    try:
-        from statsmodels.stats.multicomp import pairwise_tukeyhsd
+    # `statsmodels` is a hard dep — the Bonferroni-fallback path is dead code.
+    from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
-        tukey = pairwise_tukeyhsd(all_data, group_labels)
+    tukey = pairwise_tukeyhsd(all_data, group_labels)
 
-        for i in range(len(tukey.summary().data) - 1):
-            row = tukey.summary().data[i + 1]
-            comparisons.append(
-                {
-                    "group1": str(row[0]),
-                    "group2": str(row[1]),
-                    "mean_diff": float(row[2]),
-                    "p_adj": float(row[3]),
-                    "ci_lower": float(row[4]),
-                    "ci_upper": float(row[5]),
-                    "reject": bool(row[6]),
-                }
-            )
-    except ImportError:
-        # Fallback: Bonferroni-corrected t-tests
-        n_comparisons = len(group_arrays) * (len(group_arrays) - 1) // 2
-        for i in range(len(group_arrays)):
-            for j in range(i + 1, len(group_arrays)):
-                stat, p = scipy_stats.ttest_ind(group_arrays[i], group_arrays[j])
-                p_adj = min(p * n_comparisons, 1.0)
-                comparisons.append(
-                    {
-                        "group1": names[i],
-                        "group2": names[j],
-                        "mean_diff": float(
-                            np.mean(group_arrays[i]) - np.mean(group_arrays[j])
-                        ),
-                        "t_statistic": float(stat),
-                        "p_value": float(p),
-                        "p_adj": float(p_adj),
-                        "reject": p_adj < 0.05,
-                    }
-                )
+    for i in range(len(tukey.summary().data) - 1):
+        row = tukey.summary().data[i + 1]
+        comparisons.append(
+            {
+                "group1": str(row[0]),
+                "group2": str(row[1]),
+                "mean_diff": float(row[2]),
+                "p_adj": float(row[3]),
+                "ci_lower": float(row[4]),
+                "ci_upper": float(row[5]),
+                "reject": bool(row[6]),
+            }
+        )
 
     return comparisons
 

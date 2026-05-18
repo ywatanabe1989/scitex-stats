@@ -52,14 +52,12 @@ async def describe_handler(
                 "iqr": float(np.percentile(arr, 75) - np.percentile(arr, 25)),
             }
 
-            # Add skewness and kurtosis if scipy available
-            try:
-                from scipy import stats as scipy_stats
+            # `scipy` is a hard dep — plain import (was a dead "if available"
+            # gate; the package can't load without scipy anyway).
+            from scipy import stats as scipy_stats
 
-                result["skewness"] = float(scipy_stats.skew(arr))
-                result["kurtosis"] = float(scipy_stats.kurtosis(arr))
-            except ImportError:
-                pass
+            result["skewness"] = float(scipy_stats.skew(arr))
+            result["kurtosis"] = float(scipy_stats.kurtosis(arr))
 
             return result
 

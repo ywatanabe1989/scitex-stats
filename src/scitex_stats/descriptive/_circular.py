@@ -18,14 +18,13 @@ import numpy as np
 __FILE__ = __file__
 __DIR__ = os.path.dirname(__FILE__)
 
-# Optional torch support
-try:
-    import torch
+# Optional torch support — gated via the canonical scitex helper
+# (general/05_development_11_dependency-tiers.md). `torch` lives in
+# [project.optional-dependencies.all].
+from scitex_dev import try_import_optional
 
-    HAS_TORCH = True
-except ImportError:
-    torch = None
-    HAS_TORCH = False
+torch = try_import_optional("torch", extra="all", pkg="scitex-stats")
+HAS_TORCH = torch is not None
 
 
 def _is_torch_tensor(x):

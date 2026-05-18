@@ -81,14 +81,16 @@ dev = [
     "nbconvert>=7.0",     # executes example .ipynb in tests (PS-505)
     "ipykernel>=6.0",     # kernel for nbconvert --execute
     "openpyxl>=3.1",      # pandas to_excel used by _demo_*.py
-    # Note: fastmcp / mcp / scitex-dev / scitex-logging / pingouin come in via [project.dependencies].
-]
-docs = [
+    # Sphinx doc build — only maintainers/CI need these. Folded in
+    # from the (now removed) [docs] extra per the three-tier policy
+    # (general/05_development_11_dependency-tiers.md): only [all] and
+    # [dev] are sanctioned optional-dependency keys.
     "sphinx>=7.0",
     "sphinx-rtd-theme>=2.0",
     "myst-parser>=2.0",
     "sphinx-copybutton>=0.5",
     "sphinx-autodoc-typehints>=1.25",
+    # Note: fastmcp / mcp / scitex-dev / scitex-logging / pingouin come in via [project.dependencies].
 ]
 
 [project.scripts]

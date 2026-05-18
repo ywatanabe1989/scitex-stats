@@ -21,7 +21,9 @@ jobs:
           python-version: "3.11"
 
       - name: Install package + docs deps
-        run: pip install -e ".[docs]"
+        # Sphinx deps moved into [dev] per the three-tier dependency
+        # policy (only [all] and [dev] are sanctioned extras).
+        run: pip install -e ".[dev]"
 
       - name: Build Sphinx HTML (warnings fail PRs only)
         run: |

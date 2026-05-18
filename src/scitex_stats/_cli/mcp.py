@@ -233,11 +233,15 @@ def cmd_doctor() -> int:
 
     checks = []
 
-    try:
-        import fastmcp
+    # `fastmcp` is a hard dep — probe via the canonical helper instead of bare
+    # try/except (so an out-of-date install still produces a "not installed"
+    # diagnostic instead of crashing the doctor command at import time).
+    from scitex_dev import try_import_optional
 
-        checks.append(("fastmcp", True, fastmcp.__version__))
-    except ImportError:
+    _fastmcp = try_import_optional("fastmcp", pkg="scitex-stats")
+    if _fastmcp is not None:
+        checks.append(("fastmcp", True, _fastmcp.__version__))
+    else:
         checks.append(("fastmcp", False, "not installed"))
 
     try:
@@ -267,7 +271,7 @@ def cmd_doctor() -> int:
     if all_ok:
         print("All checks passed!")
     else:
-        print("Some checks failed. Run 'pip install scitex-stats[mcp]' to fix.")
+        print("Some checks failed. Run 'pip install scitex-stats[all]' to fix.")
 
     return 0 if all_ok else 1
 

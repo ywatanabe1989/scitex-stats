@@ -109,16 +109,13 @@ def load_stats_bundle(bundle_dir: Path) -> Dict[str, Any]:
     else:
         result["spec"] = None
 
-    # Load supplementary data files if present
+    # Load supplementary data files if present. `pandas` is a hard dep —
+    # plain import (the legacy raw-text fallback was dead code).
     data_file = bundle_dir / "data.csv"
     if data_file.exists():
-        try:
-            import pandas as pd
+        import pandas as pd
 
-            result["data"] = pd.read_csv(data_file)
-        except ImportError:
-            with open(data_file) as f:
-                result["data"] = f.read()
+        result["data"] = pd.read_csv(data_file)
 
     return result
 

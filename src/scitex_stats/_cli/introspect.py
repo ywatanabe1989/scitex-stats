@@ -166,9 +166,13 @@ def cmd_api(
     """List API tree of a Python module."""
     dotted_path = dotted_path.replace("-", "_")
 
+    # NOTE: This is NOT an optional-dep gate — `dotted_path` is user-supplied
+    # CLI input, so we cannot use the canonical `try_import_optional` helper.
+    # `ModuleNotFoundError` is the precise subclass for "user-supplied name
+    # does not exist"; falls back to plain `ImportError` for partial imports.
     try:
         module = importlib.import_module(dotted_path)
-    except ImportError as e:
+    except (ModuleNotFoundError, ImportError) as e:
         print(f"Error importing {dotted_path}: {e}", file=sys.stderr)
         return 1
 

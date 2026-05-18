@@ -66,18 +66,16 @@ async def normality_test_handler(
                 }
 
             elif method == "lilliefors":
-                try:
-                    from statsmodels.stats.diagnostic import lilliefors
+                # `statsmodels` is a hard dep — plain import (was a dead gate).
+                from statsmodels.stats.diagnostic import lilliefors
 
-                    stat, p_value = lilliefors(arr, dist="norm")
-                    result = {
-                        "test": "Lilliefors",
-                        "statistic": float(stat),
-                        "statistic_name": "D",
-                        "p_value": float(p_value),
-                    }
-                except ImportError:
-                    return {"error": "statsmodels required for Lilliefors test"}
+                stat, p_value = lilliefors(arr, dist="norm")
+                result = {
+                    "test": "Lilliefors",
+                    "statistic": float(stat),
+                    "statistic_name": "D",
+                    "p_value": float(p_value),
+                }
 
             else:
                 raise ValueError(f"Unknown method: {method}")

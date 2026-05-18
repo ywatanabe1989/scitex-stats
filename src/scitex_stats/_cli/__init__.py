@@ -496,40 +496,34 @@ main.add_command(_skills_group, name="skills")
 
 
 # §1a: install-shell-completion + print-shell-completion (canonical leaves)
-try:
-    from scitex_dev._cli._completion import attach_shell_completion
+# scitex-dev is a hard dep, but specific attribute paths may shift between
+# versions — probe via the canonical helper rather than bare try/except.
+from scitex_dev import try_import_optional
 
-    attach_shell_completion(main, prog_name="scitex-stats")
-except ImportError:
-    pass
+_attach_shell_completion = try_import_optional(
+    "scitex_dev._cli._completion",
+    attr="attach_shell_completion",
+    pkg="scitex-dev",
+)
+if _attach_shell_completion is not None:
+    _attach_shell_completion(main, prog_name="scitex-stats")
 
 
 # ----------------------------------------------------------------------------
-# Optional docs/skills subcommands from scitex-dev
+# Optional docs/skills subcommands from scitex-dev (Click variants gate the
+# wire-up; argparse-only scitex-dev installs silently skip — `scitex-dev` is
+# the canonical UI for those subcommands.)
 # ----------------------------------------------------------------------------
 
-try:
-    from scitex_dev.cli import register_docs_subcommand, register_skills_subcommand
-
-    # scitex-dev exposes argparse-compatible registration functions; if a Click
-    # variant is available, use it. Otherwise we silently skip — the docs/skills
-    # subcommands are non-essential and the canonical API is `scitex-dev`.
-    _has_click_register = False
-    try:
-        from scitex_dev.cli import (  # type: ignore
-            register_docs_click_command,
-            register_skills_click_command,
-        )
-
-        _has_click_register = True
-    except ImportError:
-        pass
-
-    if _has_click_register:
-        register_docs_click_command(main, package="scitex-stats")
-        # Skills group is owned locally (skills_group.py) — do not override.
-except ImportError:
-    pass
+_register_docs_subcommand = try_import_optional(
+    "scitex_dev.cli", attr="register_docs_subcommand", pkg="scitex-dev"
+)
+_register_docs_click = try_import_optional(
+    "scitex_dev.cli", attr="register_docs_click_command", pkg="scitex-dev"
+)
+if _register_docs_subcommand is not None and _register_docs_click is not None:
+    _register_docs_click(main, package="scitex-stats")
+    # Skills group is owned locally (skills_group.py) — do not override.
 
 
 def _entry(argv=None) -> int:

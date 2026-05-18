@@ -16,10 +16,11 @@ import os
 
 import pandas as pd
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
+from scitex_dev import try_import_optional
+
+# `scitex` umbrella is an optional integration (not in scitex-stats deps);
+# gated via the canonical helper per dependency-tiers skill.
+stx = try_import_optional("scitex", pkg="scitex")
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._normalizers import force_dataframe
 

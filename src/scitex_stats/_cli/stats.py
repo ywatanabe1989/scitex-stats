@@ -49,10 +49,10 @@ def _read_data(path: str) -> "Any":
 
 def _select_column(df, name: "str | None"):
     """Pick a single column from a DataFrame -> np.ndarray. Pass-through if not DataFrame."""
-    try:
-        import pandas as pd
-    except ImportError:
-        return df
+    # `pandas` is a hard dep (see general/05_development_11_dependency-tiers.md);
+    # the legacy try/except fallback was dead code.
+    import pandas as pd
+
     if not isinstance(df, pd.DataFrame):
         return df
     if name is None:
@@ -111,29 +111,22 @@ def run_tests_execute(
         "json_safe": True,
     }
 
+    # `pandas` is a hard dep — plain import (the prior bare try/except was dead).
+    import pandas as pd
+
     if groups:
         cols = [c.strip() for c in groups.split(",")]
-        try:
-            import pandas as pd
-
-            if isinstance(df, pd.DataFrame):
-                kwargs["groups"] = [df[c].to_numpy() for c in cols]
-            else:
-                raise SystemExit("--groups requires CSV / DataFrame input.")
-        except ImportError:
-            raise SystemExit("pandas required for --groups")
+        if isinstance(df, pd.DataFrame):
+            kwargs["groups"] = [df[c].to_numpy() for c in cols]
+        else:
+            raise SystemExit("--groups requires CSV / DataFrame input.")
     elif x and y:
         kwargs["data"] = _select_column(df, x)
         kwargs["data2"] = _select_column(df, y)
     elif x:
         kwargs["data"] = _select_column(df, x)
     else:
-        try:
-            import pandas as pd
-
-            kwargs["data"] = df.to_numpy() if isinstance(df, pd.DataFrame) else df
-        except ImportError:
-            kwargs["data"] = df
+        kwargs["data"] = df.to_numpy() if isinstance(df, pd.DataFrame) else df
 
     try:
         result = ss.run_test(test_name, **kwargs)
@@ -158,15 +151,13 @@ def run_tests_describe(
     import scitex_stats as ss
 
     arr = _read_data(data)
-    try:
-        import pandas as pd
+    # `pandas` is a hard dep — plain import.
+    import pandas as pd
 
-        if isinstance(arr, pd.DataFrame) and column:
-            arr = arr[column].to_numpy()
-        elif hasattr(arr, "to_numpy"):
-            arr = arr.to_numpy()
-    except ImportError:
-        pass
+    if isinstance(arr, pd.DataFrame) and column:
+        arr = arr[column].to_numpy()
+    elif hasattr(arr, "to_numpy"):
+        arr = arr.to_numpy()
 
     if funcs:
         values, names = ss.describe(arr, funcs=funcs.split(","))

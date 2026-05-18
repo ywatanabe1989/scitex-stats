@@ -31,12 +31,11 @@ __FILE__ = __file__
 
 logger = getLogger(__name__)
 
-try:
-    import matplotlib.pyplot as plt  # noqa: E402
+# `matplotlib` is a hard dep — plain import (the legacy try/except was
+# dead code; see general/05_development_11_dependency-tiers.md).
+import matplotlib.pyplot as plt  # noqa: E402
 
-    HAS_PLT = True
-except ImportError:
-    HAS_PLT = False
+HAS_PLT = True
 
 
 def cochran_q_statistic(data: np.ndarray) -> Tuple[float, int]:

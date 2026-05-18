@@ -15,10 +15,11 @@ import os
 
 import numpy as np
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
+from scitex_dev import try_import_optional
+
+# `scitex` umbrella is an optional integration (not in scitex-stats deps);
+# gated via the canonical helper per dependency-tiers skill.
+stx = try_import_optional("scitex", pkg="scitex")
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._normalizers import export_results, export_summary
 
@@ -168,13 +169,17 @@ def main(args):  # noqa: C901
             df_all, "./example_09_export_to_various_formats_results.json"
         )
         logger.info(f"Exported to JSON: {json_path}")
-        try:
+        # `openpyxl` is a [dev] extra (pandas needs it for .xlsx). Probe via
+        # the canonical helper instead of bare try/except around the call.
+        from scitex_dev import try_import_optional
+
+        if try_import_optional("openpyxl", pkg="scitex-stats") is None:
+            logger.warning("openpyxl not available, skipping Excel export")
+        else:
             xlsx_path = export_results(
                 df_all, "./example_09_export_to_various_formats_results.xlsx"
             )
             logger.info(f"Exported to Excel: {xlsx_path}")
-        except ImportError:
-            logger.warning("openpyxl not available, skipping Excel export")
         latex_path = export_summary(
             df_all,
             "./example_09_export_to_various_formats_table.tex",

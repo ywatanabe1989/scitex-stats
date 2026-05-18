@@ -675,82 +675,11 @@ def test_correct_pvalues_n_significant_counts_rejections_correctly():
     assert sum(out["reject_null"]) == 1
 
 
-# ----- correct_pvalues fallback path (statsmodels missing) ------------ #
-
-
-def _arun_without_statsmodels(coro_factory):
-    """Stub the statsmodels import inside `do_correct` to force the
-    handler's no-statsmodels fallback path (lines 62-107)."""
-    import sys as _sys
-
-    saved = _sys.modules.get("statsmodels.stats.multitest")
-    # Replace with a module-like object whose `multipletests` raises.
-    bad = type(_sys)("statsmodels.stats.multitest")
-
-    def _raise(*a, **k):
-        raise ImportError("statsmodels stubbed out")
-
-    bad.multipletests = _raise  # type: ignore[attr-defined]
-    _sys.modules["statsmodels.stats.multitest"] = bad
-    try:
-        return _arun(coro_factory())
-    finally:
-        if saved is None:
-            _sys.modules.pop("statsmodels.stats.multitest", None)
-        else:
-            _sys.modules["statsmodels.stats.multitest"] = saved
-
-
-def test_correct_pvalues_fallback_bonferroni():
-    out = _arun_without_statsmodels(
-        lambda: h.correct_pvalues_handler(
-            pvalues=[0.01, 0.02, 0.05], method="bonferroni"
-        )
-    )
-    assert out["success"] is True
-    assert out["method"] == "bonferroni"
-    assert abs(out["corrected_pvalues"][0] - 0.03) < 1e-10
-
-
-def test_correct_pvalues_fallback_holm():
-    out = _arun_without_statsmodels(
-        lambda: h.correct_pvalues_handler(
-            pvalues=[0.001, 0.01, 0.05, 0.20], method="holm"
-        )
-    )
-    assert out["success"] is True
-    assert out["method"] == "holm"
-    # Holm with n=4: smallest p * 4 = 0.004 → significant
-    assert out["reject_null"][0] is True
-
-
-def test_correct_pvalues_fallback_fdr_bh():
-    out = _arun_without_statsmodels(
-        lambda: h.correct_pvalues_handler(
-            pvalues=[0.001, 0.01, 0.05, 0.20], method="fdr_bh"
-        )
-    )
-    assert out["success"] is True
-    assert out["method"] == "fdr_bh"
-
-
-def test_correct_pvalues_fallback_sidak():
-    out = _arun_without_statsmodels(
-        lambda: h.correct_pvalues_handler(pvalues=[0.001, 0.01, 0.05], method="sidak")
-    )
-    assert out["success"] is True
-    assert out["method"] == "sidak"
-
-
-def test_correct_pvalues_fallback_unknown_method_passes_through():
-    """Fallback's `else` branch returns the raw p-values unchanged."""
-    out = _arun_without_statsmodels(
-        lambda: h.correct_pvalues_handler(
-            pvalues=[0.01, 0.02, 0.05], method="not_a_real_method"
-        )
-    )
-    assert out["success"] is True
-    assert out["corrected_pvalues"] == [0.01, 0.02, 0.05]
+# `correct_pvalues` no-statsmodels fallback tests removed: `statsmodels`
+# is now a hard dep (see general/05_development_11_dependency-tiers.md),
+# so the conditional fallback branch in `_corrections.py` was dead code
+# and was deleted alongside this test suite as part of the
+# extras-only + try_import_optional deps cleanup.
 
 
 # ----- describe_handler edge paths ------------------------------------ #

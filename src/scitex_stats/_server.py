@@ -236,31 +236,34 @@ async def p_to_stars(
 # =============================================================================
 
 
+# `scitex_dev.skills` lives inside the hard-dep `scitex_dev` package, but
+# specific attribute paths can shift between minor versions — gate with the
+# canonical helper rather than bare try/except (general/05_development_11).
+from scitex_dev import try_import_optional
+
+_list_skills = try_import_optional("scitex_dev.skills", attr="list_skills", pkg="scitex-dev")
+_get_skill = try_import_optional("scitex_dev.skills", attr="get_skill", pkg="scitex-dev")
+
+
 @mcp.tool()
 async def skills_list() -> str:
     """List available skill pages for scitex-stats."""
-    try:
-        from scitex_dev.skills import list_skills
-
-        result = list_skills(package="scitex-stats")
-        return _json({"success": True, "skills": result.get("scitex-stats", [])})
-    except ImportError:
+    if _list_skills is None:
         return _json({"success": False, "error": "scitex-dev not installed"})
+    result = _list_skills(package="scitex-stats")
+    return _json({"success": True, "skills": result.get("scitex-stats", [])})
 
 
 @mcp.tool()
 async def skills_get(name: Optional[str] = None) -> str:
     """Get a skill page for scitex-stats. Without name, returns main SKILL.md."""
-    try:
-        from scitex_dev.skills import get_skill
-
-        content = get_skill(package="scitex-stats", name=name)
-        if content:
-            return _json({"success": True, "name": name, "content": content})
-        target = f"'{name}'" if name else "SKILL.md"
-        return _json({"success": False, "error": f"Skill {target} not found"})
-    except ImportError:
+    if _get_skill is None:
         return _json({"success": False, "error": "scitex-dev not installed"})
+    content = _get_skill(package="scitex-stats", name=name)
+    if content:
+        return _json({"success": True, "name": name, "content": content})
+    target = f"'{name}'" if name else "SKILL.md"
+    return _json({"success": False, "error": f"Skill {target} not found"})
 
 
 # =============================================================================

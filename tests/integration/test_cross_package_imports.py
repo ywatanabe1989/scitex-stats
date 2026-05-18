@@ -22,10 +22,8 @@ import pytest
 CROSS_PACKAGE_IMPORTS = [
     "scitex",
     "scitex_config",
-    "scitex_dev._cli._completion",
-    "scitex_dev.cli",
+    "scitex_dev",
     "scitex_dev.decorators",
-    "scitex_dev.skills",
     "scitex_dev.linter._rules._base",
     "scitex_logging",
 ]

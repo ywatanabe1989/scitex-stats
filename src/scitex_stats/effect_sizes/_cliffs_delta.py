@@ -299,10 +299,10 @@ def parse_args():
 
 def run_main():
     """Initialize SciTeX framework and run main."""
-    try:
-        import scitex as stx
-    except ImportError:
-        stx = None
+    from scitex_dev import try_import_optional
+
+    # `scitex` umbrella optional integration — gated via canonical helper.
+    stx = try_import_optional("scitex", pkg="scitex")
 
     global CONFIG, sys, plt, rng
 

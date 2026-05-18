@@ -155,11 +155,12 @@ _LAZY_ATTRS: dict[str, str] = {
 
 
 def _supports_return_as_lazy(fn):
-    """Apply scitex-dev's @supports_return_as if available; identity otherwise."""
-    try:
-        from scitex_dev.decorators import supports_return_as
-    except ImportError:
-        return fn
+    """Apply scitex-dev's @supports_return_as. ``scitex_dev`` is a hard
+    runtime dep (see general/05_development_11_dependency-tiers.md), so a
+    plain import is the canonical form here — no try/except ImportError.
+    """
+    from scitex_dev.decorators import supports_return_as
+
     return supports_return_as(fn)
 
 

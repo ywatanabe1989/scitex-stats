@@ -44,13 +44,12 @@ __DIR__ = os.path.dirname(__FILE__)
 
 HAS_PLT = True
 
-# Try importing pingouin for sphericity test
-try:
-    import pingouin as pg  # noqa: E402
+# `pingouin` is a hard dep (promoted to [project.dependencies] for the
+# stats core — see general/05_development_11_dependency-tiers.md). Plain
+# import; legacy fallback to a hand-rolled Mauchly is now dead code.
+import pingouin as pg  # noqa: E402
 
-    HAS_PINGOUIN = True
-except ImportError:
-    HAS_PINGOUIN = False
+HAS_PINGOUIN = True
 
 
 def test_anova_rm(  # noqa: C901
