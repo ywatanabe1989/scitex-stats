@@ -22,14 +22,10 @@ import argparse
 import numpy as np
 import pandas as pd
 
-try:
-    import scitex as stx
-except ImportError:
-    stx = None
+import matplotlib.pyplot as plt
 
 from scitex_stats._logging import getLogger
-
-from ._correct_bonferroni import correct_bonferroni
+from scitex_stats.correct._correct_bonferroni import correct_bonferroni
 
 logger = getLogger(__name__)
 
@@ -88,7 +84,7 @@ def main(args):
 
     # Visualization
     logger.info("\n=== Creating visualization ===")
-    fig, axes = stx.plt.subplots(2, 2, figsize=(12, 10))
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
 
     # Plot 1: Adjusted vs original p-values
     ax = axes[0, 0]
@@ -163,9 +159,10 @@ def main(args):
                 table[(i, j)].set_facecolor("#f0f0f0")
     ax.set_title("Multiple Comparison Methods Comparison", pad=20, fontweight="bold")
 
-    plt.tight_layout()  # type: ignore[name-defined]
+    plt.tight_layout()
 
-    stx.io.save(fig, "./bonferroni_demo.jpg")
+    fig.savefig("./bonferroni_demo.jpg")
+    plt.close(fig)
     logger.info("Visualization saved")
 
     return 0
@@ -179,31 +176,16 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    global CONFIG, sys, plt, rng
+    """Run main without the scitex umbrella session helpers.
 
-    import sys
+    Force the matplotlib Agg backend so the demo runs headlessly in CI.
+    """
+    import matplotlib
 
-    import matplotlib.pyplot as plt
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng = stx.session.start(  # type: ignore[union-attr]
-        sys,
-        plt,
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(  # type: ignore[union-attr]
-        CONFIG,
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":
