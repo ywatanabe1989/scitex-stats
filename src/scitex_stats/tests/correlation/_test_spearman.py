@@ -466,6 +466,8 @@ def _run_main_no_stx(args=None):
     return 0
 
 def run_main() -> None:
+    if stx is None:
+        return _run_main_no_stx()
     """Initialize SciTeX framework and run main."""
     import scitex as stx
 
