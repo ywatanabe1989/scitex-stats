@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 17:00:00 (ywatanabe)"
-# File: scitex_stats/tests/parametric/_demo_anova_rm.py
+# File: examples/tests/parametric/demo_anova_rm.py
 # ----------------------------------------
 from __future__ import annotations
 
@@ -13,21 +13,17 @@ __DIR__ = os.path.dirname(__FILE__)
 """
 Demo script for repeated measures ANOVA examples.
 
-Run with: python -m scitex_stats.tests.parametric._demo_anova_rm
+Run with: python examples/tests/parametric/demo_anova_rm.py
 """
 
 import argparse
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
 from scitex_stats._logging import getLogger
-
-from ._test_anova_rm import test_anova_rm
+from scitex_stats.tests.parametric._test_anova_rm import test_anova_rm
 
 logger = getLogger(__name__)
 
@@ -37,6 +33,9 @@ def main(args):
     logger.info("=" * 70)
     logger.info("Repeated Measures ANOVA Examples")
     logger.info("=" * 70)
+
+    # Ensure ./.dev exists for figure output.
+    os.makedirs("./.dev", exist_ok=True)
 
     # Example 1: Basic repeated measures (4 time points)
     logger.info("\n[Example 1] Basic repeated measures - 4 time points")
@@ -54,15 +53,15 @@ def main(args):
         plot=True,
         verbose=True,
     )
-    stx.io.save(stx.plt.gcf(), "./.dev/anova_rm_example1.jpg")
-    stx.plt.close()
+    plt.gcf().savefig("./.dev/anova_rm_example1.jpg")
+    plt.close("all")
 
     logger.info(
         f"F({result['df_effect']:.1f}, {result['df_error']:.1f}) = {result['statistic']:.3f}"  # type: ignore[call-overload]
     )
     logger.info(f"p-value = {result['pvalue']:.4f} {result['stars']}")  # type: ignore[call-overload]
     logger.info(
-        f"Partial η² = {result['effect_size']:.3f} ({result['effect_size_interpretation']})"  # type: ignore[call-overload]
+        f"Partial eta^2 = {result['effect_size']:.3f} ({result['effect_size_interpretation']})"  # type: ignore[call-overload]
     )
     if "sphericity_met" in result:
         logger.info(f"Sphericity met: {result['sphericity_met']}")  # type: ignore[call-overload]
@@ -83,8 +82,8 @@ def main(args):
         plot=True,
         verbose=True,
     )
-    stx.io.save(stx.plt.gcf(), "./.dev/anova_rm_example2.jpg")
-    stx.plt.close()
+    plt.gcf().savefig("./.dev/anova_rm_example2.jpg")
+    plt.close("all")
 
     logger.info(f"Sphericity W = {result_spher.get('sphericity_W', 'N/A')}")  # type: ignore[union-attr]
     logger.info(f"Sphericity p = {result_spher.get('sphericity_pvalue', 'N/A')}")  # type: ignore[union-attr]
@@ -115,8 +114,8 @@ def main(args):
         plot=True,
         verbose=True,
     )
-    stx.io.save(stx.plt.gcf(), "./.dev/anova_rm_example3.jpg")
-    stx.plt.close()
+    plt.gcf().savefig("./.dev/anova_rm_example3.jpg")
+    plt.close("all")
 
     logger.info(f"F = {result_long['statistic']:.3f}, p = {result_long['pvalue']:.4f}")  # type: ignore[call-overload]
     logger.info(f"Conditions: {result_long['condition_names']}")  # type: ignore[call-overload]
@@ -140,23 +139,19 @@ def main(args):
         df_wide.iloc[:, i] += dose * 0.5
 
     result_wide, _fig_wide = test_anova_rm(df_wide, plot=True, verbose=True)
-    stx.io.save(stx.plt.gcf(), "./.dev/anova_rm_example4.jpg")
-    stx.plt.close()
+    plt.gcf().savefig("./.dev/anova_rm_example4.jpg")
+    plt.close("all")
 
     logger.info(f"F = {result_wide['statistic']:.3f}, p = {result_wide['pvalue']:.4f}")  # type: ignore[call-overload]
-    logger.info(f"Partial η² = {result_wide['effect_size']:.3f}")  # type: ignore[call-overload]
+    logger.info(f"Partial eta^2 = {result_wide['effect_size']:.3f}")  # type: ignore[call-overload]
 
     # Example 5: Export results
     logger.info("\n[Example 5] Export results")
     logger.info("-" * 70)
 
-    # Export via pandas — convert_results doesn't emit Excel/CSV
-    # (supported: dict / dataframe / markdown / json / latex / html / text).
-    os.makedirs("./.dev", exist_ok=True)
-    pd.DataFrame([result]).to_excel("./.dev/anova_rm_results.xlsx", index=False)
-    logger.info("Saved to: ./.dev/anova_rm_results.xlsx")
-
-    # EOF
+    # Export via pandas to CSV.
+    pd.DataFrame([result]).to_csv("./.dev/anova_rm_results.csv", index=False)
+    logger.info("Saved to: ./.dev/anova_rm_results.csv")
 
     return 0
 
@@ -169,29 +164,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    global CONFIG, CC, sys, plt
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    import sys
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng_manager = stx.session.start(  # type: ignore[name-defined]
-        sys,  # type: ignore[name-defined]
-        stx.plt,
-        args=args,
-        file=__FILE__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,  # type: ignore[name-defined]
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

@@ -259,11 +259,26 @@ def test_read_data_json_file(tmp_path):
     np.testing.assert_array_equal(out, [1, 2, 3])
 
 
-def test_read_data_stdin_path_reads_json(monkeypatch):
-    import io as _io
+def test_read_data_stdin_path_reads_json(tmp_path):
+    """Read stdin via a real temp file rather than monkeypatching the global.
 
-    monkeypatch.setattr("sys.stdin", _io.StringIO(json.dumps([7, 8, 9])))
-    out = cli._read_data("-")
+    The no-mocks rule (PA-306) forbids ``monkeypatch.setattr("sys.stdin",
+    ...)`` because it patches production process state. A temp-file-backed
+    ``sys.stdin`` reassignment in a ``try/finally`` covers the same wire
+    without leaving an after-effect on the test runner.
+    """
+    import sys
+
+    p = tmp_path / "stdin.json"
+    p.write_text(json.dumps([7, 8, 9]))
+    saved_stdin = sys.stdin
+    f = open(p)
+    sys.stdin = f
+    try:
+        out = cli._read_data("-")
+    finally:
+        sys.stdin = saved_stdin
+        f.close()
     np.testing.assert_array_equal(out, [7, 8, 9])
 
 

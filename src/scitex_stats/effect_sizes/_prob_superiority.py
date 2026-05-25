@@ -30,6 +30,7 @@ IO:
 import argparse
 from typing import Union
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -185,7 +186,6 @@ def interpret_prob_superiority(prob: float) -> str:
 
 def main(args):
     """Demonstrate probability of superiority computation."""
-    import scitex as stx
     logger.info("Demonstrating probability of superiority P(X > Y)")
 
     # Set random seed
@@ -223,7 +223,7 @@ def main(args):
     # Visualization
     logger.info("\n=== Creating visualization ===")
 
-    fig, ax = stx.plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(10, 6))
 
     # Generate data for visualization
     shifts = np.linspace(0, 2, 20)
@@ -246,8 +246,9 @@ def main(args):
     ax.legend()
     ax.grid(True, alpha=0.3)
 
-    stx.plt.tight_layout()
-    stx.io.save(fig, "./prob_superiority_demo.jpg")
+    plt.tight_layout()
+    fig.savefig("./prob_superiority_demo.jpg")
+    plt.close(fig)
     logger.info("Visualization saved")
 
     return 0
@@ -263,36 +264,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    try:
-        import scitex as stx
-    except ImportError:
-        stx = None
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    global CONFIG, sys, plt, rng
-
-    import sys
-
-    import matplotlib.pyplot as plt
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng = stx.session.start(
-        sys,
-        plt,
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

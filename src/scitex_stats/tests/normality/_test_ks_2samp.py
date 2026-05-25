@@ -312,8 +312,6 @@ def _plot_ks_2samp_simple(x, y, var_x, var_y, result, ax):
 
 def main(args):
     """Demonstrate two-sample Kolmogorov-Smirnov test functionality."""
-    import scitex as stx
-
     logger.info("Demonstrating two-sample Kolmogorov-Smirnov test")
 
     # Set random seed
@@ -344,8 +342,8 @@ def main(args):
     result3 = test_ks_2samp(
         x3, y3, var_x="Normal", var_y="Exponential", plot=True, verbose=True
     )
-    stx.io.save(plt.gcf(), "./ks_2samp_example.jpg")
-    plt.close()
+    plt.gcf().savefig("./ks_2samp_example.jpg")
+    plt.close("all")
 
     # Example 4: Export results
     logger.info("\n=== Example 4: Export results ===")
@@ -373,32 +371,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    import sys  # noqa: E402
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    import matplotlib.pyplot as plt  # noqa: E402
-    import scitex as stx
-
-    global CONFIG, sys, plt
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng_manager = stx.session.start(  # type: ignore[name-defined]
-        sys,  # type: ignore[name-defined]
-        plt,
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,  # type: ignore[name-defined]
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":
