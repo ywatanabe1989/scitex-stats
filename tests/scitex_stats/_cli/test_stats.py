@@ -259,11 +259,19 @@ def test_read_data_json_file(tmp_path):
     np.testing.assert_array_equal(out, [1, 2, 3])
 
 
-def test_read_data_stdin_path_reads_json(monkeypatch):
-    import io as _io
+def test_read_data_stdin_path_reads_json(tmp_path):
+    import sys
 
-    monkeypatch.setattr("sys.stdin", _io.StringIO(json.dumps([7, 8, 9])))
-    out = cli._read_data("-")
+    p = tmp_path / "stdin.json"
+    p.write_text(json.dumps([7, 8, 9]))
+    saved = sys.stdin
+    f = open(p)
+    sys.stdin = f
+    try:
+        out = cli._read_data("-")
+    finally:
+        sys.stdin = saved
+        f.close()
     np.testing.assert_array_equal(out, [7, 8, 9])
 
 
