@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 18:53:25 (ywatanabe)"
-# File: scitex_stats/tests/categorical/_demo_chi2.py
+# File: examples/tests/categorical/demo_chi2.py
 # ----------------------------------------
 
 """
 Demo script for chi-square test examples.
 
-Run with: python -m scitex_stats.tests.categorical._demo_chi2
+Run with: python examples/tests/categorical/demo_chi2.py
 """
 
 from __future__ import annotations
@@ -14,17 +14,13 @@ from __future__ import annotations
 import argparse
 import os
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._normalizers import force_dataframe
-
-from ._test_chi2 import test_chi2
+from scitex_stats.tests.categorical._test_chi2 import test_chi2
 
 __FILE__ = __file__
 __DIR__ = os.path.dirname(__FILE__)
@@ -38,7 +34,7 @@ def main(args):
     logger.info("Chi-square Test of Independence - Examples")
     logger.info("=" * 70)
 
-    # Example 1: Treatment × Outcome (2×2 table, demonstrates plt.gcf() and stx.io.save())
+    # Example 1: Treatment × Outcome (2×2 table)
     logger.info("\nExample 1: Treatment × Outcome (2×2 table)")
     logger.info("-" * 70)
     observed1 = np.array(
@@ -57,7 +53,8 @@ def main(args):
     logger.info(force_dataframe(result1))
 
     # Save the figure using plt.gcf()
-    stx.io.save(stx.plt.gcf(), "./example1_treatment_outcome.jpg")
+    plt.gcf().savefig("./example1_treatment_outcome.jpg")
+    plt.close("all")
 
     # Example 2: Education × Income (3×3 table)
     logger.info("\nExample 2: Education × Income level")
@@ -78,8 +75,8 @@ def main(args):
     )
     logger.info(force_dataframe(result2))
 
-    # Save the figure using plt.gcf()
-    stx.io.save(stx.plt.gcf(), "./example2_education_income.jpg")
+    plt.gcf().savefig("./example2_education_income.jpg")
+    plt.close("all")
 
     # Example 3: Gender × Product preference
     logger.info("\nExample 3: Gender × Product preference")
@@ -105,7 +102,8 @@ def main(args):
     df4.columns.name = "Outcome"
     result4 = test_chi2(df4, plot=True)
     print(force_dataframe(result4))
-    stx.io.save(stx.plt.gcf(), "./fig4.jpg")
+    plt.gcf().savefig("./fig4.jpg")
+    plt.close("all")
 
     # Example 5: Small expected frequencies (warning)
     print("\nExample 5: Small expected frequencies (assumption violation)")
@@ -114,13 +112,12 @@ def main(args):
     result5 = test_chi2(observed5, var_row="Group", var_col="Response", plot=False)
     print(force_dataframe(result5))
     if "warnings" in result5:
-        print(f"⚠ Warning: {result5['warnings']}")
+        print(f"Warning: {result5['warnings']}")
 
     # Example 6: No association (null example)
     print("\nExample 6: No association (random data)")
     print("-" * 70)
     np.random.seed(42)
-    # Generate independent multinomial data
     n_samples = 200
     row_probs = [0.5, 0.5]
     col_probs = [0.3, 0.4, 0.3]
@@ -129,7 +126,8 @@ def main(args):
     ).reshape(2, 3)
     result6 = test_chi2(observed6, var_row="Factor1", var_col="Factor2", plot=True)
     print(force_dataframe(result6))
-    stx.io.save(stx.plt.gcf(), "./example6_no_association.jpg")
+    plt.gcf().savefig("./example6_no_association.jpg")
+    plt.close("all")
 
     # Example 7: Strong association
     print("\nExample 7: Strong association")
@@ -144,7 +142,8 @@ def main(args):
     result7 = test_chi2(observed7, var_row="Group", var_col="Category", plot=True)
     print(force_dataframe(result7))
     print(f"Very strong association: V = {result7['effect_size']:.3f}")
-    stx.io.save(stx.plt.gcf(), "./example7_strong_association.jpg")
+    plt.gcf().savefig("./example7_strong_association.jpg")
+    plt.close("all")
 
     # Example 8: Yates' correction vs no correction (2×2)
     print("\nExample 8: Yates' correction comparison (2×2 table)")
@@ -153,19 +152,19 @@ def main(args):
     result8_yates = test_chi2(observed8, correction=True, plot=False)
     result8_no = test_chi2(observed8, correction=False, plot=False)
     print("With Yates' correction:")
-    print(f"  χ² = {result8_yates['statistic']:.3f}, p = {result8_yates['pvalue']:.4f}")
+    print(f"  chi2 = {result8_yates['statistic']:.3f}, p = {result8_yates['pvalue']:.4f}")
     print("Without correction:")
-    print(f"  χ² = {result8_no['statistic']:.3f}, p = {result8_no['pvalue']:.4f}")
+    print(f"  chi2 = {result8_no['statistic']:.3f}, p = {result8_no['pvalue']:.4f}")
 
-    # Example 9: Export to various formats
-    print("\nExample 9: Export to various formats")
+    # Example 9: Export to CSV
+    print("\nExample 9: Export to CSV")
     print("-" * 70)
     result9 = test_chi2(
         observed3, var_row="Gender", var_col="Product", return_as="dataframe"
     )
     result9.to_csv("chi2_demo.csv", index=False)  # type: ignore[union-attr]
-    stx.io.save(result9, "chi2_demo.tex")
-    print("Exported to CSV and LaTeX formats")
+    # stx.io.save(result9, 'chi2_demo.tex') removed -- leaf-rule
+    print("Exported to CSV")
     print(result9)
 
     # Example 10: Large contingency table (4×5)
@@ -175,7 +174,8 @@ def main(args):
     observed10 = np.random.randint(10, 40, size=(4, 5))
     result10 = test_chi2(observed10, var_row="Factor_A", var_col="Factor_B", plot=True)
     print(force_dataframe(result10))
-    stx.io.save(stx.plt.gcf(), "./example10_large_table.jpg")
+    plt.gcf().savefig("./example10_large_table.jpg")
+    plt.close("all")
 
     return 0
 
@@ -188,29 +188,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    import sys  # noqa: E402
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    global CONFIG
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, _rng_manager = stx.session.start(  # type: ignore[name-defined]
-        sys,
-        stx.plt,
-        args=args,
-        file=__FILE__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,  # type: ignore[name-defined]
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 15:30:00 (ywatanabe)"
-# File: scitex_stats/tests/normality/_demo_shapiro.py
+# File: examples/tests/normality/demo_shapiro.py
 # ----------------------------------------
 from __future__ import annotations
 
@@ -19,12 +19,9 @@ Demonstrates various use cases of test_shapiro().
 """Imports"""
 import argparse  # noqa: E402
 
+import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
 from scitex_stats._logging import getLogger
 
 logger = getLogger(__name__)
@@ -34,7 +31,7 @@ logger = getLogger(__name__)
 
 def main(args):
     """Demonstrate Shapiro-Wilk test functionality."""
-    from ._test_shapiro import test_normality, test_shapiro
+    from scitex_stats.tests.normality._test_shapiro import test_normality, test_shapiro
 
     logger.info("Demonstrating Shapiro-Wilk normality test")
 
@@ -64,8 +61,8 @@ def main(args):
     )
 
     _ = test_shapiro(x_mixed, var_x="Mixed Distribution", plot=True, verbose=True)
-    stx.io.save(stx.plt.gcf(), "./shapiro_example3.jpg")
-    stx.plt.close()
+    plt.gcf().savefig("./shapiro_example3.jpg")
+    plt.close("all")
 
     # Example 4: Multiple samples check
     logger.info("\n=== Example 4: Check multiple samples ===")
@@ -129,31 +126,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    global CONFIG, sys, plt
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    import sys
-
-    import matplotlib.pyplot as plt  # noqa: E402, F401
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng_manager = stx.session.start(  # type: ignore[name-defined]
-        sys,  # type: ignore[name-defined]
-        plt,  # type: ignore[name-defined]
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,  # type: ignore[name-defined]
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

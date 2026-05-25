@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 19:00:00 (ywatanabe)"
-# File: scitex_stats/tests/categorical/_demo_cochran_q.py
+# File: examples/tests/categorical/demo_cochran_q.py
 # ----------------------------------------
 
 """
 Demo script for Cochran's Q test examples.
 
-Run with: python -m scitex_stats.tests.categorical._demo_cochran_q
+Run with: python examples/tests/categorical/demo_cochran_q.py
 """
 
 from __future__ import annotations
@@ -14,16 +14,12 @@ from __future__ import annotations
 import argparse
 import os
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
 from scitex_stats._logging import getLogger
-
-from ._test_cochran_q import test_cochran_q
+from scitex_stats.tests.categorical._test_cochran_q import test_cochran_q
 
 __FILE__ = __file__
 __DIR__ = os.path.dirname(__FILE__)
@@ -36,6 +32,9 @@ def main(args):
     logger.info("=" * 70)
     logger.info("Cochran's Q Test Examples")
     logger.info("=" * 70)
+
+    # Make sure ./.dev exists for output JPGs.
+    os.makedirs("./.dev", exist_ok=True)
 
     # Example 1: Treatment success over time
     logger.info("\n[Example 1] Treatment success (0/1) across 4 visits")
@@ -71,8 +70,8 @@ def main(args):
         f"Effect size (W) = {result['effect_size']:.3f} ({result['effect_size_interpretation']})"
     )
     logger.info(f"Proportions: {[f'{p:.1%}' for p in result['proportions']]}")
-    stx.io.save(stx.plt.gcf(), "./.dev/cochran_q_example1.jpg")
-    stx.plt.close()
+    plt.gcf().savefig("./.dev/cochran_q_example1.jpg")
+    plt.close("all")
 
     # Example 2: Symptom presence (binary)
     logger.info("\n[Example 2] Symptom presence across 3 time points")
@@ -99,8 +98,8 @@ def main(args):
 
     logger.info(f"Q({result_symptom['df']}) = {result_symptom['statistic']:.3f}")
     logger.info(f"p-value = {result_symptom['pvalue']:.4f}")
-    stx.io.save(stx.plt.gcf(), "./.dev/cochran_q_example2.jpg")
-    stx.plt.close()
+    plt.gcf().savefig("./.dev/cochran_q_example2.jpg")
+    plt.close("all")
 
     # Example 3: Comparison with Friedman test
     logger.info("\n[Example 3] Comparison: Cochran Q vs Friedman")
@@ -115,7 +114,7 @@ def main(args):
         f"Cochran's Q:    Q = {result_cochran['statistic']:.3f}, p = {result_cochran['pvalue']:.4f}"  # type: ignore[call-overload]
     )
     logger.info(
-        f"Friedman test:  χ² = {result_friedman['statistic']:.3f}, p = {result_friedman['pvalue']:.4f}"
+        f"Friedman test:  chi2 = {result_friedman['statistic']:.3f}, p = {result_friedman['pvalue']:.4f}"
     )
     logger.info("Note: For binary data, both tests are similar")
 
@@ -140,8 +139,8 @@ def main(args):
     )
 
     logger.info(f"Q = {result_long['statistic']:.3f}, p = {result_long['pvalue']:.4f}")
-    stx.io.save(stx.plt.gcf(), "./.dev/cochran_q_example4.jpg")
-    stx.plt.close()
+    plt.gcf().savefig("./.dev/cochran_q_example4.jpg")
+    plt.close("all")
 
     # Example 5: Export results
     logger.info("\n[Example 5] Export results")
@@ -150,8 +149,8 @@ def main(args):
     from scitex_stats._utils._normalizers import convert_results
 
     df_result = convert_results(result, return_as="dataframe")
-    df_result.to_excel("./cochran_q_results.xlsx", index=False)  # type: ignore[union-attr]
-    logger.info("Saved to: ./cochran_q_results.xlsx")
+    df_result.to_csv("./cochran_q_results.csv", index=False)  # type: ignore[union-attr]
+    logger.info("Saved to: ./cochran_q_results.csv")
 
     return 0
 
@@ -164,29 +163,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    import sys  # noqa: E402
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    global CONFIG
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, _rng_manager = stx.session.start(  # type: ignore[name-defined]
-        sys,
-        stx.plt,
-        args=args,
-        file=__FILE__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,  # type: ignore[name-defined]
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

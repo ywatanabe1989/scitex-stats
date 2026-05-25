@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # Time-stamp: "2025-01-15 00:00:00 (ywatanabe)"
-# File: scitex_stats/tests/categorical/_demo_fisher.py
+# File: examples/tests/categorical/demo_fisher.py
 # ----------------------------------------
 
 """
 Demo script for Fisher's exact test examples.
 
-Run with: python -m scitex_stats.tests.categorical._demo_fisher
+Run with: python examples/tests/categorical/demo_fisher.py
 """
 
 from __future__ import annotations
@@ -14,16 +14,12 @@ from __future__ import annotations
 import argparse
 import os
 
+import matplotlib.pyplot as plt
 import pandas as pd
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._normalizers import force_dataframe
-
-from ._test_fisher import test_fisher
+from scitex_stats.tests.categorical._test_fisher import test_fisher
 
 __FILE__ = __file__
 __DIR__ = os.path.dirname(__FILE__)
@@ -49,8 +45,8 @@ def main(args):
         verbose=True,
     )
     logger.info(force_dataframe(result1))
-    stx.io.save(stx.plt.gcf(), "fisher_example1.jpg")
-    stx.plt.close()
+    plt.gcf().savefig("fisher_example1.jpg")
+    plt.close("all")
 
     # Example 2: Case-control study (exposure × disease)
     logger.info("\nExample 2: Case-control study")
@@ -64,8 +60,8 @@ def main(args):
         verbose=True,
     )
     logger.info(force_dataframe(result2))
-    stx.io.save(stx.plt.gcf(), "fisher_example2.jpg")
-    stx.plt.close()
+    plt.gcf().savefig("fisher_example2.jpg")
+    plt.close("all")
 
     # Example 3: One-tailed test (expect positive association)
     logger.info("\nExample 3: One-tailed test (alternative='greater')")
@@ -88,8 +84,8 @@ def main(args):
     df4.columns.name = "Outcome"
     result4 = test_fisher(df4, plot=True)
     print(force_dataframe(result4))
-    stx.io.save(stx.plt.gcf(), "example4_dataframe.jpg")
-    stx.plt.close()
+    plt.gcf().savefig("example4_dataframe.jpg")
+    plt.close("all")
 
     # Example 5: Compare Fisher vs Chi-square
     print("\nExample 5: Compare Fisher's exact vs Chi-square")
@@ -97,13 +93,13 @@ def main(args):
     observed5 = [[5, 10], [10, 5]]
     fisher_result = test_fisher(observed5, plot=False)
 
-    from ._test_chi2 import test_chi2
+    from scitex_stats.tests.categorical._test_chi2 import test_chi2
 
     chi2_result = test_chi2(observed5, plot=False)
 
     print(f"Fisher's exact test: p = {fisher_result['pvalue']:.4f} (exact)")
     print(f"Chi-square test:     p = {chi2_result['pvalue']:.4f} (approximation)")
-    print("→ Fisher's exact provides exact p-value, chi-square is approximation")
+    print("-> Fisher's exact provides exact p-value, chi-square is approximation")
 
     # Example 6: Very small sample
     print("\nExample 6: Very small sample (chi-square not recommended)")
@@ -112,8 +108,8 @@ def main(args):
     result6 = test_fisher(observed6, var_row="Group", var_col="Response", plot=True)
     print(force_dataframe(result6))
     print("Fisher's exact test is ideal for small samples")
-    stx.io.save(stx.plt.gcf(), "example6_small_sample.jpg")
-    stx.plt.close()
+    plt.gcf().savefig("example6_small_sample.jpg")
+    plt.close("all")
 
     # Example 7: Strong association
     print("\nExample 7: Strong positive association")
@@ -122,18 +118,18 @@ def main(args):
     result7 = test_fisher(observed7, var_row="Factor A", var_col="Factor B", plot=True)
     print(force_dataframe(result7))
     print(f"Very strong association: OR = {result7['statistic']:.1f}")
-    stx.io.save(stx.plt.gcf(), "example7_strong_association.jpg")
-    stx.plt.close()
+    plt.gcf().savefig("example7_strong_association.jpg")
+    plt.close("all")
 
-    # Example 8: No association (OR ≈ 1)
+    # Example 8: No association (OR ~ 1)
     print("\nExample 8: No association")
     print("-" * 70)
     observed8 = [[10, 10], [10, 10]]
     result8 = test_fisher(observed8, plot=True)
     print(force_dataframe(result8))
-    print(f"OR = {result8['statistic']:.2f} ≈ 1 (no association)")
-    stx.io.save(stx.plt.gcf(), "example8_no_association.jpg")
-    stx.plt.close()
+    print(f"OR = {result8['statistic']:.2f} ~ 1 (no association)")
+    plt.gcf().savefig("example8_no_association.jpg")
+    plt.close("all")
 
     # Example 9: Negative association (OR < 1)
     print("\nExample 9: Negative association (OR < 1)")
@@ -144,18 +140,18 @@ def main(args):
     )
     print(force_dataframe(result9))
     print(f"OR = {result9['statistic']:.3f} < 1 (negative association)")
-    stx.io.save(stx.plt.gcf(), "example9_negative_association.jpg")
-    stx.plt.close()
+    plt.gcf().savefig("example9_negative_association.jpg")
+    plt.close("all")
 
-    # Example 10: Export to various formats
-    print("\nExample 10: Export to various formats")
+    # Example 10: Export to CSV
+    print("\nExample 10: Export to CSV")
     print("-" * 70)
     result10 = test_fisher(
         observed2, var_row="Exposure", var_col="Disease", return_as="dataframe"
     )
-    stx.io.save(result10, "fisher_demo.csv")
-    stx.io.save(result10, "fisher_demo.tex")
-    print("Exported to CSV and LaTeX formats")
+    result10.to_csv("fisher_demo.csv", index=False)  # type: ignore[union-attr]
+    # stx.io.save(result10, 'fisher_demo.tex') removed -- leaf-rule
+    print("Exported to CSV")
     print(result10)
 
     logger.info(f"\n{'=' * 70}")
@@ -173,29 +169,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    import sys  # noqa: E402
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    global CONFIG
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng_manager = stx.session.start(  # type: ignore[name-defined]
-        sys,
-        stx.plt,
-        args=args,
-        file=__FILE__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,  # type: ignore[name-defined]
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 17:30:00 (ywatanabe)"
-# File: scitex_stats/tests/parametric/_demo_anova_2way.py
+# File: examples/tests/parametric/demo_anova_2way.py
 # ----------------------------------------
 from __future__ import annotations
 
@@ -13,21 +13,17 @@ __DIR__ = os.path.dirname(__FILE__)
 """
 Demo script for two-way ANOVA examples.
 
-Run with: python -m scitex_stats.tests.parametric._demo_anova_2way
+Run with: python examples/tests/parametric/demo_anova_2way.py
 """
 
 import argparse
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
 from scitex_stats._logging import getLogger
-
-from ._test_anova_2way import test_anova_2way
+from scitex_stats.tests.parametric._test_anova_2way import test_anova_2way
 
 logger = getLogger(__name__)
 
@@ -38,8 +34,11 @@ def main(args):
     logger.info("Two-way ANOVA Examples")
     logger.info("=" * 70)
 
+    # Ensure ./.dev exists for figure output.
+    os.makedirs("./.dev", exist_ok=True)
+
     # Example 1: Drug × Gender (with interaction)
-    logger.info("\n[Example 1] Drug × Gender (interaction present)")
+    logger.info("\n[Example 1] Drug x Gender (interaction present)")
     logger.info("-" * 70)
 
     np.random.seed(42)
@@ -67,18 +66,18 @@ def main(args):
         plot=True,
         verbose=True,
     )
-    stx.io.save(plt.gcf(), "./.dev/anova_2way_example1.jpg")  # type: ignore[name-defined]
-    plt.close()  # type: ignore[name-defined]
+    plt.gcf().savefig("./.dev/anova_2way_example1.jpg")
+    plt.close("all")
 
     for effect in results:
         logger.info(
             f"{effect['effect']:20s}: F({effect['df_effect']},{effect['df_error']}) = "
             f"{effect['statistic']:.3f}, p = {effect['pvalue']:.4f} {effect['stars']}, "
-            f"η²p = {effect['effect_size']:.3f}"
+            f"eta^2p = {effect['effect_size']:.3f}"
         )
 
     # Example 2: No interaction (additive effects)
-    logger.info("\n[Example 2] Temperature × Time (no interaction)")
+    logger.info("\n[Example 2] Temperature x Time (no interaction)")
     logger.info("-" * 70)
 
     data2 = pd.DataFrame(
@@ -112,8 +111,8 @@ def main(args):
         plot=True,
         verbose=True,
     )
-    stx.io.save(plt.gcf(), "./.dev/anova_2way_example2.jpg")  # type: ignore[name-defined]
-    plt.close()  # type: ignore[name-defined]
+    plt.gcf().savefig("./.dev/anova_2way_example2.jpg")
+    plt.close("all")
 
     logger.info("\nMain effects should be significant, interaction should not be:")
     for effect in results2:
@@ -142,15 +141,10 @@ def main(args):
     logger.info("\n[Example 4] Export results")
     logger.info("-" * 70)
 
-    # Export via pandas — convert_results doesn't emit Excel/CSV
-    # (supported: dict / dataframe / markdown / json / latex / html / text).
-    os.makedirs("./.dev", exist_ok=True)
-    results_df.to_excel(  # type: ignore[union-attr]
-        "./.dev/anova_2way_results.xlsx", index=False
+    results_df.to_csv(  # type: ignore[union-attr]
+        "./.dev/anova_2way_results.csv", index=False
     )
-    logger.info("Saved to: ./.dev/anova_2way_results.xlsx")
-
-    # EOF
+    logger.info("Saved to: ./.dev/anova_2way_results.csv")
 
     return 0
 
@@ -163,29 +157,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    global CONFIG, CC, sys, plt
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    import sys
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng_manager = stx.session.start(  # type: ignore[name-defined]
-        sys,  # type: ignore[name-defined]
-        stx.plt,
-        args=args,
-        file=__FILE__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,  # type: ignore[name-defined]
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

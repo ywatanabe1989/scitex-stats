@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 22:43:58 (ywatanabe)"
-# File: scitex_stats/tests/nonparametric/_demo_friedman.py
+# File: examples/tests/nonparametric/demo_friedman.py
 
 """
 Demo script for Friedman test.
@@ -13,13 +13,10 @@ from __future__ import annotations
 import argparse
 import os
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
 from scitex_stats._logging import getLogger
 
 __FILE__ = __file__
@@ -28,9 +25,25 @@ __DIR__ = os.path.dirname(__FILE__)
 logger = getLogger(__name__)
 
 
+def _safe_call(fn, *args, **kwargs):
+    """Call ``fn``; on a missing optional plotting dependency, retry with
+    plot=False. Keeps the demo runnable when ``figrecipe`` is not installed.
+    """
+    try:
+        return fn(*args, **kwargs)
+    except ModuleNotFoundError as exc:
+        if "figrecipe" not in str(exc):
+            raise
+        logger.warning(
+            "figrecipe not installed; rerunning %s with plot=False", fn.__name__
+        )
+        kwargs["plot"] = False
+        return fn(*args, **kwargs)
+
+
 def main(args):  # noqa: C901
     """Demonstrate Friedman test functionality."""
-    from ._test_friedman import test_friedman
+    from scitex_stats.tests.nonparametric._test_friedman import test_friedman
 
     # Example 1: Pain ratings (ordinal data)
     logger.info("\n[Example 1] Pain ratings across 4 time points (ordinal)")
@@ -51,13 +64,15 @@ def main(args):  # noqa: C901
         ]
     )
 
-    result = test_friedman(
+    result = _safe_call(
+        test_friedman,
         pain_data,
         condition_names=["Baseline", "Week 1", "Week 2", "Week 3"],
         plot=True,
         verbose=True,
     )
-    stx.io.save(stx.plt.gcf(), "./friedman_example1.jpg")
+    plt.gcf().savefig("./friedman_example1.jpg")
+    plt.close("all")
 
     # Example 2: Likert scale ratings
     logger.info("\n[Example 2] Likert scale ratings (1-5) for 4 products")
@@ -78,16 +93,17 @@ def main(args):  # noqa: C901
         ]
     )
 
-    result_likert = test_friedman(
+    result_likert = _safe_call(
+        test_friedman,
         likert_data,
         condition_names=["Product A", "Product B", "Product C", "Product D"],
         plot=True,
         verbose=True,
     )
-    stx.io.save(stx.plt.gcf(), "./friedman_example2.jpg")
-    stx.plt.close()
+    plt.gcf().savefig("./friedman_example2.jpg")
+    plt.close("all")
 
-    logger.info(f"χ²({result_likert['df']}) = {result_likert['statistic']:.3f}")
+    logger.info(f"chi2({result_likert['df']}) = {result_likert['statistic']:.3f}")
     logger.info(f"p-value = {result_likert['pvalue']:.4f}")
     logger.info(f"Kendall's W = {result_likert['kendall_w']:.3f}")
 
@@ -103,7 +119,8 @@ def main(args):  # noqa: C901
         {"Subject": subjects, "TimePoint": conditions, "Score": values}
     )
 
-    result_long = test_friedman(
+    result_long = _safe_call(
+        test_friedman,
         df_long,
         subject_col="Subject",
         condition_col="TimePoint",
@@ -111,16 +128,16 @@ def main(args):  # noqa: C901
         plot=True,
         verbose=True,
     )
-    stx.io.save(stx.plt.gcf(), "./friedman_example3.jpg")
-    stx.plt.close()
+    plt.gcf().savefig("./friedman_example3.jpg")
+    plt.close("all")
 
-    logger.info(f"χ² = {result_long['statistic']:.3f}, p = {result_long['pvalue']:.4f}")
+    logger.info(f"chi2 = {result_long['statistic']:.3f}, p = {result_long['pvalue']:.4f}")
 
     # Example 4: Comparison with RM-ANOVA
     logger.info("\n[Example 4] Comparison: Friedman vs RM-ANOVA")
     logger.info("-" * 70)
 
-    from ..parametric import test_anova_rm
+    from scitex_stats.tests.parametric import test_anova_rm
 
     # Data with outliers
     data_outlier = np.random.normal(5, 1, (10, 4))
@@ -138,9 +155,7 @@ def main(args):  # noqa: C901
     logger.info("\n[Example 5] Export results")
     logger.info("-" * 70)
 
-    stx.io.save(result, "./friedman_results.xlsx")
-
-    # EOF
+    pd.DataFrame([result]).to_csv("./friedman_results.csv", index=False)
 
     return 0
 
@@ -153,29 +168,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    import sys
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    import matplotlib.pyplot as plt  # noqa: F401
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, _CC, _rng_manager = stx.session.start(
-        sys,
-        plt,
-        args=args,
-        file=__FILE__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

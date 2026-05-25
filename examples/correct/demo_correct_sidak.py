@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# File: scitex_stats/correct/_demo_correct_sidak.py
+# File: examples/correct/demo_correct_sidak.py
 # ----------------------------------------
 from __future__ import annotations
 
@@ -13,28 +13,20 @@ __DIR__ = os.path.dirname(__FILE__)
 """
 Demo script for Šidák correction.
 
-Run with: python -m scitex_stats.correct._demo_correct_sidak
+Run with: python examples/correct/demo_correct_sidak.py
 """
 
 """Imports"""
 import argparse
-import sys
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-try:
-    import scitex as stx
-except ImportError:
-    stx = None
-
 from scitex_stats._logging import getLogger
-
-from ..tests.parametric import test_ttest_ind
-from ._correct_bonferroni import correct_bonferroni
-from ._correct_holm import correct_holm
-from ._correct_sidak import correct_sidak
+from scitex_stats.correct._correct_bonferroni import correct_bonferroni
+from scitex_stats.correct._correct_holm import correct_holm
+from scitex_stats.correct._correct_sidak import correct_sidak
+from scitex_stats.tests.parametric import test_ttest_ind
 
 logger = getLogger(__name__)
 
@@ -49,15 +41,6 @@ def main():
         help="Enable verbose output",
     )
     args = parser.parse_args([])
-
-    CONFIG, sys.stdout, sys.stderr, _plt, CC, rng = stx.session.start(  # type: ignore[union-attr]
-        sys=sys,
-        plt=plt,
-        args=args,
-        file=__FILE__,
-        verbose=True,
-        agg=True,
-    )
 
     logger.info("=" * 70)
     logger.info("Šidák Correction Examples")
@@ -190,8 +173,8 @@ def main():
     # Example 9: Export
     logger.info("\n[Example 9] Export corrected results")
     logger.info("-" * 70)
-    stx.io.save(df_corrected, "./sidak_corrected.xlsx")
-    stx.io.save(df_corrected, "./sidak_corrected.csv")
+    if hasattr(df_corrected, "to_csv"):
+        df_corrected.to_csv("./sidak_corrected.csv", index=False)  # type: ignore[union-attr]
 
     # Example 10: Mathematical properties
     logger.info("\n[Example 10] Mathematical properties demonstration")
@@ -211,15 +194,18 @@ def main():
     logger.info("\nNote: Šidák is always ≥ Bonferroni (more powerful)")
     logger.info("Difference increases with larger m")
 
-    stx.session.close(  # type: ignore[union-attr]
-        CONFIG,
-        verbose=False,
-        notify=False,
-        exit_status=0,
-    )
+    return 0
+
+
+def run_main():
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    return main()
 
 
 if __name__ == "__main__":
-    main()
+    run_main()
 
 # EOF

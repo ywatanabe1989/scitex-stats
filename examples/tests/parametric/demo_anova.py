@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 16:30:00 (ywatanabe)"
-# File: scitex_stats/tests/parametric/_demo_anova.py
+# File: examples/tests/parametric/demo_anova.py
 # ----------------------------------------
 from __future__ import annotations
 
@@ -22,10 +22,6 @@ import argparse  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
 from scitex_stats._logging import getLogger
 
 logger = getLogger(__name__)
@@ -33,27 +29,35 @@ logger = getLogger(__name__)
 """Main function"""
 
 
-def main(args):
-    """Demonstrate one-way ANOVA functionality.
-
-    Parameters
-    ----------
-    args : argparse.Namespace
-        Command line arguments.
-
-    Returns
-    -------
-    int
-        Exit status code.
+def _safe_call(fn, *args, **kwargs):
+    """Call ``fn``; on a missing optional plotting dependency, retry with
+    plot=False. Keeps the demo runnable when ``figrecipe`` is not installed.
     """
-    from ...correct._correct_bonferroni import correct_bonferroni
-    from ._test_anova import test_anova
-    from ._test_ttest import test_ttest_ind
+    try:
+        return fn(*args, **kwargs)
+    except ModuleNotFoundError as exc:
+        if "figrecipe" not in str(exc):
+            raise
+        logger.warning(
+            "figrecipe not installed; rerunning %s with plot=False", fn.__name__
+        )
+        kwargs["plot"] = False
+        return fn(*args, **kwargs)
+
+
+def main(args):
+    """Demonstrate one-way ANOVA functionality."""
+    from scitex_stats.correct._correct_bonferroni import correct_bonferroni
+    from scitex_stats.tests.parametric._test_anova import test_anova
+    from scitex_stats.tests.parametric._test_ttest import test_ttest_ind
 
     logger.info("Demonstrating one-way ANOVA")
 
     # Set random seed
     np.random.seed(42)
+
+    # Make sure ./.dev exists for outputs.
+    os.makedirs("./.dev", exist_ok=True)
 
     # Example 1: Three groups with clear differences
     logger.info("\n=== Example 1: Three groups with clear differences ===")
@@ -73,7 +77,7 @@ def main(args):
     )
     logger.info(f"p = {result1['pvalue']:.4f} {result1['stars']}")
     logger.info(
-        f"η² = {result1['effect_size']:.3f} ({result1['effect_size_interpretation']})"
+        f"eta^2 = {result1['effect_size']:.3f} ({result1['effect_size_interpretation']})"
     )
     logger.info(f"Assumptions met: {result1['assumptions_met']}")
     logger.info(f"Recommendation: {result1['recommendation']}")
@@ -105,14 +109,15 @@ def main(args):
     group3 = np.random.normal(14, 2, 25)
     group4 = np.random.normal(16, 2, 25)
 
-    result3 = test_anova(
+    result3 = _safe_call(
+        test_anova,
         [group1, group2, group3, group4],
         var_names=["Dose 0", "Dose 1", "Dose 2", "Dose 3"],
         plot=True,
         verbose=True,
     )
-    stx.io.save(plt.gcf(), "./.dev/anova_example3.jpg")
-    plt.close()
+    plt.gcf().savefig("./.dev/anova_example3.jpg")
+    plt.close("all")
 
     # Example 4: Assumption violation - unequal variances
     logger.info("\n=== Example 4: Unequal variances ===")
@@ -227,11 +232,7 @@ def main(args):
     df = force_dataframe(test_results)
     logger.info(f"\nDataFrame shape: {df.shape}")
 
-    # Export to Excel / CSV via pandas — convert_results doesn't emit
-    # those formats (dict / dataframe / markdown / json / latex / html / text only).
-    os.makedirs("./.dev", exist_ok=True)
-    df.to_excel("./.dev/anova_tests.xlsx", index=False)
-    logger.info("Results exported to Excel")
+    # Export to CSV via pandas.
     df.to_csv("./.dev/anova_tests.csv", index=False)
     logger.info("Results exported to CSV")
 
@@ -246,31 +247,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    import sys  # noqa: E402
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    import matplotlib.pyplot as plt  # noqa: E402
-
-    global CONFIG, sys, plt
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng_manager = stx.session.start(  # type: ignore[name-defined]
-        sys,  # type: ignore[name-defined]
-        plt,
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,  # type: ignore[name-defined]
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

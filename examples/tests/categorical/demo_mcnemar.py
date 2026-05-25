@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 16:30:00 (ywatanabe)"
-# File: scitex_stats/tests/categorical/_demo_mcnemar.py
+# File: examples/tests/categorical/demo_mcnemar.py
 # ----------------------------------------
 from __future__ import annotations
 
@@ -13,28 +13,21 @@ __DIR__ = os.path.dirname(__FILE__)
 """
 Demo script for McNemar's test examples.
 
-Run with: python -m scitex_stats.tests.categorical._demo_mcnemar
+Run with: python examples/tests/categorical/demo_mcnemar.py
 """
 
 import argparse
 
 import pandas as pd
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
 from scitex_stats._logging import getLogger
-
-from ._test_mcnemar import test_mcnemar
+from scitex_stats.tests.categorical._test_mcnemar import test_mcnemar
 
 logger = getLogger(__name__)
 
 
 def main(args):
     """Run demonstration."""
-    # Parse empty args
-
     logger.info("=" * 70)
     logger.info("McNemar's Test Examples")
     logger.info("=" * 70)
@@ -62,7 +55,7 @@ def main(args):
     logger.info(f"  [[{observed[0][0]}, {observed[0][1]}],")
     logger.info(f"   [{observed[1][0]}, {observed[1][1]}]]")
     logger.info(
-        f"\nχ² = {result['statistic']:.3f}, p = {result['pvalue']:.4f} {result['stars']}"
+        f"\nchi2 = {result['statistic']:.3f}, p = {result['pvalue']:.4f} {result['stars']}"
     )
     logger.info(f"Discordant pairs: b={result['b']}, c={result['c']}")
     logger.info(
@@ -88,9 +81,9 @@ def main(args):
     logger.info("-" * 70)
 
     observed_strong = [
-        [50, 25],  # Many improved (0→1)
+        [50, 25],  # Many improved (0->1)
         [2, 23],
-    ]  # Few relapsed (1→0)
+    ]  # Few relapsed (1->0)
 
     result_strong = test_mcnemar(observed_strong, plot=True)
 
@@ -109,10 +102,10 @@ def main(args):
     result_without = test_mcnemar(observed_small, correction=False)
 
     logger.info(
-        f"With correction:    χ² = {result_with['statistic']:.3f}, p = {result_with['pvalue']:.4f}"
+        f"With correction:    chi2 = {result_with['statistic']:.3f}, p = {result_with['pvalue']:.4f}"
     )
     logger.info(
-        f"Without correction: χ² = {result_without['statistic']:.3f}, p = {result_without['pvalue']:.4f}"
+        f"Without correction: chi2 = {result_without['statistic']:.3f}, p = {result_without['pvalue']:.4f}"
     )
     logger.info("Difference: Correction makes test more conservative")
 
@@ -132,11 +125,11 @@ def main(args):
     )
 
     # Example 6: Export results
-    logger.info("\n[Example 6] Export results to Excel")
+    logger.info("\n[Example 6] Export results to CSV")
     logger.info("-" * 70)
 
-    df_results.to_excel("./mcnemar_results.xlsx", index=False)
-    logger.info("Saved to: ./mcnemar_results.xlsx")
+    df_results.to_csv("./mcnemar_results.csv", index=False)
+    logger.info("Saved to: ./mcnemar_results.csv")
 
     return 0
 
@@ -149,29 +142,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    import sys  # noqa: E402
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    global CONFIG
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, _CC, _rng_manager = stx.session.start(  # type: ignore[name-defined]
-        sys,
-        stx.plt,
-        args=args,
-        file=__FILE__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,  # type: ignore[name-defined]
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":
