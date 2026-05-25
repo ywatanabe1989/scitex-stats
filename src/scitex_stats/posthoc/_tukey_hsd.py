@@ -292,14 +292,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     args = parser.parse_args([])
 
-        sys=sys,
-        plt=None,
-        args=args,
-        file=__FILE__,
-        verbose=True,
-        agg=True,
-    )
-
     logger = stx.logging.getLogger(__name__)
 
     logger.info("=" * 70)
@@ -374,6 +366,7 @@ if __name__ == "__main__":
     pd.DataFrame(results).to_excel("./tukey_hsd_results.xlsx", index=False)
     logger.info("Saved to: ./tukey_hsd_results.xlsx")
 
+    stx.session.close(
         CONFIG,
         verbose=False,
         notify=False,
