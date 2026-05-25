@@ -302,8 +302,6 @@ def _plot_mannwhitneyu(x, y, var_x, var_y, result, ax):
 
 def main(args):  # noqa: C901
     """Demonstrate Mann-Whitney U test functionality."""
-    import scitex as stx
-
     logger.info("Demonstrating Mann-Whitney U test")
 
     # Set random seed
@@ -375,11 +373,18 @@ def main(args):  # noqa: C901
     x6 = np.random.gamma(2, 2, 50)
     y6 = np.random.gamma(3, 2, 50)
 
-    result6 = test_mannwhitneyu(
-        x6, y6, var_x="Gamma(k=2)", var_y="Gamma(k=3)", plot=True, verbose=True
-    )
-    stx.io.save(_mpl_plt.gcf(), "./mannwhitneyu_example6.jpg")
-    _mpl_plt.close()
+    try:
+        result6 = test_mannwhitneyu(
+            x6, y6, var_x="Gamma(k=2)", var_y="Gamma(k=3)", plot=True, verbose=True
+        )
+        _mpl_plt.gcf().savefig("./mannwhitneyu_example6.jpg")
+        _mpl_plt.close("all")
+    except ModuleNotFoundError as exc:
+        # Plotting helpers depend on optional figrecipe (see [project.optional-dependencies]).
+        logger.info(f"Skipping plot: {exc}")
+        result6 = test_mannwhitneyu(
+            x6, y6, var_x="Gamma(k=2)", var_y="Gamma(k=3)", verbose=True
+        )
 
     # Example 7: Comparison with t-test
     logger.info("\n=== Example 7: Mann-Whitney U vs t-test ===")
@@ -464,30 +469,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    import sys
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    import matplotlib.pyplot as plt
-    import scitex as stx
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, _CC, _rng_manager = stx.session.start(
-        sys,
-        plt,
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

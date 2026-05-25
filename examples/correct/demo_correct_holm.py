@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# File: scitex_stats/correct/_demo_correct_holm.py
+# File: examples/correct/demo_correct_holm.py
 # ----------------------------------------
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ __DIR__ = os.path.dirname(__FILE__)
 """
 Demo script for Holm-Bonferroni correction.
 
-Run with: python -m scitex_stats.correct._demo_correct_holm
+Run with: python examples/correct/demo_correct_holm.py
 """
 
 """Imports"""
@@ -22,17 +22,11 @@ import argparse
 import numpy as np
 import pandas as pd
 
-try:
-    import scitex as stx
-except ImportError:
-    stx = None
-
 from scitex_stats._logging import getLogger
-
-from ..tests.parametric._test_anova import test_anova
-from ..tests.parametric._test_ttest import test_ttest_ind
-from ._correct_bonferroni import correct_bonferroni
-from ._correct_holm import correct_holm
+from scitex_stats.correct._correct_bonferroni import correct_bonferroni
+from scitex_stats.correct._correct_holm import correct_holm
+from scitex_stats.tests.parametric._test_anova import test_anova
+from scitex_stats.tests.parametric._test_ttest import test_ttest_ind
 
 logger = getLogger(__name__)
 
@@ -144,8 +138,7 @@ def main(args):
     # Example 6: Export corrected results
     logger.info("\n=== Example 6: Export corrected results ===")
     if holm_corrected is not None:
-        stx.io.save(holm_corrected, "./holm_corrected.xlsx")
-        stx.io.save(holm_corrected, "./holm_corrected.csv")
+        pd.DataFrame(holm_corrected).to_csv("./holm_corrected.csv", index=False)
 
     # Example 7: Power comparison with different α levels
     logger.info("\n=== Example 7: Different alpha levels ===")
@@ -168,31 +161,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    global CONFIG, sys, plt, rng
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    import sys
-
-    import matplotlib.pyplot as plt
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng = stx.session.start(  # type: ignore[union-attr]
-        sys,
-        plt,
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(  # type: ignore[union-attr]
-        CONFIG,
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

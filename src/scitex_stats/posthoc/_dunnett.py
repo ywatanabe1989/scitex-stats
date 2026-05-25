@@ -328,23 +328,17 @@ def posthoc_dunnett(
 
 if __name__ == "__main__":
     import argparse
-    import sys
 
-    import scitex as stx
+    import matplotlib
+
+    matplotlib.use("Agg")
 
     parser = argparse.ArgumentParser()
     args = parser.parse_args([])
 
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng = stx.session.start(
-        sys=sys,
-        plt=None,
-        args=args,
-        file=__FILE__,
-        verbose=True,
-        agg=True,
-    )
+    from scitex_stats._logging import getLogger as _getLogger
 
-    logger = stx.logging.getLogger(__name__)
+    logger = _getLogger(__name__)
 
     logger.info("=" * 70)
     logger.info("Dunnett's Test Post-hoc Examples")
@@ -475,12 +469,5 @@ if __name__ == "__main__":
 
     pd.DataFrame(results).to_excel("./dunnett_results.xlsx", index=False)
     logger.info("Saved to: ./dunnett_results.xlsx")
-
-    stx.session.close(
-        CONFIG,
-        verbose=False,
-        notify=False,
-        exit_status=0,
-    )
 
 # EOF

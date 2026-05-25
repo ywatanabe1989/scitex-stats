@@ -286,7 +286,6 @@ def _plot_spearman(x, y, result, var_x, var_y, ax) -> None:
 
 def main(args) -> int:
     """Demonstrate Spearman correlation test functionality."""
-    import scitex as stx
     logger.info("=" * 70)
     logger.info("Spearman's Rank Correlation Test - Examples")
     logger.info("=" * 70)
@@ -300,8 +299,8 @@ def main(args) -> int:
     logger.info(force_dataframe(result1))
 
     # Save the figure using plt.gcf()
-    stx.io.save(_mpl_plt.gcf(), "example1_perfect_monotonic.jpg")
-    _mpl_plt.close()
+    _mpl_plt.gcf().savefig("example1_perfect_monotonic.jpg")
+    _mpl_plt.close("all")
 
     # Example 2: Outlier comparison
     logger.info("\nExample 2: Robustness to outliers")
@@ -326,8 +325,8 @@ def main(args) -> int:
     y3 = np.log(x3) + np.random.normal(0, 0.2, size=50)
     result3 = test_spearman(x3, y3, var_x="x", var_y="log(x)", plot=True, verbose=True)
     logger.info(force_dataframe(result3))
-    stx.io.save(_mpl_plt.gcf(), "example3_logarithmic.jpg")
-    _mpl_plt.close()
+    _mpl_plt.gcf().savefig("example3_logarithmic.jpg")
+    _mpl_plt.close("all")
 
     # Example 4: Ordinal data
     logger.info("\nExample 4: Ordinal data (Likert scales)")
@@ -345,8 +344,8 @@ def main(args) -> int:
         verbose=True,
     )
     logger.info(force_dataframe(result4))
-    stx.io.save(_mpl_plt.gcf(), "example4_ordinal.jpg")
-    _mpl_plt.close()
+    _mpl_plt.gcf().savefig("example4_ordinal.jpg")
+    _mpl_plt.close("all")
 
     # Example 5: One-tailed test
     logger.info("\nExample 5: One-tailed test (expect positive correlation)")
@@ -369,8 +368,8 @@ def main(args) -> int:
         x6, y6, var_x="x", var_y="exp(0.5x)", plot=True, verbose=True
     )
     logger.info(force_dataframe(result6))
-    stx.io.save(_mpl_plt.gcf(), "example6_exponential.jpg")
-    _mpl_plt.close()
+    _mpl_plt.gcf().savefig("example6_exponential.jpg")
+    _mpl_plt.close("all")
 
     # Example 7: No correlation
     logger.info("\nExample 7: No correlation")
@@ -410,8 +409,8 @@ def main(args) -> int:
     )
 
     # Save
-    stx.io.save(result9, "./spearman_demo.csv")
-    stx.io.save(result9, "./spearman_demo.tex")
+    result9.to_csv("./spearman_demo.csv", index=False)
+    # stx.io.save(result9, "./spearman_demo.tex") removed (leaf-rule)
 
     # Example 10: Large dataset
     logger.info("\nExample 10: Large dataset with moderate correlation")
@@ -424,8 +423,8 @@ def main(args) -> int:
         x10, y10, var_x="Predictor", var_y="Outcome", plot=True, verbose=True
     )
     logger.info(force_dataframe(result10))
-    stx.io.save(_mpl_plt.gcf(), "example10_large_dataset.jpg")
-    _mpl_plt.close()
+    _mpl_plt.gcf().savefig("example10_large_dataset.jpg")
+    _mpl_plt.close("all")
 
     logger.info(f"\n{'=' * 70}")
     logger.info("All examples completed")
@@ -442,31 +441,13 @@ def parse_args():
 
 
 def run_main() -> None:
-    """Initialize SciTeX framework and run main."""
-    import scitex as stx
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    import sys
-
-    import matplotlib.pyplot as plt
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    _CONFIG, sys.stdout, sys.stderr, plt, _CC, _rng_manager = stx.session.start(
-        sys,
-        plt,
-        args=args,
-        file=__FILE__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        _CONFIG,
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    main(args)
 
 
 if __name__ == "__main__":

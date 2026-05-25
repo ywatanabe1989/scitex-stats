@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 21:47:27 (ywatanabe)"
-# File: scitex_stats/tests/correlation/_demo_pearson.py
+# File: examples/tests/correlation/demo_pearson.py
 # ----------------------------------------
 from __future__ import annotations
 
@@ -16,10 +16,6 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
 from scitex_stats._logging import getLogger
 
 __FILE__ = __file__
@@ -32,18 +28,21 @@ logger = getLogger(__name__)
 
 def main(args) -> int:
     """Demonstrate Pearson correlation functionality."""
-    from ._test_pearson import test_pearson
+    from scitex_stats.tests.correlation._test_pearson import test_pearson
 
     logger.info("Demonstrating Pearson correlation test")
 
     # Set random seed
     np.random.seed(42)
 
+    # Ensure ./.dev exists for figure output.
+    os.makedirs("./.dev", exist_ok=True)
+
     # Example 1: Strong positive correlation
     logger.info("\n=== Example 1: Strong positive correlation ===")
 
     x1 = np.random.normal(0, 1, 50)
-    y1 = 2 * x1 + np.random.normal(0, 0.5, 50)  # y ≈ 2x with noise
+    y1 = 2 * x1 + np.random.normal(0, 0.5, 50)  # y ~ 2x with noise
 
     result1 = test_pearson(x1, y1, var_x="X", var_y="Y", verbose=True)
 
@@ -65,7 +64,7 @@ def main(args) -> int:
 
     result3 = test_pearson(x3, y3, var_x="Variable A", var_y="Variable B", verbose=True)
 
-    # Example 4: With visualization (demonstrates plt.gcf() and stx.io.save())
+    # Example 4: With visualization
     logger.info("\n=== Example 4: With visualization ===")
 
     x4 = np.random.normal(100, 15, 60)
@@ -81,8 +80,8 @@ def main(args) -> int:
     )
 
     # Save the figure using plt.gcf()
-    stx.io.save(plt.gcf(), "./.dev/pearson_demo.jpg")
-    plt.close()
+    plt.gcf().savefig("./.dev/pearson_demo.jpg")
+    plt.close("all")
     logger.info("Figure saved to ./.dev/pearson_demo.jpg")
 
     # Example 5: One-sided tests
@@ -148,7 +147,6 @@ def main(args) -> int:
 
     pearson_result = test_pearson(x8, y8)
 
-    # Note: Spearman will be implemented separately
     logger.info(f"Pearson r = {pearson_result['statistic']:.3f}")
     logger.info(
         "Note: For non-linear monotonic relationships, use Spearman correlation"
@@ -205,14 +203,7 @@ def main(args) -> int:
     df = force_dataframe(test_results)
     logger.info(f"\nDataFrame shape: {df.shape}")
 
-    stx.io.save(df, "./pearson_tests.xlsx")
-    stx.io.save(df, "./pearson_tests.csv")
-
-    # convert_results(test_results, return_as='excel', path='./pearson_tests.xlsx')
-    # logger.info("Results exported to Excel")
-
-    # convert_results(test_results, return_as='csv', path='./pearson_tests.csv')
-    # logger.info("Results exported to CSV")
+    df.to_csv("./pearson_tests.csv", index=False)
 
     return 0
 
@@ -225,29 +216,13 @@ def parse_args():
 
 
 def run_main() -> None:
-    """Initialize SciTeX framework and run main."""
-    import sys
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    import matplotlib.pyplot as plt
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    _CONFIG, sys.stdout, sys.stderr, plt, _CC, _rng_manager = stx.session.start(
-        sys,
-        plt,
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        _CONFIG,
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    main(args)
 
 
 if __name__ == "__main__":

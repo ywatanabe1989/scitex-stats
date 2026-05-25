@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Timestamp: "2025-10-01 22:40:43 (ywatanabe)"
-# File: scitex_stats/tests/nonparametric/_demo_brunner_munzel.py
+# File: examples/tests/nonparametric/demo_brunner_munzel.py
 
 """
 Demo script for Brunner-Munzel test.
@@ -13,12 +13,9 @@ from __future__ import annotations
 import argparse
 import os
 
+import matplotlib.pyplot as plt
 import numpy as np
 
-try:
-    import scitex as stx  # noqa: E402
-except ImportError:
-    stx = None
 from scitex_stats._logging import getLogger
 from scitex_stats._utils._normalizers import export_results, export_summary
 
@@ -28,9 +25,27 @@ __DIR__ = os.path.dirname(__FILE__)
 logger = getLogger(__name__)
 
 
+def _safe_call(fn, *args, **kwargs):
+    """Call ``fn``; on a missing optional plotting dependency, retry with
+    plot=False. Keeps the demo runnable when ``figrecipe`` is not installed.
+    """
+    try:
+        return fn(*args, **kwargs)
+    except ModuleNotFoundError as exc:
+        if "figrecipe" not in str(exc):
+            raise
+        logger.warning(
+            "figrecipe not installed; rerunning %s with plot=False", fn.__name__
+        )
+        kwargs["plot"] = False
+        return fn(*args, **kwargs)
+
+
 def main(args):  # noqa: C901
     """Demonstrate Brunner-Munzel test functionality."""
-    from ._test_brunner_munzel import test_brunner_munzel
+    from scitex_stats.tests.nonparametric._test_brunner_munzel import (
+        test_brunner_munzel,
+    )
 
     logger.info("Demonstrating Brunner-Munzel test")
     np.random.seed(42)
@@ -40,10 +55,17 @@ def main(args):  # noqa: C901
         logger.info("\n=== Example 1: Normal distributions ===")
         x1 = np.random.normal(0, 1, 50)
         y1 = np.random.normal(0.6, 1, 50)
-        test_brunner_munzel(
-            x1, y1, var_x="Control", var_y="Treatment", plot=True, verbose=True
+        _safe_call(
+            test_brunner_munzel,
+            x1,
+            y1,
+            var_x="Control",
+            var_y="Treatment",
+            plot=True,
+            verbose=True,
         )
-        stx.io.save(stx.plt.gcf(), "./example_01_normal_distributions.jpg")
+        plt.gcf().savefig("./example_01_normal_distributions.jpg")
+        plt.close("all")
         return x1, y1
 
     def example_02_skewed_distributions():
@@ -51,7 +73,8 @@ def main(args):  # noqa: C901
         logger.info("\n=== Example 2: Non-normal (skewed) distributions ===")
         x2 = np.random.gamma(2, 2, 40)
         y2 = np.random.gamma(3, 2, 40)
-        result_df = test_brunner_munzel(
+        result_df = _safe_call(
+            test_brunner_munzel,
             x2,
             y2,
             var_x="Group A",
@@ -60,17 +83,18 @@ def main(args):  # noqa: C901
             plot=True,
             verbose=True,
         )
-        logger.info(f"Cliff's δ = {result_df['effect_size_secondary'].iloc[0]:.3f}")
-        stx.io.save(stx.plt.gcf(), "./example_02_skewed_distributions.jpg")
-        stx.io.save(result_df, "./example_02_skewed_distributions.csv")
-        stx.io.save(result_df, "./example_02_skewed_distributions.xlsx")
+        logger.info(f"Cliff's delta = {result_df['effect_size_secondary'].iloc[0]:.3f}")
+        plt.gcf().savefig("./example_02_skewed_distributions.jpg")
+        plt.close("all")
+        result_df.to_csv("./example_02_skewed_distributions.csv", index=False)
 
     def example_03_data_with_outliers():
         """Run example 03 with data containing outliers."""
         logger.info("\n=== Example 3: Data with outliers ===")
         x3 = np.concatenate([np.random.normal(0, 1, 35), [10, 12]])
         y3 = np.random.normal(0.5, 1, 40)
-        result_df = test_brunner_munzel(
+        result_df = _safe_call(
+            test_brunner_munzel,
             x3,
             y3,
             var_x="With Outliers",
@@ -79,16 +103,17 @@ def main(args):  # noqa: C901
             plot=True,
             verbose=True,
         )
-        stx.io.save(stx.plt.gcf(), "./example_03_data_with_outliers.jpg")
-        stx.io.save(result_df, "./example_03_data_with_outliers.csv")
-        stx.io.save(result_df, "./example_03_data_with_outliers.xlsx")
+        plt.gcf().savefig("./example_03_data_with_outliers.jpg")
+        plt.close("all")
+        result_df.to_csv("./example_03_data_with_outliers.csv", index=False)
 
     def example_04_unequal_variances():
         """Run example 04 with unequal variances."""
         logger.info("\n=== Example 4: Unequal variances ===")
         x4 = np.random.normal(0, 1, 50)
         y4 = np.random.normal(0.5, 3, 50)
-        result_df = test_brunner_munzel(
+        result_df = _safe_call(
+            test_brunner_munzel,
             x4,
             y4,
             var_x="Low Variance",
@@ -97,9 +122,9 @@ def main(args):  # noqa: C901
             plot=True,
             verbose=True,
         )
-        stx.io.save(stx.plt.gcf(), "./example_04_unequal_variances.jpg")
-        stx.io.save(result_df, "./example_04_unequal_variances.csv")
-        stx.io.save(result_df, "./example_04_unequal_variances.xlsx")
+        plt.gcf().savefig("./example_04_unequal_variances.jpg")
+        plt.close("all")
+        result_df.to_csv("./example_04_unequal_variances.csv", index=False)
         logger.info(f"Variance ratio: {np.var(y4) / np.var(x4):.1f}")
 
     def example_05_one_sided_test():
@@ -107,24 +132,41 @@ def main(args):  # noqa: C901
         logger.info("\n=== Example 5: One-sided test ===")
         x5 = np.random.normal(0, 1, 40)
         y5 = np.random.normal(0.8, 1, 40)
-        test_brunner_munzel(x5, y5, alternative="two-sided", plot=True, verbose=True)
-        test_brunner_munzel(x5, y5, alternative="less", plot=True, verbose=True)
+        _safe_call(
+            test_brunner_munzel,
+            x5,
+            y5,
+            alternative="two-sided",
+            plot=True,
+            verbose=True,
+        )
+        _safe_call(
+            test_brunner_munzel,
+            x5,
+            y5,
+            alternative="less",
+            plot=True,
+            verbose=True,
+        )
+        plt.close("all")
 
     def example_06_with_visualization():
         """Run example 06 with visualization."""
         logger.info("\n=== Example 6: With visualization ===")
         x6 = np.random.exponential(2, 50)
         y6 = np.random.exponential(3, 50)
-        test_brunner_munzel(
+        _safe_call(
+            test_brunner_munzel,
             x6,
             y6,
-            var_x="Exponential (λ=0.5)",
-            var_y="Exponential (λ=0.33)",
+            var_x="Exponential (lambda=0.5)",
+            var_y="Exponential (lambda=0.33)",
             return_as="dataframe",
             plot=True,
             verbose=True,
         )
-        stx.io.save(stx.plt.gcf(), "./example_06_with_visualization.jpg")
+        plt.gcf().savefig("./example_06_with_visualization.jpg")
+        plt.close("all")
 
     def example_07_dataframe_output():
         """Run example 07 with DataFrame output."""
@@ -216,29 +258,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    import sys
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    import matplotlib.pyplot as plt  # noqa: F401
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, _CC, _rng_manager = stx.session.start(
-        sys,
-        plt,
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

@@ -386,10 +386,6 @@ def _plot_fdr(df, alpha, method, ax):
 
 def demo(verbose=False):
     """Demonstrate FDR correction."""
-    import scitex as stx
-
-    # CONFIG, sys.stdout, sys.stderr, plt, CC, rng
-
     logger.info("Demonstrating False Discovery Rate correction")
 
     # Example 1: Single test (no correction needed)
@@ -511,7 +507,7 @@ def demo(verbose=False):
     # Create visualization
     logger.info("\n=== Creating visualization ===")
 
-    fig, axes = stx.plt.subplots(2, 2, figsize=(12, 10))
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
 
     # Plot 1: Q-values vs P-values
     ax = axes[0, 0]
@@ -592,13 +588,17 @@ def demo(verbose=False):
     plt.tight_layout()
 
     # Save
-    stx.io.save(fig, "./fdr_demo.jpg")
+    fig.savefig("./fdr_demo.jpg")
+    plt.close(fig)
     logger.info("Visualization saved")
 
     return 0
 
 
 if __name__ == "__main__":
+    import matplotlib
+
+    matplotlib.use("Agg")
     demo()
 
 # EOF
