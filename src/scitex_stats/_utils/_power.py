@@ -22,6 +22,7 @@ IO:
 import argparse
 from typing import Literal, Optional, Union
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy import stats
@@ -315,9 +316,8 @@ def main(args):
 
     # Create visualizations
     logger.info("\n=== Creating visualizations ===")
-    import scitex as stx
 
-    fig, axes = stx.plt.subplots(2, 2, figsize=(12, 10))
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
 
     # Plot 1: Effect size vs power
     ax = axes[0, 0]
@@ -386,7 +386,8 @@ def main(args):
     plt.tight_layout()
 
     # Save
-    stx.io.save(fig, "./power_analysis_demo.jpg")
+    fig.savefig("./power_analysis_demo.jpg")
+    plt.close(fig)
     logger.info("Visualization saved")
 
     return 0
@@ -402,32 +403,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    global CONFIG, sys, plt, rng
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    import sys
-
-    import matplotlib.pyplot as plt
-    import scitex as stx
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng = stx.session.start(
-        sys,
-        plt,
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

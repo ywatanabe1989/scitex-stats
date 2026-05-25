@@ -363,7 +363,6 @@ def _plot_kendall(x, y, result, var_x, var_y, ax) -> None:
 
 def main(args) -> int:
     """Run Kendall tau correlation examples."""
-    import scitex as stx
     logger.info("=" * 70)
     logger.info("Kendall's Tau Correlation Examples")
     logger.info("=" * 70)
@@ -379,8 +378,8 @@ def main(args) -> int:
     test_kendall(
         x, y, var_x="Treatment Dose", var_y="Response", plot=True, verbose=True
     )
-    stx.io.save(_mpl_plt.gcf(), "kendall_example1.jpg")
-    _mpl_plt.close()
+    _mpl_plt.gcf().savefig("kendall_example1.jpg")
+    _mpl_plt.close("all")
 
     # Example 2: Comparison with Spearman
     logger.info("\n[Example 2] Kendall vs Spearman comparison")
@@ -403,8 +402,8 @@ def main(args) -> int:
 
     logger.info("With small samples, Kendall's tau is preferred over Spearman")
     test_kendall(x_small, y_small, plot=True, verbose=True)
-    stx.io.save(_mpl_plt.gcf(), "kendall_example3.jpg")
-    _mpl_plt.close()
+    _mpl_plt.gcf().savefig("kendall_example3.jpg")
+    _mpl_plt.close("all")
 
     # Example 4: Ordinal data (Likert scale)
     logger.info("\n[Example 4] Ordinal data (Likert scales)")
@@ -422,8 +421,8 @@ def main(args) -> int:
         plot=True,
         verbose=True,
     )
-    stx.io.save(_mpl_plt.gcf(), "kendall_example4.jpg")
-    _mpl_plt.close()
+    _mpl_plt.gcf().savefig("kendall_example4.jpg")
+    _mpl_plt.close("all")
 
     # Example 5: One-sided test
     logger.info("\n[Example 5] One-sided test (positive association)")
@@ -448,8 +447,8 @@ def main(args) -> int:
     logger.info("\n[Example 7] Export results")
     logger.info("-" * 70)
 
-    stx.io.save(result_df, "./kendall_results.csv")
-    stx.io.save(result_df, "./kendall_results.xlsx")
+    result_df.to_csv("./kendall_results.csv", index=False)
+    result_df.to_excel("./kendall_results.xlsx", index=False)
 
     return 0
 
@@ -462,31 +461,13 @@ def parse_args():
 
 
 def run_main() -> None:
-    """Initialize SciTeX framework and run main."""
-    import scitex as stx
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    import sys
-
-    import matplotlib.pyplot as plt
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    _CONFIG, sys.stdout, sys.stderr, plt, _CC, _rng_manager = stx.session.start(
-        sys,
-        plt,
-        args=args,
-        file=__FILE__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        _CONFIG,
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    main(args)
 
 
 if __name__ == "__main__":

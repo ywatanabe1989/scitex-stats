@@ -30,6 +30,7 @@ IO:
 import argparse
 from typing import Literal, Optional, Union
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -197,7 +198,6 @@ def interpret_cohens_d(d: float) -> str:
 
 def main(args):
     """Demonstrate Cohen's d computation."""
-    import scitex as stx
     logger.info("Demonstrating Cohen's d effect size")
 
     # Set random seed
@@ -264,7 +264,7 @@ def main(args):
     # Visualization
     logger.info("\n=== Creating visualization ===")
 
-    fig, axes = stx.plt.subplots(1, 2, figsize=(12, 5))
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
     # Plot 1: Distribution visualization
     ax = axes[0]
@@ -294,8 +294,9 @@ def main(args):
     ax.legend()
     ax.grid(True, alpha=0.3)
 
-    stx.plt.tight_layout()
-    stx.io.save(fig, "./cohens_d_demo.jpg")
+    plt.tight_layout()
+    fig.savefig("./cohens_d_demo.jpg")
+    plt.close(fig)
     logger.info("Visualization saved")
 
     return 0
@@ -311,36 +312,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    try:
-        import scitex as stx
-    except ImportError:
-        stx = None
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    global CONFIG, sys, plt, rng
-
-    import sys
-
-    import matplotlib.pyplot as plt
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng = stx.session.start(
-        sys,
-        plt,
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

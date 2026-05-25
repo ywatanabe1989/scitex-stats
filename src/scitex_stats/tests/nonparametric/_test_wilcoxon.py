@@ -302,7 +302,6 @@ def _plot_wilcoxon(x, y, var_x, var_y, result, ax):
 
 def main(args):  # noqa: C901
     """Demonstrate Wilcoxon signed-rank test functionality."""
-    import scitex as stx
     logger.info("Demonstrating Wilcoxon signed-rank test")
 
     # Set random seed
@@ -380,19 +379,22 @@ def main(args):  # noqa: C901
     before6 = np.random.lognormal(2, 0.5, 40)
     after6 = before6 * np.random.lognormal(0.15, 0.3, 40)
 
-    test_wilcoxon(
-        before6,
-        after6,
-        var_x="Baseline",
-        var_y="Treatment",
-        plot=True,
-        verbose=True,
-    )
-
-    # Save the figure using plt.gcf()
-    stx.io.save(_mpl_plt.gcf(), "./wilcoxon_demo.jpg")
-    _mpl_plt.close()
-    logger.info("Figure saved to wilcoxon_demo.jpg")
+    try:
+        test_wilcoxon(
+            before6,
+            after6,
+            var_x="Baseline",
+            var_y="Treatment",
+            plot=True,
+            verbose=True,
+        )
+        # Save the figure using plt.gcf()
+        _mpl_plt.gcf().savefig("./wilcoxon_demo.jpg")
+        _mpl_plt.close("all")
+        logger.info("Figure saved to wilcoxon_demo.jpg")
+    except ModuleNotFoundError as exc:
+        # Plotting helpers depend on optional figrecipe (see [project.optional-dependencies]).
+        logger.info(f"Skipping plot: {exc}")
 
     # Example 7: Compare with paired t-test
     logger.info("\n=== Example 7: Wilcoxon vs Paired t-test ===")
@@ -445,31 +447,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    import scitex as stx
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    import sys
-
-    import matplotlib.pyplot as plt
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, _CC, _rng_manager = stx.session.start(
-        sys,
-        plt,
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

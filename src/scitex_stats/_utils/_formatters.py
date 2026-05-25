@@ -309,7 +309,6 @@ def _p2stars_scalar(
 
 def main(args):
     """Demonstrate p2stars functionality."""
-    import scitex as stx
     logger.info("Demonstrating p2stars functionality")
 
     # Example 1: Single p-values
@@ -396,7 +395,8 @@ def main(args):
     ax.legend(handles=legend_elements, loc="upper left")
 
     # Save
-    stx.io.save(fig, "./p2stars_demo.jpg")
+    fig.savefig("./p2stars_demo.jpg")
+    _mpl_plt.close(fig)
     logger.info("Visualization saved")
 
     return 0
@@ -412,33 +412,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    import scitex as stx
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    global CONFIG, sys, plt, rng
-
-    import sys
-
-    import matplotlib.pyplot as plt
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng = stx.session.start(
-        sys,
-        plt,
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

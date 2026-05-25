@@ -30,6 +30,7 @@ IO:
 import argparse
 from typing import List, Union
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -173,7 +174,6 @@ def interpret_eta_squared(eta2: float) -> str:
 
 def main(args):
     """Demonstrate eta-squared computation."""
-    import scitex as stx
     logger.info("Demonstrating eta-squared effect size for ANOVA")
 
     # Set random seed
@@ -219,7 +219,7 @@ def main(args):
     # Visualization
     logger.info("\n=== Creating visualization ===")
 
-    fig, axes = stx.plt.subplots(1, 2, figsize=(12, 5))
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
     # Plot 1: Group distributions
     ax = axes[0]
@@ -251,8 +251,9 @@ def main(args):
     ax.set_title("Effect Size vs Number of Groups")
     ax.grid(True, alpha=0.3)
 
-    stx.plt.tight_layout()
-    stx.io.save(fig, "./eta_squared_demo.jpg")
+    plt.tight_layout()
+    fig.savefig("./eta_squared_demo.jpg")
+    plt.close(fig)
     logger.info("Visualization saved")
 
     return 0
@@ -268,36 +269,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    try:
-        import scitex as stx
-    except ImportError:
-        stx = None
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    global CONFIG, sys, plt, rng
-
-    import sys
-
-    import matplotlib.pyplot as plt
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng = stx.session.start(
-        sys,
-        plt,
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

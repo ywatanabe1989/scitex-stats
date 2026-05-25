@@ -275,7 +275,6 @@ def _plot_ttest_rel(x, y, var_x, var_y, result, ax):
 
 def main(args):
     """Demonstrate paired samples t-test functionality."""
-    import scitex as stx
     logger.info("Demonstrating paired samples t-test")
 
     # Set random seed
@@ -293,8 +292,8 @@ def main(args):
     logger.info("\n=== Example 2: With visualization ===")
 
     test_ttest_rel(before, after, plot=True)
-    stx.io.save(plt.gcf(), "./.dev/ttest_rel_example2.jpg")
-    plt.close()
+    plt.gcf().savefig("./ttest_rel_example2.jpg")
+    plt.close("all")
 
     # Example 3: DataFrame output
     logger.info("\n=== Example 3: DataFrame output ===")
@@ -313,33 +312,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    import scitex as stx
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    import sys  # noqa: E402
-
-    import matplotlib.pyplot as plt  # noqa: E402
-
-    global CONFIG, sys, plt
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng_manager = stx.session.start(  # type: ignore[name-defined]
-        sys,  # type: ignore[name-defined]
-        plt,
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,  # type: ignore[name-defined]
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

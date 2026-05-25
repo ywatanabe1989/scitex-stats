@@ -291,7 +291,6 @@ def _plot_ttest_ind(x, y, var_x, var_y, result, ax):
 
 def main(args):
     """Demonstrate independent samples t-test functionality."""
-    import scitex as stx
     logger.info("Demonstrating independent samples t-test")
 
     # Set random seed
@@ -343,9 +342,15 @@ def main(args):
     x5 = np.random.normal(10, 2, 60)
     y5 = np.random.normal(12, 2, 60)
 
-    test_ttest_ind(x5, y5, var_x="Baseline", var_y="Follow-up", plot=True, verbose=True)
-    stx.io.save(plt.gcf(), "./.dev/ttest_ind_example5.jpg")
-    plt.close()
+    try:
+        test_ttest_ind(
+            x5, y5, var_x="Baseline", var_y="Follow-up", plot=True, verbose=True
+        )
+        plt.gcf().savefig("./ttest_ind_example5.jpg")
+        plt.close("all")
+    except ModuleNotFoundError as exc:
+        # Plotting helpers depend on optional figrecipe (see [project.optional-dependencies]).
+        logger.info(f"Skipping plot: {exc}")
 
     # Example 6: DataFrame output
     logger.info("\n=== Example 6: DataFrame output ===")
@@ -366,33 +371,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    import scitex as stx
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    import sys  # noqa: E402
-
-    import matplotlib.pyplot as plt  # noqa: E402
-
-    global CONFIG, sys, plt
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng_manager = stx.session.start(  # type: ignore[name-defined]
-        sys,  # type: ignore[name-defined]
-        plt,
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,  # type: ignore[name-defined]
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":

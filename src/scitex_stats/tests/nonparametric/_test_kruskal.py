@@ -326,8 +326,6 @@ def _plot_kruskal(groups, var_names, result, ax):
 
 def main(args):  # noqa: C901
     """Demonstrate Kruskal-Wallis test functionality."""
-    import scitex as stx
-
     logger.info("Demonstrating Kruskal-Wallis H test")
 
     # Set random seed
@@ -366,14 +364,23 @@ def main(args):  # noqa: C901
     group2 = np.random.exponential(3, 27)
     group3 = np.random.exponential(4, 28)
 
-    result3 = test_kruskal(
-        [group1, group2, group3],
-        var_names=["Exponential 1", "Exponential 2", "Exponential 3"],
-        plot=True,
-        verbose=True,
-    )
-    stx.io.save(_mpl_plt.gcf(), "./kruskal_example3.jpg")
-    _mpl_plt.close()
+    try:
+        result3 = test_kruskal(
+            [group1, group2, group3],
+            var_names=["Exponential 1", "Exponential 2", "Exponential 3"],
+            plot=True,
+            verbose=True,
+        )
+        _mpl_plt.gcf().savefig("./kruskal_example3.jpg")
+        _mpl_plt.close("all")
+    except ModuleNotFoundError as exc:
+        # Plotting helpers depend on optional figrecipe (see [project.optional-dependencies]).
+        logger.info(f"Skipping plot: {exc}")
+        result3 = test_kruskal(
+            [group1, group2, group3],
+            var_names=["Exponential 1", "Exponential 2", "Exponential 3"],
+            verbose=True,
+        )
 
     # Example 4: Four groups comparison
     logger.info("\n=== Example 4: Four groups comparison ===")
@@ -484,30 +491,13 @@ def parse_args():
 
 
 def run_main():
-    """Initialize SciTeX framework and run main."""
-    import sys
+    """Run main without the scitex umbrella session helpers."""
+    import matplotlib
 
-    import matplotlib.pyplot as plt
-    import scitex as stx
+    matplotlib.use("Agg")
 
     args = parse_args()
-
-    CONFIG, sys.stdout, sys.stderr, plt, _CC, _rng_manager = stx.session.start(
-        sys,
-        plt,
-        args=args,
-        file=__file__,
-        verbose=args.verbose,
-        agg=True,
-    )
-
-    exit_status = main(args)
-
-    stx.session.close(
-        CONFIG,
-        verbose=args.verbose,
-        exit_status=exit_status,
-    )
+    return main(args)
 
 
 if __name__ == "__main__":
