@@ -385,6 +385,12 @@ def _plot_fdr(df, alpha, method, ax):
 
 
 def demo(verbose=False):
+    try:
+        import scitex as _stx_demo
+    except ImportError:
+        print("scitex not available — skipping demo visualization")
+        return 0
+    import scitex as stx  # noqa: F811 — re-import for backward compat
     """Demonstrate FDR correction."""
     import scitex as stx
 

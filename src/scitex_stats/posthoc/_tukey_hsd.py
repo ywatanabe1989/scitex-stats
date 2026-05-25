@@ -277,15 +277,21 @@ def posthoc_tukey(
 
 
 if __name__ == "__main__":
+    import sys
+    try:
+        import scitex as _stx
+    except ImportError:
+        _stx = None
+    if _stx is None:
+        print("scitex not available — skipping demo visualization")
+        sys.exit(0)
     import argparse
     import sys
 
-    import scitex as stx
 
     parser = argparse.ArgumentParser()
     args = parser.parse_args([])
 
-    CONFIG, sys.stdout, sys.stderr, plt, CC, rng = stx.session.start(
         sys=sys,
         plt=None,
         args=args,
@@ -368,7 +374,6 @@ if __name__ == "__main__":
     pd.DataFrame(results).to_excel("./tukey_hsd_results.xlsx", index=False)
     logger.info("Saved to: ./tukey_hsd_results.xlsx")
 
-    stx.session.close(
         CONFIG,
         verbose=False,
         notify=False,

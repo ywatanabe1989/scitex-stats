@@ -444,6 +444,30 @@ def parse_args():
     return parser.parse_args()
 
 
+
+def _run_main_no_stx(args=None):
+    """Run demo without scitex umbrella (use plain matplotlib)."""
+    import sys
+    # parse args if signature exists
+    try:
+        _args = parse_args()
+    except NameError:
+        _args = args or type(sys.argv)(sys.argv[1:]) if args is None else args
+    # Run core logic
+    if "main" in dir():
+        try:
+            import matplotlib as _mpl
+            _mpl.use("Agg")
+            import matplotlib.pyplot as _plt
+            code = main(_args)
+            _plt.close("all")
+            return code
+        except Exception:
+            import traceback
+            traceback.print_exc()
+            return 1
+    return 0
+
 def run_main():
     """Initialize SciTeX framework and run main."""
     import scitex as stx
@@ -451,6 +475,10 @@ def run_main():
     import sys
 
     import matplotlib.pyplot as plt
+
+
+    if stx is None:
+        return _run_main_no_stx()
 
     args = parse_args()
 

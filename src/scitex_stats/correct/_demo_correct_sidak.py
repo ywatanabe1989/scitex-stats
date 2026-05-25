@@ -220,6 +220,14 @@ def main():
 
 
 if __name__ == "__main__":
+    import sys
+    try:
+        import scitex as _stx
+    except ImportError:
+        _stx = None
+    if _stx is None:
+        print("scitex not available — skipping demo visualization")
+        sys.exit(0)
     main()
 
 # EOF
