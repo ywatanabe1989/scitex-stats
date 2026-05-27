@@ -12,18 +12,14 @@ from __future__ import annotations
 import os
 
 import numpy as np
+from scitex_dev import try_import_optional
 
 __FILE__ = __file__
 __DIR__ = os.path.dirname(__FILE__)
 
-# Optional torch support
-try:
-    import torch
-
-    HAS_TORCH = True
-except ImportError:
-    torch = None
-    HAS_TORCH = False
+# Optional torch support (numpy fallback when absent)
+torch = try_import_optional("torch", extra="all", pkg="scitex-stats")
+HAS_TORCH = torch is not None
 
 
 def _is_torch_tensor(x):
