@@ -26,6 +26,6 @@ MCP Subcommands
 
    scitex-stats mcp start           # Start MCP server
    scitex-stats mcp doctor          # Check MCP dependencies
-   scitex-stats mcp installation    # Show installation instructions
+   scitex-stats mcp install         # Show installation instructions
    scitex-stats mcp list-tools      # List available MCP tools
    scitex-stats mcp list-tools -v   # With signatures
