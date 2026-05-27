@@ -11,11 +11,11 @@ tags: [scitex-stats-env-vars, scitex-stats]
 | Variable | Purpose | Default | Type |
 |---|---|---|---|
 | `SCITEX_LOGGING_AVAILABLE` | Cross-package feature flag set by scitex-logging when present; scitex-stats reads it to decide whether to attach the SciTeX logger vs stdlib logging. | unset | bool (presence) |
+| `SCITEX_STATS_CONFIG` | Path to a YAML config file, overrides user-scope `~/.scitex/stats/config.yaml`. Documented in the CLI precedence chain. | unset | str (path) |
 
 ## Notes
 
-- scitex-stats defines no module-private `SCITEX_STATS_*` vars yet.
-- The only env reference is an optional-dep probe; no user-tunable knobs at this time.
+- No other module-private `SCITEX_STATS_*` vars are defined at this time.
 
 ## Audit
 
