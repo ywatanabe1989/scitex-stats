@@ -1,29 +1,49 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 # Timestamp: "2025-12-13 (ywatanabe)"
 # File: scitex_stats/io/_bundle.py
 
-"""
-SciTeX .stats Bundle I/O - Statistics-specific bundle operations.
+"""SciTeX ``.stats`` bundle I/O — statistics-specific bundle operations.
 
-Handles:
-    - Statistical results specification validation
-    - Comparison metadata management
-    - P-value and effect size validation
+Two output forms are supported, mirroring figrecipe's ``.plt.zip`` /
+``.fig.zip``:
+
+- ``.stats.zip``  — single-file zipped bundle (the recommended portable
+  form; consumed by scitex_io's optional provider).
+- ``.stats``       — directory bundle (legacy / debugging form, kept for
+  iteration on raw files).
+
+Bundle content::
+
+    <bundle>/
+        stats.json     # spec (schema, comparisons, descriptive, …)
+        data.csv       # supplementary data (optional)
+        report.md      # human summary (optional)
+
+Public API::
+
+    save_stats_bundle(data, path)   # path is a dir-like target or a .stats.zip
+    load_stats_bundle(path)         # reads either a dir or a .stats.zip
+    validate_stats_spec(spec)       # pure validation, no I/O
 """
+
+from __future__ import annotations
 
 import json
+import tempfile
+import zipfile
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 __all__ = [
-    "validate_stats_spec",
+    "STATS_SCHEMA_SPEC",
     "load_stats_bundle",
     "save_stats_bundle",
-    "STATS_SCHEMA_SPEC",
+    "validate_stats_spec",
 ]
 
-# Schema specification for .stats bundles
-STATS_SCHEMA_SPEC = {
+# Schema specification for ``.stats`` bundles.
+STATS_SCHEMA_SPEC: Dict[str, Any] = {
     "name": "scitex.stats.stats",
     "version": "1.0.0",
     "required_fields": ["schema"],
@@ -32,15 +52,8 @@ STATS_SCHEMA_SPEC = {
 
 
 def validate_stats_spec(spec: Dict[str, Any]) -> List[str]:
-    """Validate .stats-specific fields.
-
-    Args:
-        spec: The specification dictionary to validate.
-
-    Returns:
-        List of validation error messages (empty if valid).
-    """
-    errors = []
+    """Validate ``.stats``-specific fields. Returns the list of error messages."""
+    errors: List[str] = []
 
     if "comparisons" in spec:
         comparisons = spec["comparisons"]
@@ -52,7 +65,6 @@ def validate_stats_spec(spec: Dict[str, Any]) -> List[str]:
                     errors.append(f"comparisons[{i}] must be a dictionary")
                     continue
 
-                # Validate p_value if present
                 if "p_value" in comp:
                     p = comp["p_value"]
                     if not isinstance(p, (int, float)):
@@ -62,7 +74,6 @@ def validate_stats_spec(spec: Dict[str, Any]) -> List[str]:
                             f"comparisons[{i}].p_value must be between 0 and 1"
                         )
 
-                # Validate effect_size if present
                 if "effect_size" in comp:
                     es = comp["effect_size"]
                     if isinstance(es, dict):
@@ -75,13 +86,11 @@ def validate_stats_spec(spec: Dict[str, Any]) -> List[str]:
                             f"comparisons[{i}].effect_size must be numeric or dict"
                         )
 
-    # Validate test_results if present
     if "test_results" in spec:
         test_results = spec["test_results"]
         if not isinstance(test_results, (dict, list)):
             errors.append("'test_results' must be a dictionary or list")
 
-    # Validate descriptive if present
     if "descriptive" in spec:
         descriptive = spec["descriptive"]
         if not isinstance(descriptive, dict):
@@ -90,53 +99,18 @@ def validate_stats_spec(spec: Dict[str, Any]) -> List[str]:
     return errors
 
 
-def load_stats_bundle(bundle_dir: Path) -> Dict[str, Any]:
-    """Load .stats bundle contents from directory.
-
-    Args:
-        bundle_dir: Path to the bundle directory.
-
-    Returns:
-        Dictionary with loaded bundle contents.
-    """
-    result = {}
-
-    # Load specification
-    spec_file = bundle_dir / "stats.json"
-    if spec_file.exists():
-        with open(spec_file) as f:
-            result["spec"] = json.load(f)
-    else:
-        result["spec"] = None
-
-    # Load supplementary data files if present
-    data_file = bundle_dir / "data.csv"
-    if data_file.exists():
-        try:
-            import pandas as pd
-
-            result["data"] = pd.read_csv(data_file)
-        except ImportError:
-            with open(data_file) as f:
-                result["data"] = f.read()
-
-    return result
+def _is_stats_zip(path: Path) -> bool:
+    """True iff ``path`` ends with ``.stats.zip``."""
+    suffixes = [s.lower() for s in path.suffixes]
+    return suffixes[-2:] == [".stats", ".zip"]
 
 
-def save_stats_bundle(data: Dict[str, Any], dir_path: Path) -> None:
-    """Save .stats bundle contents to directory.
-
-    Args:
-        data: Bundle data dictionary.
-        dir_path: Path to the bundle directory.
-    """
-    # Save specification
+def _write_dir_bundle(data: Dict[str, Any], dir_path: Path) -> None:
+    """Write the canonical bundle layout under ``dir_path`` (must already exist)."""
     spec = data.get("spec", {})
-    spec_file = dir_path / "stats.json"
-    with open(spec_file, "w") as f:
+    with open(dir_path / "stats.json", "w") as f:
         json.dump(spec, f, indent=2)
 
-    # Save supplementary data if present
     if "data" in data:
         data_file = dir_path / "data.csv"
         df = data["data"]
@@ -146,11 +120,85 @@ def save_stats_bundle(data: Dict[str, Any], dir_path: Path) -> None:
             with open(data_file, "w") as f:
                 f.write(str(df))
 
-    # Save summary report if present
     if "report" in data:
-        report_file = dir_path / "report.md"
-        with open(report_file, "w") as f:
+        with open(dir_path / "report.md", "w") as f:
             f.write(data["report"])
+
+
+def _read_dir_bundle(dir_path: Path) -> Dict[str, Any]:
+    """Read the canonical bundle layout from ``dir_path``."""
+    result: Dict[str, Any] = {}
+
+    spec_file = dir_path / "stats.json"
+    if spec_file.exists():
+        with open(spec_file) as f:
+            result["spec"] = json.load(f)
+    else:
+        result["spec"] = None
+
+    data_file = dir_path / "data.csv"
+    if data_file.exists():
+        try:
+            import pandas as pd
+
+            result["data"] = pd.read_csv(data_file)
+        except ImportError:
+            with open(data_file) as f:
+                result["data"] = f.read()
+
+    report_file = dir_path / "report.md"
+    if report_file.exists():
+        result["report"] = report_file.read_text()
+
+    return result
+
+
+def save_stats_bundle(data: Dict[str, Any], path: Union[str, Path]) -> Path:
+    """Save a ``.stats`` bundle to ``path``.
+
+    ``path`` may be either a directory (legacy form — also accepts paths
+    ending in ``.stats``) or a single-file ``.stats.zip`` archive. The
+    return value is the actual on-disk path written.
+    """
+    p = Path(path)
+
+    if _is_stats_zip(p):
+        # Zipped bundle: write to a tempdir, then pack.
+        with tempfile.TemporaryDirectory() as tmpdir:
+            staging = Path(tmpdir) / "bundle"
+            staging.mkdir()
+            _write_dir_bundle(data, staging)
+
+            p.parent.mkdir(parents=True, exist_ok=True)
+            root = p.name[: -len(".stats.zip")]
+            with zipfile.ZipFile(p, "w", zipfile.ZIP_DEFLATED) as zf:
+                for f in staging.rglob("*"):
+                    if f.is_file():
+                        zf.write(f, Path(root) / f.relative_to(staging))
+        return p
+
+    # Directory bundle.
+    p.mkdir(parents=True, exist_ok=True)
+    _write_dir_bundle(data, p)
+    return p
+
+
+def load_stats_bundle(path: Union[str, Path]) -> Dict[str, Any]:
+    """Load a ``.stats`` bundle from ``path`` (directory or ``.stats.zip``)."""
+    p = Path(path)
+
+    if _is_stats_zip(p):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            staging = Path(tmpdir) / "extract"
+            staging.mkdir()
+            with zipfile.ZipFile(p, "r") as zf:
+                zf.extractall(staging)
+            # Bundle root is the first child directory (matches save layout).
+            children = [c for c in staging.iterdir() if c.is_dir()]
+            root = children[0] if children else staging
+            return _read_dir_bundle(root)
+
+    return _read_dir_bundle(p)
 
 
 # EOF
