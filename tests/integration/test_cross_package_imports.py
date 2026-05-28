@@ -28,7 +28,6 @@ CROSS_PACKAGE_IMPORTS = [
     "scitex_dev.skills",
     "scitex_dev.linter._rules._base",
     "scitex_logging",
-    "scitex",
 ]
 # ===== END AUTO-GENERATED =====
 
