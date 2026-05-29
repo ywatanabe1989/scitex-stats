@@ -7,6 +7,11 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.22]
+
+- feat(schema): publish the `scitex_stats._dataclasses` Stats schema (`_Stats.py`) — previously only on develop, which forced scitex-io's bundle to git-pin scitex-stats. Publishing it lets scitex-io depend on `scitex-stats>=0.2.22` and exercises the `.stats.zip` bundle integration on PyPI.
+- (incorporates the figrecipe-optional R4 changes merged in #43)
+
 ## [0.2.20] — 2026-05-26
 
 ### Changed
