@@ -88,6 +88,10 @@ dev = [
     "nbconvert>=7.0",     # executes example .ipynb in tests (PS-505)
     "ipykernel>=6.0",     # kernel for nbconvert --execute
     "openpyxl>=3.1",      # pandas to_excel used by _demo_*.py
+    # Optional cross-package integrations whose tests live in the suite,
+    # so a fresh `pip install -e .[dev]` runs the full suite (PS-210).
+    "scitex-io>=0.2.16",  # [bundle] extra: stats↔bundle I/O round-trip tests
+    "figrecipe>=0.28.0",  # [all] extra: stats↔figrecipe annotation tests
     # Note: fastmcp / mcp / scitex-dev / scitex-logging / pingouin come in via [project.dependencies].
 ]
 docs = [

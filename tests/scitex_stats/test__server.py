@@ -191,9 +191,20 @@ def _decode(s):
     return json.loads(s)
 
 
+def _tool_fn(name):
+    """Return the raw coroutine behind a registered MCP tool (version-robust).
+
+    FastMCP 2.x wraps an @mcp.tool() target in a non-callable FunctionTool
+    whose body is reachable via ``.fn``; FastMCP 3.x leaves the attribute as
+    the plain async function. Resolve whichever form is installed.
+    """
+    obj = getattr(srv, name)
+    return getattr(obj, "fn", obj)
+
+
 def test_recommend_tests_direct():
     out = _decode(
-        _run_async(srv.recommend_tests.fn(n_groups=2, sample_sizes=[30, 30], top_k=3))
+        _run_async(_tool_fn("recommend_tests")(n_groups=2, sample_sizes=[30, 30], top_k=3))
     )
     assert out["success"] is True
 
@@ -202,7 +213,7 @@ def test_run_test_direct_ttest_ind():
     rng_s = np.random.default_rng(0)
     g1 = rng_s.normal(0, 1, 30).tolist()
     g2 = rng_s.normal(0.5, 1, 30).tolist()
-    out = _decode(_run_async(srv.run_test.fn(test_name="ttest_ind", data=[g1, g2])))
+    out = _decode(_run_async(_tool_fn("run_test")(test_name="ttest_ind", data=[g1, g2])))
     assert out["success"] is True
     assert "p_value" in out
 
@@ -210,7 +221,7 @@ def test_run_test_direct_ttest_ind():
 def test_format_results_direct():
     out = _decode(
         _run_async(
-            srv.format_results.fn(
+            _tool_fn("format_results")(
                 test_name="ttest_ind",
                 statistic=-3.21,
                 p_value=0.002,
@@ -228,7 +239,7 @@ def test_format_results_direct():
 def test_power_analysis_direct():
     out = _decode(
         _run_async(
-            srv.power_analysis.fn(
+            _tool_fn("power_analysis")(
                 test_type="ttest",
                 effect_size=0.5,
                 power=0.8,
@@ -242,7 +253,7 @@ def test_power_analysis_direct():
 def test_correct_pvalues_direct():
     out = _decode(
         _run_async(
-            srv.correct_pvalues.fn(
+            _tool_fn("correct_pvalues")(
                 pvalues=[0.001, 0.04, 0.03, 0.20, 0.005],
                 method="fdr_bh",
                 alpha=0.05,
@@ -253,7 +264,7 @@ def test_correct_pvalues_direct():
 
 
 def test_describe_direct():
-    out = _decode(_run_async(srv.describe.fn(data=[1.0, 2.0, 3.0, 4.0, 5.0])))
+    out = _decode(_run_async(_tool_fn("describe")(data=[1.0, 2.0, 3.0, 4.0, 5.0])))
     assert out["success"] is True
     assert "mean" in out
 
@@ -261,7 +272,7 @@ def test_describe_direct():
 def test_effect_size_direct():
     out = _decode(
         _run_async(
-            srv.effect_size.fn(
+            _tool_fn("effect_size")(
                 group1=[1, 2, 3, 4, 5],
                 group2=[2, 3, 4, 5, 6],
                 measure="cohens_d",
@@ -275,7 +286,7 @@ def test_effect_size_direct():
 def test_normality_test_direct():
     rng_n = np.random.default_rng(0)
     out = _decode(
-        _run_async(srv.normality_test.fn(data=rng_n.normal(0, 1, 50).tolist()))
+        _run_async(_tool_fn("normality_test")(data=rng_n.normal(0, 1, 50).tolist()))
     )
     assert out["success"] is True
     assert out["test"] == "Shapiro-Wilk"
@@ -286,7 +297,7 @@ def test_posthoc_test_direct():
     groups = [rng_p.normal(0, 1, 25).tolist() for _ in range(3)]
     out = _decode(
         _run_async(
-            srv.posthoc_test.fn(
+            _tool_fn("posthoc_test")(
                 groups=groups,
                 group_names=["A", "B", "C"],
                 method="tukey",
@@ -298,20 +309,20 @@ def test_posthoc_test_direct():
 
 
 def test_p_to_stars_direct():
-    out = _decode(_run_async(srv.p_to_stars.fn(p_value=0.001)))
+    out = _decode(_run_async(_tool_fn("p_to_stars")(p_value=0.001)))
     assert isinstance(out, dict)
 
 
 def test_skills_list_direct_returns_json_envelope():
-    out = _decode(_run_async(srv.skills_list.fn()))
+    out = _decode(_run_async(_tool_fn("skills_list")()))
     assert "success" in out
 
 
 def test_skills_get_main_skill_direct():
-    out = _decode(_run_async(srv.skills_get.fn()))
+    out = _decode(_run_async(_tool_fn("skills_get")()))
     assert "success" in out
 
 
 def test_skills_get_unknown_name_direct():
-    out = _decode(_run_async(srv.skills_get.fn(name="definitely-not-a-real-skill")))
+    out = _decode(_run_async(_tool_fn("skills_get")(name="definitely-not-a-real-skill")))
     assert out["success"] is False
