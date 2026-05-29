@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API Reference &mdash; SciTeX Stats v0.2.22</title>
+  <title>API Reference &mdash; SciTeX Stats v0.2.23</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=b360e4a1"></script>
+      <script src="../_static/documentation_options.js?v=171860b8"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -112,9 +112,24 @@
 <li class="toctree-l2"><a class="reference internal" href="#scitex_stats.available_tests"><code class="docutils literal notranslate"><span class="pre">available_tests()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#scitex_stats.describe"><code class="docutils literal notranslate"><span class="pre">describe()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#scitex_stats.to_json_safe"><code class="docutils literal notranslate"><span class="pre">to_json_safe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scitex_stats.Stats"><code class="docutils literal notranslate"><span class="pre">Stats</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#scitex_stats.Stats.analyses"><code class="docutils literal notranslate"><span class="pre">Stats.analyses</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scitex_stats.Stats.software"><code class="docutils literal notranslate"><span class="pre">Stats.software</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scitex_stats.Stats.schema_name"><code class="docutils literal notranslate"><span class="pre">Stats.schema_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scitex_stats.Stats.schema_version"><code class="docutils literal notranslate"><span class="pre">Stats.schema_version</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scitex_stats.Stats.to_dict"><code class="docutils literal notranslate"><span class="pre">Stats.to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scitex_stats.Stats.to_json"><code class="docutils literal notranslate"><span class="pre">Stats.to_json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scitex_stats.Stats.from_dict"><code class="docutils literal notranslate"><span class="pre">Stats.from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scitex_stats.Stats.from_json"><code class="docutils literal notranslate"><span class="pre">Stats.from_json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scitex_stats.Stats.__init__"><code class="docutils literal notranslate"><span class="pre">Stats.__init__()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#scitex_stats.test_result_to_stats"><code class="docutils literal notranslate"><span class="pre">test_result_to_stats()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#scitex_stats.save_stats"><code class="docutils literal notranslate"><span class="pre">save_stats()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#scitex_stats.load_stats"><code class="docutils literal notranslate"><span class="pre">load_stats()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scitex_stats.to_figrecipe"><code class="docutils literal notranslate"><span class="pre">to_figrecipe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scitex_stats.annotate"><code class="docutils literal notranslate"><span class="pre">annotate()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scitex_stats.load_and_annotate"><code class="docutils literal notranslate"><span class="pre">load_and_annotate()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#scitex_stats.StatContext"><code class="docutils literal notranslate"><span class="pre">StatContext</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#scitex_stats.StatContext.n_groups"><code class="docutils literal notranslate"><span class="pre">StatContext.n_groups</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#scitex_stats.StatContext.sample_sizes"><code class="docutils literal notranslate"><span class="pre">StatContext.sample_sizes</span></code></a></li>
@@ -398,6 +413,79 @@ for common frontend expectations, and builds a formatted summary string.</p>
 </div>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="scitex_stats.Stats">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">scitex_stats.</span></span><span class="sig-name descname"><span class="pre">Stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analyses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">software</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fsb.stats'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1.1.0'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_stats/_dataclasses/_Stats.html#Stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_stats.Stats" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Complete statistics specification for a bundle.</p>
+<p>Stored in stats/stats.json.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scitex_stats.Stats.analyses">
+<span class="sig-name descname"><span class="pre">analyses</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Analysis</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#scitex_stats.Stats.analyses" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scitex_stats.Stats.software">
+<span class="sig-name descname"><span class="pre">software</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#scitex_stats.Stats.software" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scitex_stats.Stats.schema_name">
+<span class="sig-name descname"><span class="pre">schema_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'fsb.stats'</span></span><a class="headerlink" href="#scitex_stats.Stats.schema_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scitex_stats.Stats.schema_version">
+<span class="sig-name descname"><span class="pre">schema_version</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1.1.0'</span></span><a class="headerlink" href="#scitex_stats.Stats.schema_version" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scitex_stats.Stats.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_stats/_dataclasses/_Stats.html#Stats.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_stats.Stats.to_dict" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scitex_stats.Stats.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_stats/_dataclasses/_Stats.html#Stats.to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_stats.Stats.to_json" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scitex_stats.Stats.from_dict">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_stats/_dataclasses/_Stats.html#Stats.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_stats.Stats.from_dict" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#scitex_stats.Stats" title="scitex_stats._dataclasses._Stats.Stats"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stats</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scitex_stats.Stats.from_json">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_stats/_dataclasses/_Stats.html#Stats.from_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_stats.Stats.from_json" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#scitex_stats.Stats" title="scitex_stats._dataclasses._Stats.Stats"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stats</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scitex_stats.Stats.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analyses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">software</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fsb.stats'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1.1.0'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scitex_stats.Stats.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="scitex_stats.test_result_to_stats">
 <span class="sig-prename descclassname"><span class="pre">scitex_stats.</span></span><span class="sig-name descname"><span class="pre">test_result_to_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_stats/_bundle_io.html#test_result_to_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_stats.test_result_to_stats" title="Link to this definition"></a></dt>
@@ -422,7 +510,7 @@ for common frontend expectations, and builds a formatted summary string.</p>
 <dd class="field-even"><p>Stats object suitable for bundle storage.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Stats</p>
+<dd class="field-odd"><p><a class="reference internal" href="#scitex_stats.Stats" title="scitex_stats.Stats">Stats</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ImportError" title="(in Python v3.14)"><strong>ImportError</strong></a> – If scitex-io is not installed.</p>
@@ -437,7 +525,7 @@ for common frontend expectations, and builds a formatted summary string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>comparisons</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>, or </em><em>Stats</em>) – List of comparison-result dicts (each converted via
+<li><p><strong>comparisons</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>, or </em><a class="reference internal" href="#scitex_stats.Stats" title="scitex_stats.Stats"><em>Stats</em></a>) – List of comparison-result dicts (each converted via
 <a class="reference internal" href="#scitex_stats.test_result_to_stats" title="scitex_stats.test_result_to_stats"><code class="xref py py-func docutils literal notranslate"><span class="pre">test_result_to_stats()</span></code></a>), or an already-built <code class="docutils literal notranslate"><span class="pre">Stats</span></code> object.</p></li>
 <li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>Path</em>) – Output bundle path (directory, or <code class="docutils literal notranslate"><span class="pre">.zip</span></code> when <code class="docutils literal notranslate"><span class="pre">as_zip</span></code>).</p></li>
 <li><p><strong>metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>, </em><em>optional</em>) – Currently unused placeholder kept for API stability.</p></li>
@@ -473,6 +561,67 @@ is a flat dict (name, method, p_value, effect_size, ci95, formatted).</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ImportError" title="(in Python v3.14)"><strong>ImportError</strong></a> – If scitex-io is not installed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scitex_stats.to_figrecipe">
+<span class="sig-prename descclassname"><span class="pre">scitex_stats.</span></span><span class="sig-name descname"><span class="pre">to_figrecipe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stats_result</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_stats/_figrecipe_integration.html#to_figrecipe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_stats.to_figrecipe" title="Link to this definition"></a></dt>
+<dd><p>Convert scitex.stats result(s) to figrecipe format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stats_result</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Statistical result(s) from scitex.stats functions.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Figrecipe-compatible format with ‘comparisons’ list.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scitex_stats.annotate">
+<span class="sig-prename descclassname"><span class="pre">scitex_stats.</span></span><span class="sig-name descname"><span class="pre">annotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stars'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_stats/_figrecipe_integration.html#annotate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_stats.annotate" title="Link to this definition"></a></dt>
+<dd><p>Add statistical annotations to a plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<em>Axes</em><em> or </em><em>AxisWrapper</em>) – The axes to annotate.</p></li>
+<li><p><strong>stats</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Statistical results (auto-converted if needed).</p></li>
+<li><p><strong>positions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>, </em><em>optional</em>) – Group name to x position mapping.</p></li>
+<li><p><strong>style</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – ‘stars’, ‘p_value’, or ‘both’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Created matplotlib artist objects.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scitex_stats.load_and_annotate">
+<span class="sig-prename descclassname"><span class="pre">scitex_stats.</span></span><span class="sig-name descname"><span class="pre">load_and_annotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stars'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_stats/_figrecipe_integration.html#load_and_annotate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_stats.load_and_annotate" title="Link to this definition"></a></dt>
+<dd><p>Load stats from bundle file and annotate plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<em>Axes</em><em> or </em><em>AxisWrapper</em>) – The axes to annotate.</p></li>
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to .statsz or .zip bundle.</p></li>
+<li><p><strong>positions</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>, </em><em>optional</em>) – Group name to x position mapping.</p></li>
+<li><p><strong>style</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – ‘stars’, ‘p_value’, or ‘both’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Created matplotlib artist objects.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a></p>
 </dd>
 </dl>
 </dd></dl>

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; SciTeX Stats v0.2.22</title>
+  <title>Index &mdash; SciTeX Stats v0.2.23</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -13,7 +13,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b360e4a1"></script>
+      <script src="_static/documentation_options.js?v=171860b8"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -107,9 +107,24 @@
 <li class="toctree-l2"><a class="reference internal" href="api/index.html#scitex_stats.available_tests"><code class="docutils literal notranslate"><span class="pre">available_tests()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/index.html#scitex_stats.describe"><code class="docutils literal notranslate"><span class="pre">describe()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/index.html#scitex_stats.to_json_safe"><code class="docutils literal notranslate"><span class="pre">to_json_safe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/index.html#scitex_stats.Stats"><code class="docutils literal notranslate"><span class="pre">Stats</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/index.html#scitex_stats.Stats.analyses"><code class="docutils literal notranslate"><span class="pre">Stats.analyses</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/index.html#scitex_stats.Stats.software"><code class="docutils literal notranslate"><span class="pre">Stats.software</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/index.html#scitex_stats.Stats.schema_name"><code class="docutils literal notranslate"><span class="pre">Stats.schema_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/index.html#scitex_stats.Stats.schema_version"><code class="docutils literal notranslate"><span class="pre">Stats.schema_version</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/index.html#scitex_stats.Stats.to_dict"><code class="docutils literal notranslate"><span class="pre">Stats.to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/index.html#scitex_stats.Stats.to_json"><code class="docutils literal notranslate"><span class="pre">Stats.to_json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/index.html#scitex_stats.Stats.from_dict"><code class="docutils literal notranslate"><span class="pre">Stats.from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/index.html#scitex_stats.Stats.from_json"><code class="docutils literal notranslate"><span class="pre">Stats.from_json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/index.html#scitex_stats.Stats.__init__"><code class="docutils literal notranslate"><span class="pre">Stats.__init__()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="api/index.html#scitex_stats.test_result_to_stats"><code class="docutils literal notranslate"><span class="pre">test_result_to_stats()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/index.html#scitex_stats.save_stats"><code class="docutils literal notranslate"><span class="pre">save_stats()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/index.html#scitex_stats.load_stats"><code class="docutils literal notranslate"><span class="pre">load_stats()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/index.html#scitex_stats.to_figrecipe"><code class="docutils literal notranslate"><span class="pre">to_figrecipe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/index.html#scitex_stats.annotate"><code class="docutils literal notranslate"><span class="pre">annotate()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/index.html#scitex_stats.load_and_annotate"><code class="docutils literal notranslate"><span class="pre">load_and_annotate()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/index.html#scitex_stats.StatContext"><code class="docutils literal notranslate"><span class="pre">StatContext</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/index.html#scitex_stats.StatContext.n_groups"><code class="docutils literal notranslate"><span class="pre">StatContext.n_groups</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/index.html#scitex_stats.StatContext.sample_sizes"><code class="docutils literal notranslate"><span class="pre">StatContext.sample_sizes</span></code></a></li>
@@ -268,6 +283,8 @@
       <li><a href="api/index.html#scitex_stats.StatContext.__init__">__init__() (scitex_stats.StatContext method)</a>
 
       <ul>
+        <li><a href="api/index.html#scitex_stats.Stats.__init__">(scitex_stats.Stats method)</a>
+</li>
         <li><a href="api/index.html#scitex_stats.StatStyle.__init__">(scitex_stats.StatStyle method)</a>
 </li>
         <li><a href="api/index.html#scitex_stats.TestRule.__init__">(scitex_stats.TestRule method)</a>
@@ -285,8 +302,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#scitex_stats.StatStyle.alpha_thresholds">alpha_thresholds (scitex_stats.StatStyle attribute)</a>
 </li>
+      <li><a href="api/index.html#scitex_stats.Stats.analyses">analyses (scitex_stats.Stats attribute)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/index.html#scitex_stats.annotate">annotate() (in module scitex_stats)</a>
+</li>
       <li><a href="api/index.html#scitex_stats.available_tests">available_tests() (in module scitex_stats)</a>
 </li>
   </ul></td>
@@ -347,15 +368,21 @@
 </li>
       <li><a href="api/index.html#scitex_stats.StatStyle.format_n">format_n() (scitex_stats.StatStyle method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#scitex_stats.StatStyle.format_p">format_p() (scitex_stats.StatStyle method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#scitex_stats.StatStyle.format_stat">format_stat() (scitex_stats.StatStyle method)</a>
 </li>
       <li><a href="api/index.html#scitex_stats.StatContext.from_data">from_data() (scitex_stats.StatContext class method)</a>
 </li>
       <li><a href="api/index.html#scitex_stats.StatContext.from_dict">from_dict() (scitex_stats.StatContext class method)</a>
+
+      <ul>
+        <li><a href="api/index.html#scitex_stats.Stats.from_dict">(scitex_stats.Stats class method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/index.html#scitex_stats.Stats.from_json">from_json() (scitex_stats.Stats class method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -395,6 +422,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/index.html#scitex_stats.load_and_annotate">load_and_annotate() (in module scitex_stats)</a>
+</li>
       <li><a href="api/index.html#scitex_stats.load_stats">load_stats() (in module scitex_stats)</a>
 </li>
   </ul></td>
@@ -510,6 +539,10 @@
 </li>
       <li><a href="api/index.html#scitex_stats.save_stats">save_stats() (in module scitex_stats)</a>
 </li>
+      <li><a href="api/index.html#scitex_stats.Stats.schema_name">schema_name (scitex_stats.Stats attribute)</a>
+</li>
+      <li><a href="api/index.html#scitex_stats.Stats.schema_version">schema_version (scitex_stats.Stats attribute)</a>
+</li>
       <li>
     scitex_stats
 
@@ -519,9 +552,13 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/index.html#scitex_stats.Stats.software">software (scitex_stats.Stats attribute)</a>
+</li>
       <li><a href="api/index.html#scitex_stats.StatStyle.stat_symbol_format">stat_symbol_format (scitex_stats.StatStyle attribute)</a>
 </li>
       <li><a href="api/index.html#scitex_stats.StatContext">StatContext (class in scitex_stats)</a>
+</li>
+      <li><a href="api/index.html#scitex_stats.Stats">Stats (class in scitex_stats)</a>
 </li>
       <li><a href="api/index.html#scitex_stats.StatStyle">StatStyle (class in scitex_stats)</a>
 </li>
@@ -563,10 +600,10 @@
 </li>
       <li><a href="api/index.html#scitex_stats.test_mannwhitneyu">test_mannwhitneyu() (in module scitex_stats)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#scitex_stats.test_mcnemar">test_mcnemar() (in module scitex_stats)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/index.html#scitex_stats.test_normality">test_normality() (in module scitex_stats)</a>
 </li>
       <li><a href="api/index.html#scitex_stats.test_pearson">test_pearson() (in module scitex_stats)</a>
@@ -590,6 +627,14 @@
       <li><a href="api/index.html#scitex_stats.TestRule">TestRule (class in scitex_stats)</a>
 </li>
       <li><a href="api/index.html#scitex_stats.StatContext.to_dict">to_dict() (scitex_stats.StatContext method)</a>
+
+      <ul>
+        <li><a href="api/index.html#scitex_stats.Stats.to_dict">(scitex_stats.Stats method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/index.html#scitex_stats.to_figrecipe">to_figrecipe() (in module scitex_stats)</a>
+</li>
+      <li><a href="api/index.html#scitex_stats.Stats.to_json">to_json() (scitex_stats.Stats method)</a>
 </li>
       <li><a href="api/index.html#scitex_stats.to_json_safe">to_json_safe() (in module scitex_stats)</a>
 </li>

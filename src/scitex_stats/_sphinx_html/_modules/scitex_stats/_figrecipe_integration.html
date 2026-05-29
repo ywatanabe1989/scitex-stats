@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>scitex_stats._bundle_io &mdash; SciTeX Stats v0.2.23</title>
+  <title>scitex_stats._figrecipe_integration &mdash; SciTeX Stats v0.2.23</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -244,7 +244,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">scitex_stats._bundle_io</li>
+      <li class="breadcrumb-item active">scitex_stats._figrecipe_integration</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -253,287 +253,137 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for scitex_stats._bundle_io</h1><div class="highlight"><pre>
+  <h1>Source code for scitex_stats._figrecipe_integration</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
-<span class="c1"># File: src/scitex_stats/_bundle_io.py</span>
-<span class="sd">&quot;&quot;&quot;scitex_stats ↔ SciTeX bundle I/O.</span>
+<span class="c1"># Timestamp: &quot;2026-01-12 (ywatanabe)&quot;</span>
+<span class="c1"># File: scitex_stats/_figrecipe_integration.py</span>
+<span class="sd">&quot;&quot;&quot;Figrecipe integration for statistical annotations on plots.&quot;&quot;&quot;</span>
 
-<span class="sd">Convert ``run_test``-shaped result dicts into the canonical</span>
-<span class="sd">``scitex_stats._dataclasses.Stats`` schema, and persist / load them as</span>
-<span class="sd">SciTeX bundles (``kind=&quot;stats&quot;``) via :mod:`scitex_io.bundle`.</span>
-
-<span class="sd">``scitex-io`` is an OPTIONAL dependency (extra ``[bundle]``). This module</span>
-<span class="sd">imports cleanly without it; the three public functions raise a clear</span>
-<span class="sd">``ImportError`` when called in an environment that lacks ``scitex-io``::</span>
-
-<span class="sd">    pip install scitex-stats[bundle]   # or: uv pip install &#39;scitex-stats[bundle]&#39;</span>
-
-<span class="sd">The statistical dataclasses (``Stats``, ``Analysis``, ``StatMethod``,</span>
-<span class="sd">``StatResult``, ``EffectSize``) live here in ``scitex_stats`` as the single</span>
-<span class="sd">source of truth; ``scitex_io.bundle`` imports them from this package. Hence</span>
-<span class="sd">``test_result_to_stats`` only needs scitex-io for API consistency with the</span>
-<span class="sd">bundle round-trip, not for the conversion itself.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="c1"># ---------------------------------------------------------------------------</span>
-<span class="c1"># Optional scitex-io.bundle import. The Bundle class is the only piece that</span>
-<span class="c1"># genuinely requires scitex-io; the Stats schema itself is local (below).</span>
-<span class="c1"># ---------------------------------------------------------------------------</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">scitex_io.bundle</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bundle</span> <span class="k">as</span> <span class="n">_Bundle</span>  <span class="c1"># type: ignore[import-not-found]</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scitex_dev</span><span class="w"> </span><span class="kn">import</span> <span class="n">try_import_optional</span>
 
-    <span class="n">BUNDLE_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover - exercised via sys.modules shim test</span>
-    <span class="n">_Bundle</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore[assignment]</span>
-    <span class="n">BUNDLE_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
-
-<span class="n">_MISSING_MSG</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">&quot;scitex-io is required for stats bundle I/O; install scitex-stats[bundle]&quot;</span>
+<span class="c1"># figrecipe is an optional [all]-tier dep; its _integrations submodule is not</span>
+<span class="c1"># yet in the public API, so a missing module OR attr means &quot;unavailable&quot;.</span>
+<span class="n">_fr_load_bundle</span> <span class="o">=</span> <span class="n">try_import_optional</span><span class="p">(</span>
+    <span class="s2">&quot;figrecipe._integrations._scitex_stats&quot;</span><span class="p">,</span>
+    <span class="n">attr</span><span class="o">=</span><span class="s2">&quot;load_stats_bundle&quot;</span><span class="p">,</span>
+    <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span>
+    <span class="n">pkg</span><span class="o">=</span><span class="s2">&quot;scitex-stats&quot;</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="n">_fr_annotate</span> <span class="o">=</span> <span class="n">try_import_optional</span><span class="p">(</span>
+    <span class="s2">&quot;figrecipe.utils&quot;</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="s2">&quot;annotate_from_stats&quot;</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">pkg</span><span class="o">=</span><span class="s2">&quot;scitex-stats&quot;</span>
+<span class="p">)</span>
+<span class="n">_fr_convert</span> <span class="o">=</span> <span class="n">try_import_optional</span><span class="p">(</span>
+    <span class="s2">&quot;figrecipe.utils&quot;</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="s2">&quot;from_scitex_stats&quot;</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">pkg</span><span class="o">=</span><span class="s2">&quot;scitex-stats&quot;</span>
+<span class="p">)</span>
+<span class="n">_AVAILABLE</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="n">_fr_load_bundle</span><span class="p">,</span> <span class="n">_fr_annotate</span><span class="p">,</span> <span class="n">_fr_convert</span><span class="p">))</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_require_bundle</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">BUNDLE_AVAILABLE</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">_MISSING_MSG</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="test_result_to_stats">
-<a class="viewcode-back" href="../../api/index.html#scitex_stats.test_result_to_stats">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">test_result_to_stats</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a test-result dict to the canonical ``Stats`` schema.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    result : dict</span>
-<span class="sd">        Test result dictionary. Supports both formats:</span>
-
-<span class="sd">        Legacy flat format::</span>
-
-<span class="sd">            {&quot;name&quot;: &quot;Control vs Treatment&quot;, &quot;method&quot;: &quot;t-test&quot;,</span>
-<span class="sd">             &quot;p_value&quot;: 0.003, &quot;effect_size&quot;: 1.21, &quot;ci95&quot;: [0.5, 1.8]}</span>
-
-<span class="sd">        New nested format (from test functions)::</span>
-
-<span class="sd">            {&quot;method&quot;: {&quot;name&quot;: &quot;t-test&quot;, &quot;variant&quot;: &quot;independent&quot;},</span>
-<span class="sd">             &quot;results&quot;: {&quot;statistic&quot;: 2.5, &quot;statistic_name&quot;: &quot;t&quot;,</span>
-<span class="sd">                         &quot;p_value&quot;: 0.01}}</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    Stats</span>
-<span class="sd">        Stats object suitable for bundle storage.</span>
-
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">    ImportError</span>
-<span class="sd">        If scitex-io is not installed.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_require_bundle</span><span class="p">()</span>
-
-    <span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-        <span class="n">Analysis</span><span class="p">,</span>
-        <span class="n">EffectSize</span><span class="p">,</span>
-        <span class="n">StatMethod</span><span class="p">,</span>
-        <span class="n">StatResult</span><span class="p">,</span>
-        <span class="n">Stats</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">method_data</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="p">{})</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">method</span> <span class="o">=</span> <span class="n">StatMethod</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">method_data</span><span class="p">,</span> <span class="n">variant</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{})</span>
-        <span class="n">effect_size</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">es_val</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;effect_size&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">es_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">ci</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ci95&quot;</span><span class="p">,</span> <span class="p">[])</span>
-            <span class="n">effect_size</span> <span class="o">=</span> <span class="n">EffectSize</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;d&quot;</span><span class="p">,</span>
-                <span class="n">value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">es_val</span><span class="p">),</span>
-                <span class="n">ci_lower</span><span class="o">=</span><span class="n">ci</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ci</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="n">ci_upper</span><span class="o">=</span><span class="n">ci</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ci</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="n">stat_result</span> <span class="o">=</span> <span class="n">StatResult</span><span class="p">(</span>
-            <span class="n">statistic</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;statistic&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="n">statistic_name</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;statistic_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-            <span class="n">p_value</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;p_value&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
-            <span class="n">df</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;df&quot;</span><span class="p">),</span>
-            <span class="n">effect_size</span><span class="o">=</span><span class="n">effect_size</span><span class="p">,</span>
-            <span class="n">significant</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;p_value&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">,</span>
-            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">analysis_name</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;comparison&quot;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">method</span> <span class="o">=</span> <span class="n">StatMethod</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="n">method_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">),</span>
-            <span class="n">variant</span><span class="o">=</span><span class="n">method_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;variant&quot;</span><span class="p">),</span>
-            <span class="n">parameters</span><span class="o">=</span><span class="n">method_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="p">{}),</span>
-        <span class="p">)</span>
-        <span class="n">results_data</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;results&quot;</span><span class="p">,</span> <span class="p">{})</span>
-        <span class="n">effect_size</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="s2">&quot;effect_size&quot;</span> <span class="ow">in</span> <span class="n">results_data</span><span class="p">:</span>
-            <span class="n">es</span> <span class="o">=</span> <span class="n">results_data</span><span class="p">[</span><span class="s2">&quot;effect_size&quot;</span><span class="p">]</span>
-            <span class="n">effect_size</span> <span class="o">=</span> <span class="n">EffectSize</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">es</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-                <span class="n">value</span><span class="o">=</span><span class="n">es</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-                <span class="n">ci_lower</span><span class="o">=</span><span class="n">es</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ci_lower&quot;</span><span class="p">),</span>
-                <span class="n">ci_upper</span><span class="o">=</span><span class="n">es</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ci_upper&quot;</span><span class="p">),</span>
-            <span class="p">)</span>
-        <span class="n">stat_result</span> <span class="o">=</span> <span class="n">StatResult</span><span class="p">(</span>
-            <span class="n">statistic</span><span class="o">=</span><span class="n">results_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;statistic&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
-            <span class="n">statistic_name</span><span class="o">=</span><span class="n">results_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;statistic_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-            <span class="n">p_value</span><span class="o">=</span><span class="n">results_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;p_value&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
-            <span class="n">df</span><span class="o">=</span><span class="n">results_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;df&quot;</span><span class="p">),</span>
-            <span class="n">effect_size</span><span class="o">=</span><span class="n">effect_size</span><span class="p">,</span>
-            <span class="n">significant</span><span class="o">=</span><span class="n">results_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;significant&quot;</span><span class="p">),</span>
-            <span class="n">alpha</span><span class="o">=</span><span class="n">results_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span>
-        <span class="p">)</span>
-        <span class="n">analysis_name</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;analysis&quot;</span><span class="p">)</span>
-
-    <span class="n">inputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="p">{}))</span>
-    <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;comparison_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">analysis_name</span>
-    <span class="n">analysis</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span>
-        <span class="n">result_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span>
-        <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
-        <span class="n">results</span><span class="o">=</span><span class="n">stat_result</span><span class="p">,</span>
-        <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">Stats</span><span class="p">(</span><span class="n">analyses</span><span class="o">=</span><span class="p">[</span><span class="n">analysis</span><span class="p">])</span></div>
-
-
-
-<div class="viewcode-block" id="save_stats">
-<a class="viewcode-back" href="../../api/index.html#scitex_stats.save_stats">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">save_stats</span><span class="p">(</span>
-    <span class="n">comparisons</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Any</span><span class="p">],</span>
-    <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
-    <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">as_zip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save statistical results as a SciTeX bundle (``kind=&quot;stats&quot;``).</span>
+<div class="viewcode-block" id="to_figrecipe">
+<a class="viewcode-back" href="../../api/index.html#scitex_stats.to_figrecipe">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_figrecipe</span><span class="p">(</span>
+    <span class="n">stats_result</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert scitex.stats result(s) to figrecipe format.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    comparisons : list of dict, or Stats</span>
-<span class="sd">        List of comparison-result dicts (each converted via</span>
-<span class="sd">        :func:`test_result_to_stats`), or an already-built ``Stats`` object.</span>
-<span class="sd">    path : str or Path</span>
-<span class="sd">        Output bundle path (directory, or ``.zip`` when ``as_zip``).</span>
-<span class="sd">    metadata : dict, optional</span>
-<span class="sd">        Currently unused placeholder kept for API stability.</span>
-<span class="sd">    as_zip : bool, optional</span>
-<span class="sd">        If True, save as a ZIP archive (``.zip`` suffix enforced).</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    Path</span>
-<span class="sd">        Path to the saved bundle.</span>
-
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">    ImportError</span>
-<span class="sd">        If scitex-io is not installed.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_require_bundle</span><span class="p">()</span>
-
-    <span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stats</span>
-
-    <span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">as_zip</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">suffix</span> <span class="o">!=</span> <span class="s2">&quot;.zip&quot;</span><span class="p">:</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.zip&quot;</span><span class="p">)</span>
-
-    <span class="n">bundle</span> <span class="o">=</span> <span class="n">_Bundle</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">create</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;stats&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">comparisons</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">comparisons</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">comparisons</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="n">stats</span> <span class="o">=</span> <span class="n">Stats</span><span class="p">(</span><span class="n">analyses</span><span class="o">=</span><span class="p">[])</span>
-            <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">comparisons</span><span class="p">:</span>
-                <span class="n">analysis_stats</span> <span class="o">=</span> <span class="n">test_result_to_stats</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
-                <span class="n">stats</span><span class="o">.</span><span class="n">analyses</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">analysis_stats</span><span class="o">.</span><span class="n">analyses</span><span class="p">)</span>
-            <span class="n">bundle</span><span class="o">.</span><span class="n">stats</span> <span class="o">=</span> <span class="n">stats</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">bundle</span><span class="o">.</span><span class="n">stats</span> <span class="o">=</span> <span class="n">comparisons</span>
-
-    <span class="c1"># Stats bundles carry no renderable figure; validation reads payload from</span>
-    <span class="c1"># disk before save writes it, so skip both render and validate here.</span>
-    <span class="n">bundle</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">render</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">p</span></div>
-
-
-
-<div class="viewcode-block" id="load_stats">
-<a class="viewcode-back" href="../../api/index.html#scitex_stats.load_stats">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">load_stats</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a stats bundle into a flat, plot-friendly dict.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    path : str or Path</span>
-<span class="sd">        Path to the bundle.</span>
+<span class="sd">    stats_result : dict or list of dict</span>
+<span class="sd">        Statistical result(s) from scitex.stats functions.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    dict</span>
-<span class="sd">        ``{&quot;comparisons&quot;: [...], &quot;metadata&quot;: {...}}`` where each comparison</span>
-<span class="sd">        is a flat dict (name, method, p_value, effect_size, ci95, formatted).</span>
-
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">    ImportError</span>
-<span class="sd">        If scitex-io is not installed.</span>
+<span class="sd">        Figrecipe-compatible format with &#39;comparisons&#39; list.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_require_bundle</span><span class="p">()</span>
-
-    <span class="n">bundle</span> <span class="o">=</span> <span class="n">_Bundle</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-
-    <span class="n">comparisons</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">if</span> <span class="n">bundle</span><span class="o">.</span><span class="n">stats</span> <span class="ow">and</span> <span class="n">bundle</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">analyses</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">analysis</span> <span class="ow">in</span> <span class="n">bundle</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">analyses</span><span class="p">:</span>
-            <span class="n">ad</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
-            <span class="n">p_val</span> <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;results&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;p_value&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-            <span class="n">es_data</span> <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;results&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;effect_size&quot;</span><span class="p">,</span> <span class="p">{})</span>
-            <span class="n">es_val</span> <span class="o">=</span> <span class="n">es_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="k">if</span> <span class="n">es_data</span> <span class="k">else</span> <span class="mf">0.0</span>
-            <span class="n">ci</span> <span class="o">=</span> <span class="p">[</span><span class="n">es_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ci_lower&quot;</span><span class="p">),</span> <span class="n">es_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ci_upper&quot;</span><span class="p">)]</span> <span class="k">if</span> <span class="n">es_data</span> <span class="k">else</span> <span class="p">[]</span>
-            <span class="n">ci</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">ci</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
-
-            <span class="k">if</span> <span class="n">p_val</span> <span class="o">&lt;</span> <span class="mf">0.001</span><span class="p">:</span>
-                <span class="n">formatted</span> <span class="o">=</span> <span class="s2">&quot;***&quot;</span>
-            <span class="k">elif</span> <span class="n">p_val</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">:</span>
-                <span class="n">formatted</span> <span class="o">=</span> <span class="s2">&quot;**&quot;</span>
-            <span class="k">elif</span> <span class="n">p_val</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">:</span>
-                <span class="n">formatted</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">formatted</span> <span class="o">=</span> <span class="s2">&quot;ns&quot;</span>
-
-            <span class="n">comparisons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">ad</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;comparison_name&quot;</span><span class="p">,</span> <span class="s2">&quot;comparison&quot;</span><span class="p">),</span>
-                    <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="n">ad</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">),</span>
-                    <span class="s2">&quot;p_value&quot;</span><span class="p">:</span> <span class="n">p_val</span><span class="p">,</span>
-                    <span class="s2">&quot;effect_size&quot;</span><span class="p">:</span> <span class="n">es_val</span><span class="p">,</span>
-                    <span class="s2">&quot;ci95&quot;</span><span class="p">:</span> <span class="n">ci</span><span class="p">,</span>
-                    <span class="s2">&quot;formatted&quot;</span><span class="p">:</span> <span class="n">formatted</span><span class="p">,</span>
-                <span class="p">}</span>
-            <span class="p">)</span>
-
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;comparisons&quot;</span><span class="p">:</span> <span class="n">comparisons</span><span class="p">,</span>
-        <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">bundle</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">bundle</span><span class="o">.</span><span class="n">spec</span> <span class="k">else</span> <span class="p">{},</span>
-    <span class="p">}</span></div>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_AVAILABLE</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;figrecipe &gt;= 0.13.0 required: pip install figrecipe&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_fr_convert</span><span class="p">(</span><span class="n">stats_result</span><span class="p">)</span></div>
 
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;BUNDLE_AVAILABLE&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;test_result_to_stats&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;save_stats&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;load_stats&quot;</span><span class="p">,</span>
-<span class="p">]</span>
+<div class="viewcode-block" id="annotate">
+<a class="viewcode-back" href="../../api/index.html#scitex_stats.annotate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">annotate</span><span class="p">(</span>
+    <span class="n">ax</span><span class="p">,</span>
+    <span class="n">stats</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]],</span>
+    <span class="n">positions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;stars&quot;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add statistical annotations to a plot.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ax : Axes or AxisWrapper</span>
+<span class="sd">        The axes to annotate.</span>
+<span class="sd">    stats : dict or list of dict</span>
+<span class="sd">        Statistical results (auto-converted if needed).</span>
+<span class="sd">    positions : dict, optional</span>
+<span class="sd">        Group name to x position mapping.</span>
+<span class="sd">    style : str</span>
+<span class="sd">        &#39;stars&#39;, &#39;p_value&#39;, or &#39;both&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        Created matplotlib artist objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_AVAILABLE</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;figrecipe &gt;= 0.13.0 required: pip install figrecipe&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Convert if needed</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;comparisons&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">:</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">_fr_convert</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span>
+
+    <span class="c1"># Unwrap scitex.plt.AxisWrapper to its inner figrecipe RecordingAxes,</span>
+    <span class="c1"># which is what `annotate_from_stats` needs (it calls</span>
+    <span class="c1"># `add_stat_annotation`, defined on RecordingAxes, not raw mpl.Axes).</span>
+    <span class="c1"># If `ax` is already a RecordingAxes, pass it straight through —</span>
+    <span class="c1"># `_ax` would unwrap one level too far and land on raw matplotlib.</span>
+    <span class="n">fr_ax</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="s2">&quot;_axis_mpl&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_fr_annotate</span><span class="p">(</span><span class="n">fr_ax</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">positions</span><span class="o">=</span><span class="n">positions</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="load_and_annotate">
+<a class="viewcode-back" href="../../api/index.html#scitex_stats.load_and_annotate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_and_annotate</span><span class="p">(</span>
+    <span class="n">ax</span><span class="p">,</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">positions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;stars&quot;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load stats from bundle file and annotate plot.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ax : Axes or AxisWrapper</span>
+<span class="sd">        The axes to annotate.</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to .statsz or .zip bundle.</span>
+<span class="sd">    positions : dict, optional</span>
+<span class="sd">        Group name to x position mapping.</span>
+<span class="sd">    style : str</span>
+<span class="sd">        &#39;stars&#39;, &#39;p_value&#39;, or &#39;both&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        Created matplotlib artist objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_AVAILABLE</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;figrecipe &gt;= 0.13.0 required: pip install figrecipe&quot;</span><span class="p">)</span>
+
+    <span class="n">fr_stats</span> <span class="o">=</span> <span class="n">_fr_load_bundle</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">annotate</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">fr_stats</span><span class="p">,</span> <span class="n">positions</span><span class="o">=</span><span class="n">positions</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;to_figrecipe&quot;</span><span class="p">,</span> <span class="s2">&quot;annotate&quot;</span><span class="p">,</span> <span class="s2">&quot;load_and_annotate&quot;</span><span class="p">]</span>
 
 <span class="c1"># EOF</span>
 </pre></div>
