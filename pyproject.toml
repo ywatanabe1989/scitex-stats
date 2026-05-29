@@ -69,6 +69,13 @@ all = [
     "figrecipe>=0.28.0",
     "torch>=2.0",
 ]
+# Stats ↔ SciTeX bundle I/O: test_result_to_stats / save_stats / load_stats
+# in scitex_stats._bundle_io require scitex-io's bundle subpackage. scitex-io
+# imports the Stats schema back from scitex_stats, so it stays an optional
+# extra (no hard/circular dep).
+bundle = [
+    "scitex-io>=0.2.16",
+]
 dev = [
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
