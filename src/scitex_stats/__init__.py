@@ -113,6 +113,10 @@ _LAZY_ATTRS: dict[str, str] = {
     "run_test": "_dispatch",
     # JSON
     "to_json_safe": "_utils._serialize",
+    # Stats ↔ SciTeX bundle I/O (optional scitex-io; extra [bundle])
+    "test_result_to_stats": "_bundle_io",
+    "save_stats": "_bundle_io",
+    "load_stats": "_bundle_io",
     # Auto convenience
     "StatContext": "auto",
     "StatStyle": "auto",
@@ -205,6 +209,10 @@ __all__ = [
     "describe",
     # JSON serialization
     "to_json_safe",
+    # Stats ↔ SciTeX bundle I/O (optional scitex-io; extra [bundle])
+    "test_result_to_stats",
+    "save_stats",
+    "load_stats",
     # Auto convenience
     "StatContext",
     "TestRule",
