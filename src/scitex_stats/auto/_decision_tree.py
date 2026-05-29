@@ -18,6 +18,29 @@ from __future__ import annotations
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
+
+from scitex_dev import try_import_optional
+
+
+def _require_graph_diagram():
+    """Return figrecipe._diagram.GraphDiagram or raise a clear ImportError.
+
+    figrecipe is an optional peer (R4): only loaded when needed.
+    """
+    GraphDiagram = try_import_optional(
+        "figrecipe._diagram",
+        attr="GraphDiagram",
+        extra="figrecipe",
+        pkg="scitex-stats",
+    )
+    if GraphDiagram is None:
+        raise ImportError(
+            "figrecipe is required for decision-tree rendering; install "
+            "with 'pip install scitex-stats[figrecipe]'"
+        )
+    return GraphDiagram
+
+
 from typing import Any
 
 
@@ -319,7 +342,7 @@ def render_flowchart_mermaid() -> str:
     str
         Mermaid markup string.
     """
-    from figrecipe._diagram import GraphDiagram
+    GraphDiagram = _require_graph_diagram()
 
     d = GraphDiagram(type="decision", title="Which Statistical Test?")
 
@@ -344,7 +367,7 @@ def render_flowchart_svg(output_path: str | Path | None = None) -> str:
     str
         SVG content string.
     """
-    from figrecipe._diagram import GraphDiagram
+    GraphDiagram = _require_graph_diagram()
 
     d = GraphDiagram(type="decision", title="Which Statistical Test?")
 
