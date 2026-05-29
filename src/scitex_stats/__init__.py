@@ -114,9 +114,15 @@ _LAZY_ATTRS: dict[str, str] = {
     # JSON
     "to_json_safe": "_utils._serialize",
     # Stats ↔ SciTeX bundle I/O (optional scitex-io; extra [bundle])
+    "Stats": "_integration",
+    "BUNDLE_AVAILABLE": "_integration",
     "test_result_to_stats": "_bundle_io",
     "save_stats": "_bundle_io",
     "load_stats": "_bundle_io",
+    # Stats ↔ figrecipe annotations (optional figrecipe; extra [figrecipe])
+    "to_figrecipe": "_figrecipe_integration",
+    "annotate": "_figrecipe_integration",
+    "load_and_annotate": "_figrecipe_integration",
     # Auto convenience
     "StatContext": "auto",
     "StatStyle": "auto",
@@ -210,9 +216,15 @@ __all__ = [
     # JSON serialization
     "to_json_safe",
     # Stats ↔ SciTeX bundle I/O (optional scitex-io; extra [bundle])
+    "Stats",
+    "BUNDLE_AVAILABLE",
     "test_result_to_stats",
     "save_stats",
     "load_stats",
+    # Stats ↔ figrecipe annotations (optional figrecipe; extra [figrecipe])
+    "to_figrecipe",
+    "annotate",
+    "load_and_annotate",
     # Auto convenience
     "StatContext",
     "TestRule",

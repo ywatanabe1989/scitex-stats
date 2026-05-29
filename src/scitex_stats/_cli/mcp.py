@@ -10,6 +10,24 @@ import sys
 
 from .. import __version__
 
+
+def _list_tool_objects():
+    """Return the MCP server's registered tool objects.
+
+    FastMCP 2.12 removed the public ``FastMCP.list_tools()`` coroutine;
+    the supported in-process accessor is the ``get_tools()`` coroutine,
+    which returns a ``{name: Tool}`` mapping. Each tool object exposes
+    ``.name`` and ``.description``. This avoids spinning up an in-memory
+    client transport just to enumerate tools.
+    """
+    import asyncio
+
+    from .._mcp import mcp
+
+    tools = asyncio.run(mcp.get_tools())
+    return list(tools.values())
+
+
 CLAUDE_DESKTOP_CONFIG_CLI = """{
   "mcpServers": {
     "scitex-stats": {
@@ -141,11 +159,7 @@ def cmd_list_tools(
     as_json: bool = False,
 ) -> int:
     """List all available MCP tools."""
-    import asyncio
-
-    from .._mcp import mcp
-
-    tool_objects = asyncio.run(mcp.list_tools())
+    tool_objects = _list_tool_objects()
     tools_by_name = {t.name: t for t in tool_objects}
     tools = list(tools_by_name.keys())
     total = len(tools)
@@ -241,11 +255,7 @@ def cmd_doctor() -> int:
         checks.append(("fastmcp", False, "not installed"))
 
     try:
-        import asyncio
-
-        from .._mcp import mcp
-
-        tool_count = len(asyncio.run(mcp.list_tools()))
+        tool_count = len(_list_tool_objects())
         checks.append(("MCP server", True, f"{tool_count} tools"))
     except Exception as e:
         checks.append(("MCP server", False, str(e)))
