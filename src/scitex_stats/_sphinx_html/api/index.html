@@ -112,6 +112,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#scitex_stats.available_tests"><code class="docutils literal notranslate"><span class="pre">available_tests()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#scitex_stats.describe"><code class="docutils literal notranslate"><span class="pre">describe()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#scitex_stats.to_json_safe"><code class="docutils literal notranslate"><span class="pre">to_json_safe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scitex_stats.test_result_to_stats"><code class="docutils literal notranslate"><span class="pre">test_result_to_stats()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scitex_stats.save_stats"><code class="docutils literal notranslate"><span class="pre">save_stats()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#scitex_stats.load_stats"><code class="docutils literal notranslate"><span class="pre">load_stats()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#scitex_stats.StatContext"><code class="docutils literal notranslate"><span class="pre">StatContext</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#scitex_stats.StatContext.n_groups"><code class="docutils literal notranslate"><span class="pre">StatContext.n_groups</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#scitex_stats.StatContext.sample_sizes"><code class="docutils literal notranslate"><span class="pre">StatContext.sample_sizes</span></code></a></li>
@@ -393,6 +396,85 @@ for common frontend expectations, and builds a formatted summary string.</p>
 </pre></div>
 </div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scitex_stats.test_result_to_stats">
+<span class="sig-prename descclassname"><span class="pre">scitex_stats.</span></span><span class="sig-name descname"><span class="pre">test_result_to_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_stats/_bundle_io.html#test_result_to_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_stats.test_result_to_stats" title="Link to this definition"></a></dt>
+<dd><p>Convert a test-result dict to the canonical <code class="docutils literal notranslate"><span class="pre">Stats</span></code> schema.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>result</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – <p>Test result dictionary. Supports both formats:</p>
+<p>Legacy flat format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Control vs Treatment&quot;</span><span class="p">,</span> <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;t-test&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;p_value&quot;</span><span class="p">:</span> <span class="mf">0.003</span><span class="p">,</span> <span class="s2">&quot;effect_size&quot;</span><span class="p">:</span> <span class="mf">1.21</span><span class="p">,</span> <span class="s2">&quot;ci95&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">]}</span>
+</pre></div>
+</div>
+<p>New nested format (from test functions):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;t-test&quot;</span><span class="p">,</span> <span class="s2">&quot;variant&quot;</span><span class="p">:</span> <span class="s2">&quot;independent&quot;</span><span class="p">},</span>
+ <span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;statistic&quot;</span><span class="p">:</span> <span class="mf">2.5</span><span class="p">,</span> <span class="s2">&quot;statistic_name&quot;</span><span class="p">:</span> <span class="s2">&quot;t&quot;</span><span class="p">,</span>
+             <span class="s2">&quot;p_value&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">}}</span>
+</pre></div>
+</div>
+</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Stats object suitable for bundle storage.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Stats</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ImportError" title="(in Python v3.14)"><strong>ImportError</strong></a> – If scitex-io is not installed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scitex_stats.save_stats">
+<span class="sig-prename descclassname"><span class="pre">scitex_stats.</span></span><span class="sig-name descname"><span class="pre">save_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comparisons</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_zip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_stats/_bundle_io.html#save_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_stats.save_stats" title="Link to this definition"></a></dt>
+<dd><p>Save statistical results as a SciTeX bundle (<code class="docutils literal notranslate"><span class="pre">kind=&quot;stats&quot;</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comparisons</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>, or </em><em>Stats</em>) – List of comparison-result dicts (each converted via
+<a class="reference internal" href="#scitex_stats.test_result_to_stats" title="scitex_stats.test_result_to_stats"><code class="xref py py-func docutils literal notranslate"><span class="pre">test_result_to_stats()</span></code></a>), or an already-built <code class="docutils literal notranslate"><span class="pre">Stats</span></code> object.</p></li>
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>Path</em>) – Output bundle path (directory, or <code class="docutils literal notranslate"><span class="pre">.zip</span></code> when <code class="docutils literal notranslate"><span class="pre">as_zip</span></code>).</p></li>
+<li><p><strong>metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>, </em><em>optional</em>) – Currently unused placeholder kept for API stability.</p></li>
+<li><p><strong>as_zip</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, save as a ZIP archive (<code class="docutils literal notranslate"><span class="pre">.zip</span></code> suffix enforced).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the saved bundle.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Path</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ImportError" title="(in Python v3.14)"><strong>ImportError</strong></a> – If scitex-io is not installed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scitex_stats.load_stats">
+<span class="sig-prename descclassname"><span class="pre">scitex_stats.</span></span><span class="sig-name descname"><span class="pre">load_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/scitex_stats/_bundle_io.html#load_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scitex_stats.load_stats" title="Link to this definition"></a></dt>
+<dd><p>Load a stats bundle into a flat, plot-friendly dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>Path</em>) – Path to the bundle.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">{&quot;comparisons&quot;:</span> <span class="pre">[...],</span> <span class="pre">&quot;metadata&quot;:</span> <span class="pre">{...}}</span></code> where each comparison
+is a flat dict (name, method, p_value, effect_size, ci95, formatted).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ImportError" title="(in Python v3.14)"><strong>ImportError</strong></a> – If scitex-io is not installed.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
