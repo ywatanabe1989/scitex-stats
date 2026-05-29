@@ -234,9 +234,35 @@ def violin_swarm(ax, groups, positions, var_names):
     # would force alpha=1.0 on violin bodies and add a duplicate boxplot.
     mpl_ax = getattr(ax, "_axes_mpl", ax)
 
-    from figrecipe._wrappers._axes_plots import _add_violin_inner_elements
-    from figrecipe._wrappers._violin_kde import draw_kde_violins
-    from figrecipe.styles._internal import get_style
+    # figrecipe is optional (R4). Reach into the violin-kde private API
+    # only when figrecipe is present; raise a clear error otherwise.
+    _add_violin_inner_elements = try_import_optional(
+        "figrecipe._wrappers._axes_plots",
+        attr="_add_violin_inner_elements",
+        extra="figrecipe",
+        pkg="scitex-stats",
+    )
+    draw_kde_violins = try_import_optional(
+        "figrecipe._wrappers._violin_kde",
+        attr="draw_kde_violins",
+        extra="figrecipe",
+        pkg="scitex-stats",
+    )
+    get_style = try_import_optional(
+        "figrecipe.styles._internal",
+        attr="get_style",
+        extra="figrecipe",
+        pkg="scitex-stats",
+    )
+    if (
+        _add_violin_inner_elements is None
+        or draw_kde_violins is None
+        or get_style is None
+    ):
+        raise ImportError(
+            "figrecipe is required for violin_swarm; install with "
+            "'pip install scitex-stats[figrecipe]'"
+        )
 
     style = get_style()
     violin_style = style.get("violinplot", {}) if style else {}
