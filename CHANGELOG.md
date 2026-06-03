@@ -7,6 +7,25 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.24] — 2026-06-03
+
+### Added
+- `tests/agreement` category (new) with two inter-rater agreement scalars:
+  - `test_kendalls_w(matrix, use_abs=False)` — Kendall's coefficient of
+    concordance W ∈ [0, 1] (Kendall & Babington Smith 1939). Accepts a
+    2-D `(n_subjects, k_raters)` matrix or a long-format DataFrame with
+    `(subj, rater, score)` triples. Returns `W`, `S`, `n`, `k`, χ² and
+    p-value via the Friedman χ² approximation, plus effect-size
+    interpretation and a publication-ready `formatted` string.
+  - `test_icc(matrix, form="3,k")` — ICC (Shrout & Fleiss 1979).
+    Computes all six classical forms from one variance decomposition
+    (McGraw & Wong 1996) and surfaces the selected form at the top level;
+    F / p / df / CI / effect size / Koo & Li 2016 interpretation in the
+    result dict.
+- Top-level aliases `sts.test_kendalls_w` and `sts.test_icc` via the
+  PEP-562 lazy attribute loader.
+- 27 pytest tests in `tests/scitex_stats/tests/agreement/`.
+
 ## [0.2.22]
 
 - feat(schema): publish the `scitex_stats._dataclasses` Stats schema (`_Stats.py`) — previously only on develop, which forced scitex-io's bundle to git-pin scitex-stats. Publishing it lets scitex-io depend on `scitex-stats>=0.2.22` and exercises the `.stats.zip` bundle integration on PyPI.
