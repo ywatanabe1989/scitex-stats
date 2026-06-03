@@ -8,13 +8,25 @@ Submodules:
 - correlation: Pearson, Spearman, Kendall, Theil-Sen
 - normality: Shapiro-Wilk, Kolmogorov-Smirnov
 - categorical: Chi-square, Fisher exact, McNemar, Cochran's Q
+- agreement: Kendall's W, ICC (Shrout & Fleiss 1979)
 
-All 23 test functions are also available directly::
+All test functions are also available directly::
 
-    from scitex_stats.tests import test_ttest_ind, test_pearson
+    from scitex_stats.tests import test_ttest_ind, test_pearson,
+                                   test_kendalls_w, test_icc
 """
 
-from . import categorical, correlation, nonparametric, normality, parametric
+from . import (
+    agreement,
+    categorical,
+    correlation,
+    nonparametric,
+    normality,
+    parametric,
+)
+
+# Agreement tests (2)
+from .agreement import test_icc, test_kendalls_w
 
 # Categorical tests (4)
 from .categorical import test_chi2, test_cochran_q, test_fisher, test_mcnemar
@@ -46,6 +58,7 @@ from .parametric import (
 
 __all__ = [
     # Category modules
+    "agreement",
     "categorical",
     "correlation",
     "nonparametric",
@@ -79,4 +92,7 @@ __all__ = [
     "test_normality",
     "test_ks_1samp",
     "test_ks_2samp",
+    # Agreement tests (2)
+    "test_kendalls_w",
+    "test_icc",
 ]
