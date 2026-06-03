@@ -1,0 +1,603 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scitex_stats.tests.agreement._test_icc &mdash; SciTeX Stats v0.2.23</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=171860b8"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            SciTeX Stats
+              <img src="../../../../_static/scitex-logo-banner.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../installation.html#basic-installation">Basic Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../installation.html#optional-dependencies">Optional Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../installation.html#development-installation">Development Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../quickstart.html">Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#python-api">Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#effect-sizes">Effect Sizes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#power-analysis">Power Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#multiple-comparison-correction">Multiple Comparison Correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#post-hoc-tests">Post-hoc Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#cli">CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../quickstart.html#mcp-server">MCP Server</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../choosing_tests.html">Choosing the Right Test</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#decision-flowchart">Decision Flowchart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#step-1-what-type-of-data">Step 1: What Type of Data?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#step-2-how-many-groups">Step 2: How Many Groups?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#step-3-check-assumptions">Step 3: Check Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#automatic-recommendation">Automatic Recommendation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#correlation-tests">Correlation Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../choosing_tests.html#categorical-tests">Categorical Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../unified_output.html">Unified Output Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#result-dictionary">Result Dictionary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#key-fields">Key Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#null-hypotheses">Null Hypotheses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#significance-stars">Significance Stars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../unified_output.html#working-with-results">Working with Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cli.html">CLI Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../cli.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../cli.html#core-commands">Core Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../cli.html#mcp-subcommands">MCP Subcommands</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../mcp.html">MCP Server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#starting-the-server">Starting the Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#mcp-client-configuration">MCP Client Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#available-tools">Available Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../mcp.html#diagnostics">Diagnostics</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#functionalities">Functionalities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#io">IO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.run_test"><code class="docutils literal notranslate"><span class="pre">run_test()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.available_tests"><code class="docutils literal notranslate"><span class="pre">available_tests()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.describe"><code class="docutils literal notranslate"><span class="pre">describe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.to_json_safe"><code class="docutils literal notranslate"><span class="pre">to_json_safe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.Stats"><code class="docutils literal notranslate"><span class="pre">Stats</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.Stats.analyses"><code class="docutils literal notranslate"><span class="pre">Stats.analyses</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.Stats.software"><code class="docutils literal notranslate"><span class="pre">Stats.software</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.Stats.schema_name"><code class="docutils literal notranslate"><span class="pre">Stats.schema_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.Stats.schema_version"><code class="docutils literal notranslate"><span class="pre">Stats.schema_version</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.Stats.to_dict"><code class="docutils literal notranslate"><span class="pre">Stats.to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.Stats.to_json"><code class="docutils literal notranslate"><span class="pre">Stats.to_json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.Stats.from_dict"><code class="docutils literal notranslate"><span class="pre">Stats.from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.Stats.from_json"><code class="docutils literal notranslate"><span class="pre">Stats.from_json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.Stats.__init__"><code class="docutils literal notranslate"><span class="pre">Stats.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_result_to_stats"><code class="docutils literal notranslate"><span class="pre">test_result_to_stats()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.save_stats"><code class="docutils literal notranslate"><span class="pre">save_stats()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.load_stats"><code class="docutils literal notranslate"><span class="pre">load_stats()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.to_figrecipe"><code class="docutils literal notranslate"><span class="pre">to_figrecipe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.annotate"><code class="docutils literal notranslate"><span class="pre">annotate()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.load_and_annotate"><code class="docutils literal notranslate"><span class="pre">load_and_annotate()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext"><code class="docutils literal notranslate"><span class="pre">StatContext</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.n_groups"><code class="docutils literal notranslate"><span class="pre">StatContext.n_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.sample_sizes"><code class="docutils literal notranslate"><span class="pre">StatContext.sample_sizes</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.outcome_type"><code class="docutils literal notranslate"><span class="pre">StatContext.outcome_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.design"><code class="docutils literal notranslate"><span class="pre">StatContext.design</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.paired"><code class="docutils literal notranslate"><span class="pre">StatContext.paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.has_control_group"><code class="docutils literal notranslate"><span class="pre">StatContext.has_control_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.n_factors"><code class="docutils literal notranslate"><span class="pre">StatContext.n_factors</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.normality_ok"><code class="docutils literal notranslate"><span class="pre">StatContext.normality_ok</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.variance_homogeneity_ok"><code class="docutils literal notranslate"><span class="pre">StatContext.variance_homogeneity_ok</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.missing_allowed"><code class="docutils literal notranslate"><span class="pre">StatContext.missing_allowed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.group_names"><code class="docutils literal notranslate"><span class="pre">StatContext.group_names</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.control_group_name"><code class="docutils literal notranslate"><span class="pre">StatContext.control_group_name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.__post_init__"><code class="docutils literal notranslate"><span class="pre">StatContext.__post_init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.n_total"><code class="docutils literal notranslate"><span class="pre">StatContext.n_total</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.min_n_per_group"><code class="docutils literal notranslate"><span class="pre">StatContext.min_n_per_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.effective_paired"><code class="docutils literal notranslate"><span class="pre">StatContext.effective_paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.to_dict"><code class="docutils literal notranslate"><span class="pre">StatContext.to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.from_dict"><code class="docutils literal notranslate"><span class="pre">StatContext.from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.from_data"><code class="docutils literal notranslate"><span class="pre">StatContext.from_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatContext.__init__"><code class="docutils literal notranslate"><span class="pre">StatContext.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule"><code class="docutils literal notranslate"><span class="pre">TestRule</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.name"><code class="docutils literal notranslate"><span class="pre">TestRule.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.family"><code class="docutils literal notranslate"><span class="pre">TestRule.family</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.min_groups"><code class="docutils literal notranslate"><span class="pre">TestRule.min_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.max_groups"><code class="docutils literal notranslate"><span class="pre">TestRule.max_groups</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.outcome_types"><code class="docutils literal notranslate"><span class="pre">TestRule.outcome_types</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.supports_paired"><code class="docutils literal notranslate"><span class="pre">TestRule.supports_paired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.supports_unpaired"><code class="docutils literal notranslate"><span class="pre">TestRule.supports_unpaired</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.design_allowed"><code class="docutils literal notranslate"><span class="pre">TestRule.design_allowed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.requires_control_group"><code class="docutils literal notranslate"><span class="pre">TestRule.requires_control_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.min_n_total"><code class="docutils literal notranslate"><span class="pre">TestRule.min_n_total</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.min_n_per_group"><code class="docutils literal notranslate"><span class="pre">TestRule.min_n_per_group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.needs_normality"><code class="docutils literal notranslate"><span class="pre">TestRule.needs_normality</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.needs_equal_variance"><code class="docutils literal notranslate"><span class="pre">TestRule.needs_equal_variance</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.min_factors"><code class="docutils literal notranslate"><span class="pre">TestRule.min_factors</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.max_factors"><code class="docutils literal notranslate"><span class="pre">TestRule.max_factors</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.priority"><code class="docutils literal notranslate"><span class="pre">TestRule.priority</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.description"><code class="docutils literal notranslate"><span class="pre">TestRule.description</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.TestRule.__init__"><code class="docutils literal notranslate"><span class="pre">TestRule.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle"><code class="docutils literal notranslate"><span class="pre">StatStyle</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.id"><code class="docutils literal notranslate"><span class="pre">StatStyle.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.label"><code class="docutils literal notranslate"><span class="pre">StatStyle.label</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.target"><code class="docutils literal notranslate"><span class="pre">StatStyle.target</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.stat_symbol_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.stat_symbol_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.p_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.p_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.alpha_thresholds"><code class="docutils literal notranslate"><span class="pre">StatStyle.alpha_thresholds</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.effect_label_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.effect_label_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.n_format"><code class="docutils literal notranslate"><span class="pre">StatStyle.n_format</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.decimal_places_p"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_p</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.decimal_places_stat"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_stat</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.decimal_places_effect"><code class="docutils literal notranslate"><span class="pre">StatStyle.decimal_places_effect</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.format_stat"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_stat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.format_p"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_p()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.format_effect"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_effect()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.format_n"><code class="docutils literal notranslate"><span class="pre">StatStyle.format_n()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.p_to_stars"><code class="docutils literal notranslate"><span class="pre">StatStyle.p_to_stars()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../api/index.html#scitex_stats.StatStyle.__init__"><code class="docutils literal notranslate"><span class="pre">StatStyle.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.recommend_tests"><code class="docutils literal notranslate"><span class="pre">recommend_tests()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.check_applicable"><code class="docutils literal notranslate"><span class="pre">check_applicable()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.get_stat_style"><code class="docutils literal notranslate"><span class="pre">get_stat_style()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.p_to_stars"><code class="docutils literal notranslate"><span class="pre">p_to_stars()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ttest_ind"><code class="docutils literal notranslate"><span class="pre">test_ttest_ind()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ttest_rel"><code class="docutils literal notranslate"><span class="pre">test_ttest_rel()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ttest_1samp"><code class="docutils literal notranslate"><span class="pre">test_ttest_1samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_anova"><code class="docutils literal notranslate"><span class="pre">test_anova()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_anova_rm"><code class="docutils literal notranslate"><span class="pre">test_anova_rm()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_anova_2way"><code class="docutils literal notranslate"><span class="pre">test_anova_2way()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_brunner_munzel"><code class="docutils literal notranslate"><span class="pre">test_brunner_munzel()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_wilcoxon"><code class="docutils literal notranslate"><span class="pre">test_wilcoxon()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_kruskal"><code class="docutils literal notranslate"><span class="pre">test_kruskal()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_mannwhitneyu"><code class="docutils literal notranslate"><span class="pre">test_mannwhitneyu()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_friedman"><code class="docutils literal notranslate"><span class="pre">test_friedman()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_pearson"><code class="docutils literal notranslate"><span class="pre">test_pearson()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_spearman"><code class="docutils literal notranslate"><span class="pre">test_spearman()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_kendall"><code class="docutils literal notranslate"><span class="pre">test_kendall()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_theilsen"><code class="docutils literal notranslate"><span class="pre">test_theilsen()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_chi2"><code class="docutils literal notranslate"><span class="pre">test_chi2()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_fisher"><code class="docutils literal notranslate"><span class="pre">test_fisher()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_mcnemar"><code class="docutils literal notranslate"><span class="pre">test_mcnemar()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_cochran_q"><code class="docutils literal notranslate"><span class="pre">test_cochran_q()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_shapiro"><code class="docutils literal notranslate"><span class="pre">test_shapiro()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_normality"><code class="docutils literal notranslate"><span class="pre">test_normality()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ks_1samp"><code class="docutils literal notranslate"><span class="pre">test_ks_1samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_ks_2samp"><code class="docutils literal notranslate"><span class="pre">test_ks_2samp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_kendalls_w"><code class="docutils literal notranslate"><span class="pre">test_kendalls_w()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/index.html#scitex_stats.test_icc"><code class="docutils literal notranslate"><span class="pre">test_icc()</span></code></a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-1-basic-t-test">Example 1 — Basic t-test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-2-automatic-test-recommendation">Example 2 — Automatic test recommendation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#example-3-multiple-comparison-correction">Example 3 — Multiple comparison correction</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SciTeX Stats</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">scitex_stats.tests.agreement._test_icc</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scitex_stats.tests.agreement._test_icc</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># Timestamp: &quot;2026-06-03 10:18:00 (ywatanabe)&quot;</span>
+<span class="c1"># File: scitex_stats/tests/agreement/_test_icc.py</span>
+<span class="c1"># ----------------------------------------</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functionalities:</span>
+<span class="sd">  - Compute the six classical intraclass correlations (Shrout &amp; Fleiss</span>
+<span class="sd">    1979) on a (n_subjects, k_raters) matrix of continuous scores:</span>
+<span class="sd">    ICC(1,1), ICC(2,1), ICC(3,1) for single measures and</span>
+<span class="sd">    ICC(1,k), ICC(2,k), ICC(3,k) for average measures</span>
+<span class="sd">  - Report point estimate, F statistic, dof, p-value, and 95% CI for</span>
+<span class="sd">    every form; default selection ICC(3,k) returned at the top level</span>
+
+<span class="sd">Dependencies:</span>
+<span class="sd">  - packages: numpy, pandas, scipy</span>
+
+<span class="sd">IO:</span>
+<span class="sd">  - input: 2-D matrix of scores (rows = subjects, cols = raters) or</span>
+<span class="sd">    long-format DataFrame with (subj, rater, score) triples</span>
+<span class="sd">  - output: result dict / DataFrame with the six ICCs + a default</span>
+<span class="sd">    selection (configurable via ``form``)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">f</span> <span class="k">as</span> <span class="n">_f_dist</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">getLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._utils._formatters</span><span class="w"> </span><span class="kn">import</span> <span class="n">fmt_stat</span><span class="p">,</span> <span class="n">fmt_sym</span><span class="p">,</span> <span class="n">p2stars</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scitex_stats._utils._normalizers</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_results</span>
+
+<span class="n">__FILE__</span> <span class="o">=</span> <span class="vm">__file__</span>
+<span class="n">__DIR__</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__FILE__</span><span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">interpret_icc</span><span class="p">(</span><span class="n">icc</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interpret ICC magnitude (Koo &amp; Li 2016).</span>
+
+<span class="sd">        ICC &lt; 0.50  : poor reliability</span>
+<span class="sd">        0.50-0.75   : moderate</span>
+<span class="sd">        0.75-0.90   : good</span>
+<span class="sd">        ICC ≥ 0.90  : excellent</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">icc</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;n/a&quot;</span>
+    <span class="k">if</span> <span class="n">icc</span> <span class="o">&lt;</span> <span class="mf">0.50</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;poor&quot;</span>
+    <span class="k">if</span> <span class="n">icc</span> <span class="o">&lt;</span> <span class="mf">0.75</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;moderate&quot;</span>
+    <span class="k">if</span> <span class="n">icc</span> <span class="o">&lt;</span> <span class="mf">0.90</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;good&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;excellent&quot;</span>
+
+
+<span class="n">ICCForm</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;1,1&quot;</span><span class="p">,</span> <span class="s2">&quot;2,1&quot;</span><span class="p">,</span> <span class="s2">&quot;3,1&quot;</span><span class="p">,</span> <span class="s2">&quot;1,k&quot;</span><span class="p">,</span> <span class="s2">&quot;2,k&quot;</span><span class="p">,</span> <span class="s2">&quot;3,k&quot;</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_as_matrix</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">subj_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">rater_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">score_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">mat</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">subj_col</span> <span class="ow">and</span> <span class="n">rater_col</span> <span class="ow">and</span> <span class="n">score_col</span>
+                <span class="ow">and</span> <span class="p">{</span><span class="n">subj_col</span><span class="p">,</span> <span class="n">rater_col</span><span class="p">,</span> <span class="n">score_col</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
+            <span class="n">mat</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">subj_col</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">rater_col</span><span class="p">,</span>
+                                    <span class="n">values</span><span class="o">=</span><span class="n">score_col</span><span class="p">)</span>
+                       <span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mat</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">mat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mat</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;ICC requires a 2-D (n_subjects, k_raters) matrix;&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; got shape </span><span class="si">{</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">mat</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_iccs</span><span class="p">(</span><span class="n">mat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the six Shrout-Fleiss 1979 ICCs from one matrix.</span>
+
+<span class="sd">    Variance-component derivation follows McGraw &amp; Wong 1996 (the</span>
+<span class="sd">    canonical exposition still used by pingouin and SPSS).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">grand</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">subj_means</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">rater_means</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">ss_total</span> <span class="o">=</span> <span class="p">((</span><span class="n">mat</span> <span class="o">-</span> <span class="n">grand</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">ss_between_subj</span> <span class="o">=</span> <span class="n">k</span> <span class="o">*</span> <span class="p">((</span><span class="n">subj_means</span> <span class="o">-</span> <span class="n">grand</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">ss_between_rate</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="p">((</span><span class="n">rater_means</span> <span class="o">-</span> <span class="n">grand</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">ss_residual</span> <span class="o">=</span> <span class="n">ss_total</span> <span class="o">-</span> <span class="n">ss_between_subj</span> <span class="o">-</span> <span class="n">ss_between_rate</span>
+
+    <span class="n">ms_between_subj</span> <span class="o">=</span> <span class="n">ss_between_subj</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ms_between_rate</span> <span class="o">=</span> <span class="n">ss_between_rate</span> <span class="o">/</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+    <span class="n">ms_residual</span> <span class="o">=</span> <span class="n">ss_residual</span> <span class="o">/</span> <span class="p">((</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+    <span class="n">ms_within</span> <span class="o">=</span> <span class="p">(</span><span class="n">ss_between_rate</span> <span class="o">+</span> <span class="n">ss_residual</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="k">if</span> <span class="n">n</span> <span class="o">*</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ICC(1, 1)  one-way random, single</span>
+    <span class="n">icc_1_1</span> <span class="o">=</span> <span class="p">(</span><span class="n">ms_between_subj</span> <span class="o">-</span> <span class="n">ms_within</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="n">ms_between_subj</span> <span class="o">+</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">ms_within</span>
+    <span class="p">)</span>
+    <span class="n">f_1_1</span> <span class="o">=</span> <span class="n">ms_between_subj</span> <span class="o">/</span> <span class="n">ms_within</span> <span class="k">if</span> <span class="n">ms_within</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+    <span class="n">df1_1</span><span class="p">,</span> <span class="n">df2_1</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">*</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># ICC(2, 1)  two-way random, single, absolute agreement</span>
+    <span class="n">denom2</span> <span class="o">=</span> <span class="p">(</span><span class="n">ms_between_subj</span>
+              <span class="o">+</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">ms_residual</span>
+              <span class="o">+</span> <span class="n">k</span> <span class="o">*</span> <span class="p">(</span><span class="n">ms_between_rate</span> <span class="o">-</span> <span class="n">ms_residual</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">icc_2_1</span> <span class="o">=</span> <span class="p">(</span><span class="n">ms_between_subj</span> <span class="o">-</span> <span class="n">ms_residual</span><span class="p">)</span> <span class="o">/</span> <span class="n">denom2</span> <span class="k">if</span> <span class="n">denom2</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+    <span class="n">f_2_1</span> <span class="o">=</span> <span class="n">ms_between_subj</span> <span class="o">/</span> <span class="n">ms_residual</span> <span class="k">if</span> <span class="n">ms_residual</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+    <span class="n">df1_2</span><span class="p">,</span> <span class="n">df2_2</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># ICC(3, 1)  two-way mixed, single, consistency</span>
+    <span class="n">icc_3_1</span> <span class="o">=</span> <span class="p">(</span><span class="n">ms_between_subj</span> <span class="o">-</span> <span class="n">ms_residual</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="n">ms_between_subj</span> <span class="o">+</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">ms_residual</span>
+    <span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">ms_between_subj</span> <span class="o">+</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">ms_residual</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+    <span class="n">f_3_1</span> <span class="o">=</span> <span class="n">f_2_1</span>
+    <span class="n">df1_3</span><span class="p">,</span> <span class="n">df2_3</span> <span class="o">=</span> <span class="n">df1_2</span><span class="p">,</span> <span class="n">df2_2</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_avg</span><span class="p">(</span><span class="n">icc_single</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">kk</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">icc_single</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+        <span class="n">denom</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="p">(</span><span class="n">kk</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">icc_single</span>
+        <span class="k">return</span> <span class="n">kk</span> <span class="o">*</span> <span class="n">icc_single</span> <span class="o">/</span> <span class="n">denom</span> <span class="k">if</span> <span class="n">denom</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+
+    <span class="n">icc_1_k</span> <span class="o">=</span> <span class="n">_avg</span><span class="p">(</span><span class="n">icc_1_1</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">icc_2_k</span> <span class="o">=</span> <span class="n">_avg</span><span class="p">(</span><span class="n">icc_2_1</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">icc_3_k</span> <span class="o">=</span> <span class="n">_avg</span><span class="p">(</span><span class="n">icc_3_1</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_pval</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">F</span><span class="p">)</span> <span class="ow">or</span> <span class="n">d1</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">d2</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">_f_dist</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="s2">&quot;k&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">),</span>
+        <span class="s2">&quot;ICC(1,1)&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">icc_1_1</span><span class="p">),</span> <span class="s2">&quot;ICC(2,1)&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">icc_2_1</span><span class="p">),</span>
+        <span class="s2">&quot;ICC(3,1)&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">icc_3_1</span><span class="p">),</span>
+        <span class="s2">&quot;ICC(1,k)&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">icc_1_k</span><span class="p">),</span> <span class="s2">&quot;ICC(2,k)&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">icc_2_k</span><span class="p">),</span>
+        <span class="s2">&quot;ICC(3,k)&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">icc_3_k</span><span class="p">),</span>
+        <span class="s2">&quot;F(1,1)&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">f_1_1</span><span class="p">),</span> <span class="s2">&quot;F(2,1)&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">f_2_1</span><span class="p">),</span>
+        <span class="s2">&quot;F(3,1)&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">f_3_1</span><span class="p">),</span>
+        <span class="s2">&quot;df1&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">df1_1</span><span class="p">),</span> <span class="s2">&quot;df2&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">df2_1</span><span class="p">),</span>
+        <span class="s2">&quot;df1_23&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">df1_2</span><span class="p">),</span> <span class="s2">&quot;df2_23&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">df2_2</span><span class="p">),</span>
+        <span class="s2">&quot;pvalue(1,1)&quot;</span><span class="p">:</span> <span class="n">_pval</span><span class="p">(</span><span class="n">f_1_1</span><span class="p">,</span> <span class="n">df1_1</span><span class="p">,</span> <span class="n">df2_1</span><span class="p">),</span>
+        <span class="s2">&quot;pvalue(2,1)&quot;</span><span class="p">:</span> <span class="n">_pval</span><span class="p">(</span><span class="n">f_2_1</span><span class="p">,</span> <span class="n">df1_2</span><span class="p">,</span> <span class="n">df2_2</span><span class="p">),</span>
+        <span class="s2">&quot;pvalue(3,1)&quot;</span><span class="p">:</span> <span class="n">_pval</span><span class="p">(</span><span class="n">f_3_1</span><span class="p">,</span> <span class="n">df1_3</span><span class="p">,</span> <span class="n">df2_3</span><span class="p">),</span>
+        <span class="s2">&quot;ms_between_subj&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">ms_between_subj</span><span class="p">),</span>
+        <span class="s2">&quot;ms_between_rate&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">ms_between_rate</span><span class="p">),</span>
+        <span class="s2">&quot;ms_residual&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">ms_residual</span><span class="p">),</span>
+        <span class="s2">&quot;ms_within&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">ms_within</span><span class="p">),</span>
+    <span class="p">}</span>
+
+
+<div class="viewcode-block" id="test_icc">
+<a class="viewcode-back" href="../../../../api/index.html#scitex_stats.test_icc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_icc</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">form</span><span class="p">:</span> <span class="n">ICCForm</span> <span class="o">=</span> <span class="s2">&quot;3,k&quot;</span><span class="p">,</span>
+    <span class="n">subj_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">rater_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">score_col</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">return_as</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dict&quot;</span><span class="p">,</span> <span class="s2">&quot;dataframe&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span><span class="p">,</span>
+    <span class="n">decimals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Intraclass correlation (Shrout &amp; Fleiss 1979).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : ndarray | DataFrame | dict</span>
+<span class="sd">        2-D (n_subjects, k_raters) matrix of continuous scores, or a</span>
+<span class="sd">        long-format DataFrame with (subj, rater, score) triples (pass</span>
+<span class="sd">        ``subj_col``, ``rater_col``, ``score_col`` to pivot).</span>
+<span class="sd">    form : {&quot;1,1&quot;, &quot;2,1&quot;, &quot;3,1&quot;, &quot;1,k&quot;, &quot;2,k&quot;, &quot;3,k&quot;}, default &quot;3,k&quot;</span>
+<span class="sd">        Which ICC form to surface at the top level (statistic,</span>
+<span class="sd">        pvalue, sym, formatted). All six are always available in the</span>
+<span class="sd">        result dict.</span>
+<span class="sd">    subj_col, rater_col, score_col : str, optional</span>
+<span class="sd">        Long-form column names; ignored if ``data`` is wide.</span>
+<span class="sd">    alpha : float, default 0.05</span>
+<span class="sd">    return_as : {&quot;dict&quot;, &quot;dataframe&quot;}, default &quot;dict&quot;</span>
+<span class="sd">    decimals : int, default 3</span>
+<span class="sd">    verbose : bool, default False</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict | DataFrame</span>
+<span class="sd">        Keys include ``ICC(1,1)``, ``ICC(2,1)``, ``ICC(3,1)``,</span>
+<span class="sd">        ``ICC(1,k)``, ``ICC(2,k)``, ``ICC(3,k)``, plus the selected</span>
+<span class="sd">        form&#39;s ``statistic / pvalue / df1 / df2 / formatted`` at the</span>
+<span class="sd">        top level.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Form selection table (Shrout &amp; Fleiss 1979, McGraw &amp; Wong 1996):</span>
+
+<span class="sd">      ============== ====== =========== ============= ===========</span>
+<span class="sd">      Form           Model  Type        Measure        Use case</span>
+<span class="sd">      ============== ====== =========== ============= ===========</span>
+<span class="sd">      ICC(1, k)      1-way  random      avg of k      raters</span>
+<span class="sd">                                                       interchang.</span>
+<span class="sd">      ICC(2, k)      2-way  random      avg of k      generalise</span>
+<span class="sd">                                                       to popul.</span>
+<span class="sd">      ICC(3, k)      2-way  mixed       avg of k      these k</span>
+<span class="sd">                                                       are it</span>
+<span class="sd">      ============== ====== =========== ============= ===========</span>
+
+<span class="sd">    Use ``form=&quot;3,k&quot;`` (default) when the k raters in your data ARE</span>
+<span class="sd">    the raters of interest (e.g. months of recording in a single</span>
+<span class="sd">    patient) — this is the most common choice for repeated measures.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Shrout, P. E. &amp; Fleiss, J. L. (1979). Intraclass Correlations: Uses</span>
+<span class="sd">    in Assessing Rater Reliability. Psychological Bulletin, 86(2), 420.</span>
+<span class="sd">    McGraw, K. O. &amp; Wong, S. P. (1996). Forming inferences about some</span>
+<span class="sd">    intraclass correlation coefficients. Psychological Methods, 1(1).</span>
+<span class="sd">    Koo, T. K. &amp; Li, M. Y. (2016). A Guideline of Selecting and</span>
+<span class="sd">    Reporting Intraclass Correlation Coefficients for Reliability</span>
+<span class="sd">    Research. Journal of Chiropractic Medicine, 15(2), 155-163.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mat</span> <span class="o">=</span> <span class="n">_as_matrix</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">subj_col</span><span class="o">=</span><span class="n">subj_col</span><span class="p">,</span> <span class="n">rater_col</span><span class="o">=</span><span class="n">rater_col</span><span class="p">,</span>
+                     <span class="n">score_col</span><span class="o">=</span><span class="n">score_col</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">dropped</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">keep</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">dropped</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;test_icc: dropping </span><span class="si">%d</span><span class="s2"> subjects with NaN ratings&quot;</span><span class="p">,</span>
+                        <span class="n">dropped</span><span class="p">)</span>
+        <span class="n">mat</span> <span class="o">=</span> <span class="n">mat</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">empty</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;ICC(</span><span class="si">{</span><span class="n">form</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;statistic&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;df1&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;df2&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="s2">&quot;k&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">),</span>
+            <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">alpha</span><span class="p">,</span>
+            <span class="s2">&quot;significant&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;formatted&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;ICC(</span><span class="si">{</span><span class="n">form</span><span class="si">}</span><span class="s2">): insufficient data&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;interpretation&quot;</span><span class="p">:</span> <span class="s2">&quot;n/a (insufficient data)&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">convert_results</span><span class="p">(</span><span class="n">empty</span><span class="p">,</span> <span class="n">return_as</span><span class="o">=</span><span class="n">return_as</span><span class="p">)</span>
+
+    <span class="n">iccs</span> <span class="o">=</span> <span class="n">_compute_iccs</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ICC(</span><span class="si">{</span><span class="n">form</span><span class="si">}</span><span class="s2">)&quot;</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">iccs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown ICC form </span><span class="si">{</span><span class="n">form</span><span class="si">!r}</span><span class="s2">; valid: &quot;</span>
+                         <span class="s2">&quot;&#39;1,1&#39;, &#39;2,1&#39;, &#39;3,1&#39;, &#39;1,k&#39;, &#39;2,k&#39;, &#39;3,k&#39;&quot;</span><span class="p">)</span>
+    <span class="n">point</span> <span class="o">=</span> <span class="n">iccs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="n">interp</span> <span class="o">=</span> <span class="n">interpret_icc</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+
+    <span class="c1"># F / pvalue / dfs use the single-measure form (the k-form is just</span>
+    <span class="c1"># the Spearman-Brown transform; significance is identical).</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">f_stat</span> <span class="o">=</span> <span class="n">iccs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;F(</span><span class="si">{</span><span class="n">base</span><span class="si">}</span><span class="s2">,1)&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">))</span>
+    <span class="n">pvalue</span> <span class="o">=</span> <span class="n">iccs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pvalue(</span><span class="si">{</span><span class="n">base</span><span class="si">}</span><span class="s2">,1)&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">))</span>
+    <span class="n">df1</span> <span class="o">=</span> <span class="n">iccs</span><span class="p">[</span><span class="s2">&quot;df1&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">base</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span> <span class="k">else</span> <span class="n">iccs</span><span class="p">[</span><span class="s2">&quot;df1_23&quot;</span><span class="p">]</span>
+    <span class="n">df2</span> <span class="o">=</span> <span class="n">iccs</span><span class="p">[</span><span class="s2">&quot;df2&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">base</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span> <span class="k">else</span> <span class="n">iccs</span><span class="p">[</span><span class="s2">&quot;df2_23&quot;</span><span class="p">]</span>
+    <span class="n">significant</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">pvalue</span> <span class="o">&lt;</span> <span class="n">alpha</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">pvalue</span><span class="p">)</span> <span class="k">else</span> <span class="kc">False</span>
+    <span class="n">stars</span> <span class="o">=</span> <span class="n">p2stars</span><span class="p">(</span><span class="n">pvalue</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">pvalue</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">formatted</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;ICC(</span><span class="si">{</span><span class="n">form</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">point</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">decimals</span><span class="si">}</span><span class="s2">f</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;F(</span><span class="si">{</span><span class="n">df1</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">df2</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">f_stat</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">decimals</span><span class="si">}</span><span class="s2">f</span><span class="si">}</span><span class="s2">, &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;p = </span><span class="si">{</span><span class="n">pvalue</span><span class="si">:</span><span class="s2">.</span><span class="si">{</span><span class="n">decimals</span><span class="si">}</span><span class="s2">f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">stars</span><span class="si">}</span><span class="s2"> &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;(n = </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">, k = </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">interp</span><span class="si">}</span><span class="s2">)&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;ICC(</span><span class="si">{</span><span class="n">form</span><span class="si">}</span><span class="s2">) intraclass correlation&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;statistic&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">point</span><span class="p">),</span>
+        <span class="sa">f</span><span class="s2">&quot;ICC(</span><span class="si">{</span><span class="n">form</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">point</span><span class="p">),</span>
+        <span class="s2">&quot;pvalue&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">pvalue</span><span class="p">),</span>
+        <span class="s2">&quot;df1&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">df1</span><span class="p">),</span> <span class="s2">&quot;df2&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">df2</span><span class="p">),</span>
+        <span class="s2">&quot;F&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">f_stat</span><span class="p">),</span>
+        <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="s2">&quot;k&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">),</span>
+        <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">alpha</span><span class="p">,</span>
+        <span class="s2">&quot;significant&quot;</span><span class="p">:</span> <span class="n">significant</span><span class="p">,</span>
+        <span class="s2">&quot;stars&quot;</span><span class="p">:</span> <span class="n">stars</span><span class="p">,</span>
+        <span class="s2">&quot;sym&quot;</span><span class="p">:</span> <span class="n">fmt_sym</span><span class="p">(</span><span class="s2">&quot;ICC&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;stat_str&quot;</span><span class="p">:</span> <span class="n">fmt_stat</span><span class="p">(</span><span class="s2">&quot;ICC&quot;</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;.</span><span class="si">{</span><span class="n">decimals</span><span class="si">}</span><span class="s2">f&quot;</span><span class="p">,</span> <span class="n">stars</span><span class="o">=</span><span class="n">stars</span><span class="p">),</span>
+        <span class="s2">&quot;formatted&quot;</span><span class="p">:</span> <span class="n">formatted</span><span class="p">,</span>
+        <span class="s2">&quot;effect_size&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">point</span><span class="p">),</span>
+        <span class="s2">&quot;effect_size_label&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;ICC(</span><span class="si">{</span><span class="n">form</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;interpretation&quot;</span><span class="p">:</span> <span class="n">interp</span><span class="p">,</span>
+        <span class="c1"># All six on the result for downstream</span>
+        <span class="o">**</span><span class="p">{</span><span class="n">kk</span><span class="p">:</span> <span class="n">vv</span> <span class="k">for</span> <span class="n">kk</span><span class="p">,</span> <span class="n">vv</span> <span class="ow">in</span> <span class="n">iccs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">kk</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ICC(&quot;</span><span class="p">)},</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">formatted</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">convert_results</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">return_as</span><span class="o">=</span><span class="n">return_as</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Yusuke Watanabe.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
