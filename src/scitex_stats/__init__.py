@@ -161,6 +161,9 @@ _LAZY_ATTRS: dict[str, str] = {
     "test_normality": "tests",
     "test_ks_1samp": "tests",
     "test_ks_2samp": "tests",
+    # Agreement (2)
+    "test_kendalls_w": "tests",
+    "test_icc": "tests",
 }
 
 
@@ -261,4 +264,7 @@ __all__ = [
     "test_normality",
     "test_ks_1samp",
     "test_ks_2samp",
+    # Agreement (2)
+    "test_kendalls_w",
+    "test_icc",
 ]
