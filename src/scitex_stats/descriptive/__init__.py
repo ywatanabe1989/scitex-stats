@@ -10,6 +10,7 @@ from ._circular import (
     describe_circular,
 )
 from ._describe import describe, verify_non_leakage
+from ._describe_pandas import describe_pandas
 from ._nan import (
     nanargmax,
     nanargmin,
@@ -38,6 +39,7 @@ __all__ = [
     "ci",
     # For Ordinal Distribution
     "describe",
+    "describe_pandas",
     "kurtosis",
     "mean",
     "nanargmax",

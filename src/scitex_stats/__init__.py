@@ -133,6 +133,7 @@ _LAZY_ATTRS: dict[str, str] = {
     "recommend_tests": "auto",
     # Descriptive
     "describe": "descriptive",
+    "describe_pandas": "descriptive",
     # Parametric (6)
     "test_ttest_ind": "tests",
     "test_ttest_rel": "tests",
@@ -216,6 +217,7 @@ __all__ = [
     "available_tests",
     # Descriptive
     "describe",
+    "describe_pandas",
     # JSON serialization
     "to_json_safe",
     # Stats ↔ SciTeX bundle I/O (optional scitex-io; extra [bundle])

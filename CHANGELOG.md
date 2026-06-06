@@ -7,6 +7,16 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.25] — 2026-06-07
+
+- feat: port `describe_pandas` from `scitex-gen` `misc.py` (Phase B of
+  the scitex-gen full retirement wave). The legacy symbol name was
+  `describe`, but `scitex_stats.descriptive.describe` already exists
+  with a richer torch/numpy signature; to keep both forms available
+  without a silent breakage the pandas variant is exposed here as
+  `describe_pandas` (DataFrame in, `mean_std`/`mean_ci`/`median_iqr`
+  summary dict out).
+
 ## [0.2.24] — 2026-06-03
 
 ### Added
