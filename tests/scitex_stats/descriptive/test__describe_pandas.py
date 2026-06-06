@@ -22,8 +22,9 @@ class TestDescribePandasMeanStd:
 
     def test_mean_correct(self, sample_df):
         result = describe_pandas(sample_df, method="mean_std")
-        np.testing.assert_allclose(result["mean"]["A"], 3.0)
-        np.testing.assert_allclose(result["mean"]["B"], 30.0)
+        # When `axis=0` (the default), `np.nanmean` returns a numpy array
+        # of column-wise means in the column order of the DataFrame.
+        np.testing.assert_allclose(np.asarray(result["mean"]), [3.0, 30.0])
 
 
 class TestDescribePandasMeanCI:
@@ -39,8 +40,9 @@ class TestDescribePandasMedianIQR:
 
     def test_median_correct(self, sample_df):
         result = describe_pandas(sample_df, method="median_iqr")
-        np.testing.assert_allclose(result["median"]["A"], 3.0)
-        np.testing.assert_allclose(result["median"]["B"], 30.0)
+        # df.median(axis=0) returns a pandas Series with the column labels.
+        assert result["median"]["A"] == 3.0
+        assert result["median"]["B"] == 30.0
 
 
 class TestDescribePandasInvalid:
