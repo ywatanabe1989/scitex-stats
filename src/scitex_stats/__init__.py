@@ -113,6 +113,16 @@ _LAZY_ATTRS: dict[str, str] = {
     "run_test": "_dispatch",
     # JSON
     "to_json_safe": "_utils._serialize",
+    # Stats ↔ SciTeX bundle I/O (optional scitex-io; extra [bundle])
+    "Stats": "_integration",
+    "BUNDLE_AVAILABLE": "_integration",
+    "test_result_to_stats": "_bundle_io",
+    "save_stats": "_bundle_io",
+    "load_stats": "_bundle_io",
+    # Stats ↔ figrecipe annotations (optional figrecipe; extra [figrecipe])
+    "to_figrecipe": "_figrecipe_integration",
+    "annotate": "_figrecipe_integration",
+    "load_and_annotate": "_figrecipe_integration",
     # Auto convenience
     "StatContext": "auto",
     "StatStyle": "auto",
@@ -151,6 +161,9 @@ _LAZY_ATTRS: dict[str, str] = {
     "test_normality": "tests",
     "test_ks_1samp": "tests",
     "test_ks_2samp": "tests",
+    # Agreement (2)
+    "test_kendalls_w": "tests",
+    "test_icc": "tests",
 }
 
 
@@ -205,6 +218,16 @@ __all__ = [
     "describe",
     # JSON serialization
     "to_json_safe",
+    # Stats ↔ SciTeX bundle I/O (optional scitex-io; extra [bundle])
+    "Stats",
+    "BUNDLE_AVAILABLE",
+    "test_result_to_stats",
+    "save_stats",
+    "load_stats",
+    # Stats ↔ figrecipe annotations (optional figrecipe; extra [figrecipe])
+    "to_figrecipe",
+    "annotate",
+    "load_and_annotate",
     # Auto convenience
     "StatContext",
     "TestRule",
@@ -241,4 +264,7 @@ __all__ = [
     "test_normality",
     "test_ks_1samp",
     "test_ks_2samp",
+    # Agreement (2)
+    "test_kendalls_w",
+    "test_icc",
 ]

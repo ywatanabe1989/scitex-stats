@@ -20,13 +20,14 @@ import pytest
 
 # ===== AUTO-GENERATED: cross-package imports =====
 CROSS_PACKAGE_IMPORTS = [
-    "scitex",
     "scitex_config",
+    "scitex_dev",
     "scitex_dev._cli._completion",
     "scitex_dev.cli",
     "scitex_dev.decorators",
     "scitex_dev.skills",
     "scitex_dev.linter._rules._base",
+    "scitex_io.bundle",
     "scitex_logging",
 ]
 # ===== END AUTO-GENERATED =====
@@ -35,4 +36,8 @@ CROSS_PACKAGE_IMPORTS = [
 @pytest.mark.parametrize("module_name", CROSS_PACKAGE_IMPORTS)
 def test_cross_package_import(module_name):
     """Importing scitex-stats's declared cross-package dependency must succeed."""
-    pytest.importorskip(module_name)
+    # Arrange: parametrized module name; importorskip yields the loaded module.
+    # Act
+    mod = pytest.importorskip(module_name)
+    # Assert: importorskip returns the module object on success (never None).
+    assert mod is not None

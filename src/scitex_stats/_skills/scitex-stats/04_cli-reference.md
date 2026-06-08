@@ -38,7 +38,7 @@ where the underlying test supports them. All commands accept
 ```bash
 scitex-stats mcp list-tools           # enumerate registered MCP tools
 scitex-stats mcp doctor               # verify deps + tool count + CLI
-scitex-stats mcp show-installation    # Claude Desktop config snippet
+scitex-stats mcp install              # Claude Desktop config snippet
 scitex-stats mcp start                # stdio (default) — long-running
 scitex-stats mcp start -t sse         # SSE for HTTP clients
 scitex-stats mcp start --dry-run      # preview launch plan

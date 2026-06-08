@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "scitex-stats"
-version = "0.2.21"
-description = "Publication-ready statistical testing framework with 23 tests, effect sizes, power analysis, and MCP server"
+version = "0.2.24"
+description = "Publication-ready statistical testing framework with 25 tests, effect sizes, power analysis, and MCP server"
 readme = "README.md"
 license = "AGPL-3.0-only"
 requires-python = ">=3.10"
@@ -69,6 +69,13 @@ all = [
     "figrecipe>=0.28.0",
     "torch>=2.0",
 ]
+# Stats ↔ SciTeX bundle I/O: test_result_to_stats / save_stats / load_stats
+# in scitex_stats._bundle_io require scitex-io's bundle subpackage. scitex-io
+# imports the Stats schema back from scitex_stats, so it stays an optional
+# extra (no hard/circular dep).
+bundle = [
+    "scitex-io>=0.2.16",
+]
 dev = [
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
@@ -81,6 +88,10 @@ dev = [
     "nbconvert>=7.0",     # executes example .ipynb in tests (PS-505)
     "ipykernel>=6.0",     # kernel for nbconvert --execute
     "openpyxl>=3.1",      # pandas to_excel used by _demo_*.py
+    # Optional cross-package integrations whose tests live in the suite,
+    # so a fresh `pip install -e .[dev]` runs the full suite (PS-210).
+    "scitex-io>=0.2.16",  # [bundle] extra: stats↔bundle I/O round-trip tests
+    "figrecipe>=0.28.0",  # [all] extra: stats↔figrecipe annotation tests
     # Note: fastmcp / mcp / scitex-dev / scitex-logging / pingouin come in via [project.dependencies].
 ]
 docs = [

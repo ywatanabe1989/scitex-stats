@@ -14,18 +14,14 @@ import warnings
 from typing import List, Optional, Tuple, Union
 
 import numpy as np
+from scitex_dev import try_import_optional
 
 __FILE__ = __file__
 __DIR__ = os.path.dirname(__FILE__)
 
-# Optional torch support
-try:
-    import torch
-
-    HAS_TORCH = True
-except ImportError:
-    torch = None
-    HAS_TORCH = False
+# Optional torch support (numpy fallback when absent)
+torch = try_import_optional("torch", extra="all", pkg="scitex-stats")
+HAS_TORCH = torch is not None
 
 
 def _is_torch_tensor(x):
@@ -41,9 +37,9 @@ def _normalize_axis(axis, dim):
 def _ensure_more_than_2d(data) -> None:
     """Ensure data has at least 2 dimensions."""
     ndim = data.ndim if hasattr(data, "ndim") else np.asarray(data).ndim
-    assert (
-        ndim >= 2
-    ), f"Input must be at least 2 dimensional with batch dimension as first axis, got {ndim}"
+    assert ndim >= 2, (
+        f"Input must be at least 2 dimensional with batch dimension as first axis, got {ndim}"
+    )
 
 
 def _check_angle_units(angles) -> None:
@@ -163,9 +159,9 @@ def circular_mean(
     dim = _normalize_axis(axis, dim)
 
     if _is_torch_tensor(angles):
-        assert (
-            angles.shape == values.shape
-        ), f"angles shape {angles.shape} must match values shape {values.shape}"
+        assert angles.shape == values.shape, (
+            f"angles shape {angles.shape} must match values shape {values.shape}"
+        )
         cos_angles = torch.cos(angles)
         sin_angles = torch.sin(angles)
 
@@ -181,9 +177,9 @@ def circular_mean(
     else:
         angles = np.asarray(angles)
         values = np.asarray(values)
-        assert (
-            angles.shape == values.shape
-        ), f"angles shape {angles.shape} must match values shape {values.shape}"
+        assert angles.shape == values.shape, (
+            f"angles shape {angles.shape} must match values shape {values.shape}"
+        )
 
         cos_angles = np.cos(angles)
         sin_angles = np.sin(angles)

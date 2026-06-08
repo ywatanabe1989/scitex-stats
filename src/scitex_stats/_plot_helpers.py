@@ -8,6 +8,7 @@ Eliminates boilerplate duplication across all _plot_* functions.
 """
 
 import numpy as np
+from scitex_dev import try_import_optional
 
 __all__ = [
     "compose_panels",
@@ -44,12 +45,11 @@ def compose_panels(panel_funcs, layout="horizontal", panel_labels=True):
     import shutil
     import tempfile
 
-    try:
-        import scitex as stx
-    except ImportError as _e:
+    stx = try_import_optional("scitex")
+    if stx is None:
         raise ImportError(
             "compose_panels requires scitex to be installed: pip install scitex"
-        ) from _e
+        )
 
     _ = stx.plt.load_style()
 
@@ -107,12 +107,11 @@ def ensure_figure(plot, ax, ncols=1, figsize=None):
     ax_or_axes : Axes, array of Axes, or None
         The axes to plot on, or None if no plot.
     """
-    try:
-        import scitex as stx
-    except ImportError as _e:
+    stx = try_import_optional("scitex")
+    if stx is None:
         raise ImportError(
             "ensure_figure requires scitex to be installed: pip install scitex"
-        ) from _e
+        )
 
     if ax is not None:
         return False, ax
@@ -200,14 +199,15 @@ def get_palette(n_colors):
     colors : list of tuple
         RGB tuples in [0, 1] range.
     """
-    try:
-        from figrecipe.styles import load_style
-
-        style = load_style()
-        palette = style.get("colors", {}).get("palette", [])
-        return [tuple(v / 255.0 for v in c) for c in palette[:n_colors]]
-    except ImportError:
+    load_style = try_import_optional(
+        "figrecipe.styles", attr="load_style", extra="all", pkg="scitex-stats"
+    )
+    if load_style is None:
         return [None] * n_colors
+
+    style = load_style()
+    palette = style.get("colors", {}).get("palette", [])
+    return [tuple(v / 255.0 for v in c) for c in palette[:n_colors]]
 
 
 def violin_swarm(ax, groups, positions, var_names):
@@ -234,9 +234,35 @@ def violin_swarm(ax, groups, positions, var_names):
     # would force alpha=1.0 on violin bodies and add a duplicate boxplot.
     mpl_ax = getattr(ax, "_axes_mpl", ax)
 
-    from figrecipe._wrappers._axes_plots import _add_violin_inner_elements
-    from figrecipe._wrappers._violin_kde import draw_kde_violins
-    from figrecipe.styles._internal import get_style
+    # figrecipe is optional (R4). Reach into the violin-kde private API
+    # only when figrecipe is present; raise a clear error otherwise.
+    _add_violin_inner_elements = try_import_optional(
+        "figrecipe._wrappers._axes_plots",
+        attr="_add_violin_inner_elements",
+        extra="figrecipe",
+        pkg="scitex-stats",
+    )
+    draw_kde_violins = try_import_optional(
+        "figrecipe._wrappers._violin_kde",
+        attr="draw_kde_violins",
+        extra="figrecipe",
+        pkg="scitex-stats",
+    )
+    get_style = try_import_optional(
+        "figrecipe.styles._internal",
+        attr="get_style",
+        extra="figrecipe",
+        pkg="scitex-stats",
+    )
+    if (
+        _add_violin_inner_elements is None
+        or draw_kde_violins is None
+        or get_style is None
+    ):
+        raise ImportError(
+            "figrecipe is required for violin_swarm; install with "
+            "'pip install scitex-stats[figrecipe]'"
+        )
 
     style = get_style()
     violin_style = style.get("violinplot", {}) if style else {}

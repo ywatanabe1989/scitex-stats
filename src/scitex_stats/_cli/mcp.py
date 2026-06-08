@@ -10,6 +10,41 @@ import sys
 
 from .. import __version__
 
+
+def _list_tool_objects():
+    """Return the MCP server's registered tool objects (version-robust).
+
+    The FastMCP tool-enumeration API has churned across releases:
+
+    - 1.x exposed ``FastMCP.list_tools()`` (removed in 2.x).
+    - 2.x exposes ``FastMCP.get_tools()`` (async ``{name: Tool}`` map);
+      its internal Tool exposes ``.parameters`` and ``.fn``.
+    - 3.x dropped ``get_tools()``.
+
+    The one accessor stable across every major is the in-memory
+    ``fastmcp.Client`` transport, which returns MCP wire ``Tool`` objects
+    exposing ``.name`` / ``.description`` / ``.inputSchema``. Prefer the
+    richer in-process ``get_tools()`` when present (keeps return-type
+    annotations in signatures), and fall back to the client otherwise.
+    """
+    import asyncio
+
+    from .._mcp import mcp
+
+    get_tools = getattr(mcp, "get_tools", None)
+    if callable(get_tools):
+        tools = asyncio.run(get_tools())
+        return list(tools.values()) if isinstance(tools, dict) else list(tools)
+
+    from fastmcp import Client
+
+    async def _collect():
+        async with Client(mcp) as client:
+            return await client.list_tools()
+
+    return asyncio.run(_collect())
+
+
 CLAUDE_DESKTOP_CONFIG_CLI = """{
   "mcpServers": {
     "scitex-stats": {
@@ -71,8 +106,11 @@ def _format_tool_signature(tool, compact: bool = False, indent: str = "  ") -> s
     import inspect
 
     params = []
-    if hasattr(tool, "parameters") and tool.parameters:
-        schema = tool.parameters
+    # The JSON-schema attribute name differs across FastMCP majors:
+    # 2.x exposes ``parameters`` on the internal Tool; the MCP wire Tool
+    # (and some 3.x objects) expose ``inputSchema``. Accept either.
+    schema = getattr(tool, "parameters", None) or getattr(tool, "inputSchema", None)
+    if schema:
         props = schema.get("properties", {})
         required = schema.get("required", [])
         for name, info in props.items():
@@ -141,11 +179,7 @@ def cmd_list_tools(
     as_json: bool = False,
 ) -> int:
     """List all available MCP tools."""
-    import asyncio
-
-    from .._mcp import mcp
-
-    tool_objects = asyncio.run(mcp.list_tools())
+    tool_objects = _list_tool_objects()
     tools_by_name = {t.name: t for t in tool_objects}
     tools = list(tools_by_name.keys())
     total = len(tools)
@@ -241,11 +275,7 @@ def cmd_doctor() -> int:
         checks.append(("fastmcp", False, "not installed"))
 
     try:
-        import asyncio
-
-        from .._mcp import mcp
-
-        tool_count = len(asyncio.run(mcp.list_tools()))
+        tool_count = len(_list_tool_objects())
         checks.append(("MCP server", True, f"{tool_count} tools"))
     except Exception as e:
         checks.append(("MCP server", False, str(e)))
