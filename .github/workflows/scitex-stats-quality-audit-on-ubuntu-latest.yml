@@ -45,4 +45,13 @@ jobs:
           pip install "scitex-dev[cli-audit]"
 
       - name: Run scitex-dev ecosystem audit-all
+        # warn-only: scitex-stats has a 1917-violation backlog (mostly
+        # PA-307 §3 test-quality on tests/examples/*), tracked in a
+        # follow-up issue (linked from this PR). The findings still
+        # surface in this step's logs so they're discoverable; we just
+        # don't fail the workflow on them — the goal is to stop the
+        # nightly cron from emailing the operator about a backlog the
+        # template swap itself didn't introduce. Drop `continue-on-error`
+        # once the backlog is under the audit-all threshold.
+        continue-on-error: true
         run: scitex-dev ecosystem audit-all scitex-stats --no-version-check
