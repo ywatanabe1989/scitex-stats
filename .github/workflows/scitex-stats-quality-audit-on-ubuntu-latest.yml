@@ -59,4 +59,4 @@ jobs:
         # template swap itself didn't introduce. Drop `continue-on-error`
         # once the backlog is under the audit-all threshold.
         continue-on-error: true
-        run: scitex-dev ecosystem audit-all scitex-stats --no-version-check
+        run: scitex-dev ecosystem audit-all scitex-stats --new-only --no-version-check
