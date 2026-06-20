@@ -15,20 +15,21 @@ NOTEBOOKS = sorted(
 
 
 @pytest.mark.parametrize("nb", NOTEBOOKS, ids=lambda p: p.name)
-def test_notebook_executes(nb, tmp_path):
-    subprocess.run(
-        [
-            sys.executable,
-            "-m",
-            "jupyter",
-            "nbconvert",
-            "--to",
-            "notebook",
-            "--execute",
-            "--output",
-            str(tmp_path / nb.name),
-            str(nb),
-        ],
-        check=True,
-        timeout=180,
-    )
+def test_notebook_executes_without_error(nb, tmp_path):
+    # Arrange
+    cmd = [
+        sys.executable,
+        "-m",
+        "jupyter",
+        "nbconvert",
+        "--to",
+        "notebook",
+        "--execute",
+        "--output",
+        str(tmp_path / nb.name),
+        str(nb),
+    ]
+    # Act
+    result = subprocess.run(cmd, check=True, timeout=180)
+    # Assert
+    assert result.returncode == 0

@@ -12,105 +12,191 @@ from scitex_stats._utils._power import power_ttest, sample_size_ttest
 class TestPowerTtest:
     """Test power_ttest function for statistical power calculation."""
 
-    def test_basic_two_sample(self):
+    def test_basic_two_sample_power_float(self):
         """Test basic two-sample t-test power calculation."""
+        # Arrange
+        # Act
         power = power_ttest(effect_size=0.5, n1=30, n2=30)
+        # Assert
         assert isinstance(power, float)
+
+    def test_basic_two_sample_power(self):
+        """Test basic two-sample t-test power calculation."""
+        # Arrange
+        # Act
+        power = power_ttest(effect_size=0.5, n1=30, n2=30)
+        # Assert
         assert 0 < power < 1
 
-    def test_one_sample_test(self):
+    def test_one_sample_test_power_float(self):
         """Test one-sample t-test power calculation."""
+        # Arrange
+        # Act
         power = power_ttest(effect_size=0.5, n=50, test_type="one-sample")
+        # Assert
         assert isinstance(power, float)
+
+    def test_one_sample_test_power(self):
+        """Test one-sample t-test power calculation."""
+        # Arrange
+        # Act
+        power = power_ttest(effect_size=0.5, n=50, test_type="one-sample")
+        # Assert
         assert 0 < power < 1
 
-    def test_paired_test(self):
+    def test_paired_test_power_float(self):
         """Test paired t-test power calculation."""
+        # Arrange
+        # Act
         power = power_ttest(effect_size=0.8, n=25, test_type="paired")
+        # Assert
         assert isinstance(power, float)
+
+    def test_paired_test_power(self):
+        """Test paired t-test power calculation."""
+        # Arrange
+        # Act
+        power = power_ttest(effect_size=0.8, n=25, test_type="paired")
+        # Assert
         assert 0 < power < 1
 
     def test_power_increases_with_sample_size(self):
         """Test that power increases as sample size increases."""
+        # Arrange
         power_small = power_ttest(effect_size=0.5, n1=20, n2=20)
+        # Act
         power_large = power_ttest(effect_size=0.5, n1=100, n2=100)
+        # Assert
         assert power_large > power_small
 
     def test_power_increases_with_effect_size(self):
         """Test that power increases as effect size increases."""
+        # Arrange
         power_small_d = power_ttest(effect_size=0.2, n1=30, n2=30)
+        # Act
         power_large_d = power_ttest(effect_size=0.8, n1=30, n2=30)
+        # Assert
         assert power_large_d > power_small_d
 
     def test_power_increases_with_higher_alpha(self):
         """Test that power increases with higher alpha level."""
+        # Arrange
         power_strict = power_ttest(effect_size=0.5, n1=30, n2=30, alpha=0.01)
+        # Act
         power_liberal = power_ttest(effect_size=0.5, n1=30, n2=30, alpha=0.10)
+        # Assert
         assert power_liberal > power_strict
 
     def test_one_sided_higher_power_than_two_sided(self):
         """Test that one-sided tests have higher power than two-sided."""
+        # Arrange
         power_two = power_ttest(effect_size=0.5, n1=30, n2=30, alternative="two-sided")
+        # Act
         power_one = power_ttest(effect_size=0.5, n1=30, n2=30, alternative="greater")
+        # Assert
         assert power_one > power_two
 
-    def test_alternative_less(self):
+    def test_alternative_less_power_float(self):
         """Test alternative='less' power calculation."""
+        # Arrange
+        # Act
         power = power_ttest(effect_size=0.5, n1=30, n2=30, alternative="less")
+        # Assert
         assert isinstance(power, float)
+
+    def test_alternative_less_power(self):
+        """Test alternative='less' power calculation."""
+        # Arrange
+        # Act
+        power = power_ttest(effect_size=0.5, n1=30, n2=30, alternative="less")
+        # Assert
         assert 0 < power < 1
 
-    def test_unequal_sample_sizes(self):
+    def test_unequal_sample_sizes_power_float(self):
         """Test power with unequal sample sizes."""
+        # Arrange
+        # Act
         power = power_ttest(effect_size=0.5, n1=20, n2=40)
+        # Assert
         assert isinstance(power, float)
+
+    def test_unequal_sample_sizes_power(self):
+        """Test power with unequal sample sizes."""
+        # Arrange
+        # Act
+        power = power_ttest(effect_size=0.5, n1=20, n2=40)
+        # Assert
         assert 0 < power < 1
 
     def test_missing_n_for_one_sample_raises(self):
         """Test that missing n for one-sample test raises error."""
+        # Arrange
+        # Act
+        # Assert
         with pytest.raises(ValueError, match="n must be specified"):
             power_ttest(effect_size=0.5, test_type="one-sample")
 
     def test_missing_n_for_paired_raises(self):
         """Test that missing n for paired test raises error."""
+        # Arrange
+        # Act
+        # Assert
         with pytest.raises(ValueError, match="n must be specified"):
             power_ttest(effect_size=0.5, test_type="paired")
 
     def test_missing_n1_n2_for_two_sample_raises(self):
         """Test that missing n1/n2 for two-sample test raises error."""
+        # Arrange
+        # Act
+        # Assert
         with pytest.raises(ValueError, match="n1 and n2 must be specified"):
             power_ttest(effect_size=0.5, test_type="two-sample")
 
     def test_missing_n2_raises(self):
         """Test that missing n2 for two-sample test raises error."""
+        # Arrange
+        # Act
+        # Assert
         with pytest.raises(ValueError, match="n1 and n2 must be specified"):
             power_ttest(effect_size=0.5, n1=30, test_type="two-sample")
 
     def test_invalid_test_type_raises(self):
         """Test that invalid test type raises error."""
+        # Arrange
+        # Act
+        # Assert
         with pytest.raises(ValueError, match="Unknown test_type"):
             power_ttest(effect_size=0.5, n1=30, n2=30, test_type="invalid")
 
     def test_invalid_alternative_raises(self):
         """Test that invalid alternative raises error."""
+        # Arrange
+        # Act
+        # Assert
         with pytest.raises(ValueError, match="Unknown alternative"):
             power_ttest(effect_size=0.5, n1=30, n2=30, alternative="invalid")
 
     def test_zero_effect_size(self):
         """Test power with zero effect size (should be around alpha)."""
+        # Arrange
+        # Act
         power = power_ttest(effect_size=0.0, n1=100, n2=100, alpha=0.05)
-        # With zero effect, power should be around alpha (Type I error rate)
+        # Assert
         assert abs(power - 0.05) < 0.01
 
     def test_large_effect_size(self):
         """Test power with large effect size is very high."""
-        # Use moderately large effect size to avoid numerical issues
+        # Arrange
+        # Act
         power = power_ttest(effect_size=1.0, n1=50, n2=50)
+        # Assert
         assert power > 0.95
 
     def test_power_bound_between_0_and_1(self):
         """Test that power is always between 0 and 1."""
-        # Use moderate effect sizes to avoid numerical overflow issues
+        # Arrange
+        # Act
+        # Assert
         for d in [0.1, 0.5, 0.8, 1.0]:
             for n in [10, 50, 100]:
                 power = power_ttest(effect_size=d, n1=n, n2=n)
@@ -120,137 +206,220 @@ class TestPowerTtest:
 class TestSampleSizeTtest:
     """Test sample_size_ttest function for sample size determination."""
 
-    def test_basic_two_sample(self):
+    def test_basic_two_sample_n1_int(self):
         """Test basic two-sample sample size calculation."""
+        # Arrange
+        # Act
         n1, n2 = sample_size_ttest(effect_size=0.5, power=0.80)
+        # Assert
         assert isinstance(n1, int)
+
+    def test_basic_two_sample_n2_int(self):
+        """Test basic two-sample sample size calculation."""
+        # Arrange
+        # Act
+        n1, n2 = sample_size_ttest(effect_size=0.5, power=0.80)
+        # Assert
         assert isinstance(n2, int)
+
+    def test_basic_two_sample_n1(self):
+        """Test basic two-sample sample size calculation."""
+        # Arrange
+        # Act
+        n1, n2 = sample_size_ttest(effect_size=0.5, power=0.80)
+        # Assert
         assert n1 > 0
+
+    def test_basic_two_sample_n2(self):
+        """Test basic two-sample sample size calculation."""
+        # Arrange
+        # Act
+        n1, n2 = sample_size_ttest(effect_size=0.5, power=0.80)
+        # Assert
         assert n2 > 0
 
     def test_equal_allocation_by_default(self):
         """Test that equal allocation is used by default."""
+        # Arrange
+        # Act
         n1, n2 = sample_size_ttest(effect_size=0.5, power=0.80)
+        # Assert
         assert n1 == n2
 
-    def test_one_sample_test(self):
+    def test_one_sample_test_int(self):
         """Test one-sample sample size calculation."""
+        # Arrange
+        # Act
         n = sample_size_ttest(effect_size=0.5, power=0.80, test_type="one-sample")
+        # Assert
         assert isinstance(n, int)
+
+    def test_one_sample_test_case_2(self):
+        """Test one-sample sample size calculation."""
+        # Arrange
+        # Act
+        n = sample_size_ttest(effect_size=0.5, power=0.80, test_type="one-sample")
+        # Assert
         assert n > 0
 
-    def test_paired_test(self):
+    def test_paired_test_int(self):
         """Test paired sample size calculation."""
+        # Arrange
+        # Act
         n = sample_size_ttest(effect_size=0.5, power=0.80, test_type="paired")
+        # Assert
         assert isinstance(n, int)
+
+    def test_paired_test_case_2(self):
+        """Test paired sample size calculation."""
+        # Arrange
+        # Act
+        n = sample_size_ttest(effect_size=0.5, power=0.80, test_type="paired")
+        # Assert
         assert n > 0
 
     def test_larger_effect_needs_smaller_sample(self):
         """Test that larger effect sizes need smaller samples."""
+        # Arrange
         n_small_d, _ = sample_size_ttest(effect_size=0.2, power=0.80)
+        # Act
         n_large_d, _ = sample_size_ttest(effect_size=0.8, power=0.80)
+        # Assert
         assert n_small_d > n_large_d
 
     def test_higher_power_needs_larger_sample(self):
         """Test that higher power requirements need larger samples."""
+        # Arrange
         n_low_power, _ = sample_size_ttest(effect_size=0.5, power=0.70)
+        # Act
         n_high_power, _ = sample_size_ttest(effect_size=0.5, power=0.95)
+        # Assert
         assert n_high_power > n_low_power
 
     def test_one_sided_needs_smaller_sample(self):
         """Test that one-sided tests need smaller samples."""
+        # Arrange
         n_two, _ = sample_size_ttest(
             effect_size=0.5, power=0.80, alternative="two-sided"
         )
+        # Act
         n_one, _ = sample_size_ttest(effect_size=0.5, power=0.80, alternative="greater")
+        # Assert
         assert n_one < n_two
 
     def test_unequal_allocation_ratio(self):
         """Test unequal allocation ratio."""
+        # Arrange
+        # Act
         n1, n2 = sample_size_ttest(effect_size=0.5, power=0.80, ratio=2.0)
+        # Assert
         assert n2 == int(n1 * 2)
 
     def test_stricter_alpha_needs_larger_sample(self):
         """Test that stricter alpha needs larger samples."""
+        # Arrange
         n_liberal, _ = sample_size_ttest(effect_size=0.5, power=0.80, alpha=0.10)
+        # Act
         n_strict, _ = sample_size_ttest(effect_size=0.5, power=0.80, alpha=0.01)
+        # Assert
         assert n_strict > n_liberal
 
     def test_achieves_target_power(self):
         """Test that calculated sample size achieves target power."""
+        # Arrange
         target_power = 0.80
         n1, n2 = sample_size_ttest(effect_size=0.5, power=target_power)
-
+        # Act
         actual_power = power_ttest(effect_size=0.5, n1=n1, n2=n2)
+        # Assert
         assert actual_power >= target_power
 
     def test_achieves_target_power_one_sample(self):
         """Test that calculated sample size achieves target power for one-sample."""
+        # Arrange
         target_power = 0.80
         n = sample_size_ttest(
             effect_size=0.5, power=target_power, test_type="one-sample"
         )
-
+        # Act
         actual_power = power_ttest(effect_size=0.5, n=n, test_type="one-sample")
+        # Assert
         assert actual_power >= target_power
 
     def test_medium_effect_requires_about_64_per_group(self):
         """Test that medium effect (d=0.5) requires approximately 64 per group for 80% power."""
+        # Arrange
+        # Act
         n1, n2 = sample_size_ttest(effect_size=0.5, power=0.80)
-        # Standard result is around 64 per group for d=0.5, power=0.80
+        # Assert
         assert 60 <= n1 <= 70
 
     def test_small_effect_requires_large_sample(self):
         """Test that small effect (d=0.2) requires large sample."""
+        # Arrange
+        # Act
         n1, n2 = sample_size_ttest(effect_size=0.2, power=0.80)
-        # Small effect requires many more subjects
+        # Assert
         assert n1 > 300
 
     def test_large_effect_requires_small_sample(self):
         """Test that large effect (d=0.8) requires smaller sample."""
+        # Arrange
+        # Act
         n1, n2 = sample_size_ttest(effect_size=0.8, power=0.80)
-        # Large effect requires fewer subjects
+        # Assert
         assert n1 < 30
 
 
 class TestPowerConsistency:
     """Test consistency between power and sample size functions."""
 
-    def test_round_trip_two_sample(self):
+    def test_round_trip_two_sample_actual_power_target_power(self):
         """Test that sample_size -> power -> sample_size is consistent."""
+        # Arrange
         target_power = 0.85
         effect_size = 0.6
-
         n1, n2 = sample_size_ttest(effect_size=effect_size, power=target_power)
+        # Act
         actual_power = power_ttest(effect_size=effect_size, n1=n1, n2=n2)
-
-        # Actual power should meet or exceed target
+        # Assert
         assert actual_power >= target_power
-        # But not by too much (within 0.05)
+
+    def test_round_trip_two_sample_actual_power_target_power_2(self):
+        """Test that sample_size -> power -> sample_size is consistent."""
+        # Arrange
+        target_power = 0.85
+        effect_size = 0.6
+        n1, n2 = sample_size_ttest(effect_size=effect_size, power=target_power)
+        # Act
+        actual_power = power_ttest(effect_size=effect_size, n1=n1, n2=n2)
+        # Assert
         assert actual_power < target_power + 0.05
 
     def test_round_trip_one_sample(self):
         """Test consistency for one-sample tests."""
+        # Arrange
         target_power = 0.90
         effect_size = 0.4
-
         n = sample_size_ttest(
             effect_size=effect_size, power=target_power, test_type="one-sample"
         )
+        # Act
         actual_power = power_ttest(effect_size=effect_size, n=n, test_type="one-sample")
-
+        # Assert
         assert actual_power >= target_power
 
     def test_round_trip_paired(self):
         """Test consistency for paired tests."""
+        # Arrange
         target_power = 0.80
         effect_size = 0.7
-
         n = sample_size_ttest(
             effect_size=effect_size, power=target_power, test_type="paired"
         )
+        # Act
         actual_power = power_ttest(effect_size=effect_size, n=n, test_type="paired")
-
+        # Assert
         assert actual_power >= target_power
 
 
@@ -259,28 +428,45 @@ class TestEdgeCases:
 
     def test_very_small_alpha(self):
         """Test with very small alpha."""
+        # Arrange
+        # Act
         power = power_ttest(effect_size=0.5, n1=100, n2=100, alpha=0.001)
+        # Assert
         assert 0 < power < 1
 
     def test_very_small_sample(self):
         """Test with very small sample sizes."""
+        # Arrange
+        # Act
         power = power_ttest(effect_size=0.5, n1=3, n2=3)
+        # Assert
         assert 0 < power < 1
 
-    def test_high_power_target(self):
+    def test_high_power_target_n1(self):
         """Test with high power target (0.99)."""
+        # Arrange
+        # Act
         n1, n2 = sample_size_ttest(effect_size=0.5, power=0.99)
+        # Assert
         assert n1 > 0
-
         actual_power = power_ttest(effect_size=0.5, n1=n1, n2=n2)
+
+    def test_high_power_target_actual_power(self):
+        """Test with high power target (0.99)."""
+        # Arrange
+        n1, n2 = sample_size_ttest(effect_size=0.5, power=0.99)
+        # Act
+        actual_power = power_ttest(effect_size=0.5, n1=n1, n2=n2)
+        # Assert
         assert actual_power >= 0.99
 
     def test_negative_effect_size(self):
         """Test with negative effect size (should work, direction doesn't matter)."""
+        # Arrange
         power_pos = power_ttest(effect_size=0.5, n1=30, n2=30)
+        # Act
         power_neg = power_ttest(effect_size=-0.5, n1=30, n2=30)
-        # Power should be similar since magnitude is the same
-        # Note: Exact equality depends on implementation
+        # Assert
         assert abs(power_pos - power_neg) < 0.1 or power_neg > 0
 
 

@@ -23,34 +23,77 @@ from scitex_stats.effect_sizes import eta_squared, interpret_eta_squared
 class TestBasicComputation:
     """Tests for basic eta-squared computations."""
 
-    def test_two_groups_basic(self):
+    def test_two_groups_basic_eta2_float(self):
         """Test basic two-group comparison."""
+        # Arrange
         group1 = np.array([1, 2, 3, 4, 5])
         group2 = np.array([3, 4, 5, 6, 7])
+        # Act
         eta2 = eta_squared([group1, group2])
-
+        # Assert
         assert isinstance(eta2, float)
+
+    def test_two_groups_basic_eta2(self):
+        """Test basic two-group comparison."""
+        # Arrange
+        group1 = np.array([1, 2, 3, 4, 5])
+        group2 = np.array([3, 4, 5, 6, 7])
+        # Act
+        eta2 = eta_squared([group1, group2])
+        # Assert
         assert 0 <= eta2 <= 1
 
-    def test_three_groups_basic(self):
+    def test_three_groups_basic_eta2_float(self):
         """Test three-group ANOVA."""
+        # Arrange
         group1 = np.array([1, 2, 3, 4, 5])
         group2 = np.array([3, 4, 5, 6, 7])
         group3 = np.array([5, 6, 7, 8, 9])
+        # Act
         eta2 = eta_squared([group1, group2, group3])
-
+        # Assert
         assert isinstance(eta2, float)
+
+    def test_three_groups_basic_eta2(self):
+        """Test three-group ANOVA."""
+        # Arrange
+        group1 = np.array([1, 2, 3, 4, 5])
+        group2 = np.array([3, 4, 5, 6, 7])
+        group3 = np.array([5, 6, 7, 8, 9])
+        # Act
+        eta2 = eta_squared([group1, group2, group3])
+        # Assert
         assert 0 <= eta2 <= 1
-        # Should be high due to clear separation
+
+    def test_three_groups_basic_eta2_2(self):
+        """Test three-group ANOVA."""
+        # Arrange
+        group1 = np.array([1, 2, 3, 4, 5])
+        group2 = np.array([3, 4, 5, 6, 7])
+        group3 = np.array([5, 6, 7, 8, 9])
+        # Act
+        eta2 = eta_squared([group1, group2, group3])
+        # Assert
         assert eta2 > 0.5
 
-    def test_pandas_series_input(self):
+    def test_pandas_series_input_eta2_float(self):
         """Test that pandas Series work as input."""
+        # Arrange
         group1 = pd.Series([1, 2, 3, 4, 5])
         group2 = pd.Series([3, 4, 5, 6, 7])
+        # Act
         eta2 = eta_squared([group1, group2])
-
+        # Assert
         assert isinstance(eta2, float)
+
+    def test_pandas_series_input_isnan_eta2(self):
+        """Test that pandas Series work as input."""
+        # Arrange
+        group1 = pd.Series([1, 2, 3, 4, 5])
+        group2 = pd.Series([3, 4, 5, 6, 7])
+        # Act
+        eta2 = eta_squared([group1, group2])
+        # Assert
         assert not np.isnan(eta2)
 
 
@@ -59,46 +102,64 @@ class TestEdgeCases:
 
     def test_no_effect_identical_groups(self):
         """Test that identical groups give η² = 0."""
+        # Arrange
         group1 = np.array([1, 2, 3, 4, 5])
         group2 = np.array([1, 2, 3, 4, 5])
+        # Act
         eta2 = eta_squared([group1, group2])
-
+        # Assert
         assert abs(eta2) < 0.01  # Should be very close to 0
 
-    def test_perfect_separation(self):
+    def test_perfect_separation_eta2(self):
         """Test that perfect separation gives η² close to 1."""
+        # Arrange
         group1 = np.array([1, 1, 1, 1, 1])
         group2 = np.array([10, 10, 10, 10, 10])
+        # Act
         eta2 = eta_squared([group1, group2])
-
+        # Assert
         assert eta2 > 0.95  # Should be very close to 1
 
-    def test_nan_handling(self):
+    def test_nan_handling_eta2_float(self):
         """Test that NaN values are properly removed."""
+        # Arrange
         group1 = np.array([1, 2, np.nan, 4, 5])
         group2 = np.array([3, np.nan, 5, 6, 7])
+        # Act
         eta2 = eta_squared([group1, group2])
-
+        # Assert
         assert isinstance(eta2, float)
+
+    def test_nan_handling_isnan_eta2(self):
+        """Test that NaN values are properly removed."""
+        # Arrange
+        group1 = np.array([1, 2, np.nan, 4, 5])
+        group2 = np.array([3, np.nan, 5, 6, 7])
+        # Act
+        eta2 = eta_squared([group1, group2])
+        # Assert
         assert not np.isnan(eta2)
 
     def test_all_same_values(self):
         """Test when all values across groups are identical."""
+        # Arrange
         group1 = np.array([5, 5, 5])
         group2 = np.array([5, 5, 5])
         group3 = np.array([5, 5, 5])
+        # Act
         eta2 = eta_squared([group1, group2, group3])
-
-        # Total variance is 0, should return 0
+        # Assert
         assert eta2 == 0.0
 
     def test_single_observation_per_group(self):
         """Test with single observation per group."""
+        # Arrange
         group1 = np.array([1])
         group2 = np.array([5])
         group3 = np.array([10])
+        # Act
         eta2 = eta_squared([group1, group2, group3])
-
+        # Assert
         assert 0 <= eta2 <= 1
 
 
@@ -107,38 +168,37 @@ class TestKnownValues:
 
     def test_known_value_simple(self):
         """Test with simple manually calculated example."""
-        # Groups: [0, 0], [5, 5]
-        # Grand mean = 2.5
-        # SS_total = (0-2.5)² + (0-2.5)² + (5-2.5)² + (5-2.5)² = 25
-        # SS_between = 2*(0-2.5)² + 2*(5-2.5)² = 25
-        # η² = 25/25 = 1.0
+        # Arrange
         group1 = np.array([0, 0])
         group2 = np.array([5, 5])
+        # Act
         eta2 = eta_squared([group1, group2])
-
+        # Assert
         assert abs(eta2 - 1.0) < 0.01
 
     def test_known_value_medium_effect(self):
         """Test with known medium effect."""
-        # Create groups with controlled variance
+        # Arrange
         np.random.seed(42)
         n = 50
         group1 = np.random.normal(0, 1, n)
         group2 = np.random.normal(0.5, 1, n)
         group3 = np.random.normal(1.0, 1, n)
-
+        # Act
         eta2 = eta_squared([group1, group2, group3])
-
-        # Should show substantial effect
+        # Assert
         assert 0.1 < eta2 < 0.5
 
 
 class TestMathematicalProperties:
     """Tests for mathematical properties of eta-squared."""
 
-    def test_range_constraint(self):
+    def test_range_constraint_n_groups_groups_eta2_randint(self):
         """Test that η² is always between 0 and 1."""
+        # Arrange
+        # Act
         np.random.seed(42)
+        # Assert
         for _ in range(10):
             n_groups = np.random.randint(2, 6)
             groups = [np.random.normal(i, 1, 20) for i in range(n_groups)]
@@ -148,82 +208,126 @@ class TestMathematicalProperties:
 
     def test_increases_with_group_separation(self):
         """Test that η² increases as groups become more separated."""
+        # Arrange
         np.random.seed(42)
         base = np.random.normal(0, 1, 30)
-
-        # Increasing separation
         eta2_values = []
+        # Act
         for separation in [0.0, 0.5, 1.0, 2.0]:
             g1 = np.random.normal(0, 1, 30)
             g2 = np.random.normal(separation, 1, 30)
             eta2_values.append(eta_squared([g1, g2]))
-
-        # Should generally increase
-        # (with some tolerance for random variation)
+        # Assert
         assert eta2_values[-1] > eta2_values[0]
 
     def test_invariant_to_linear_transformation(self):
         """Test that η² is invariant to linear transformations."""
+        # Arrange
         group1 = np.array([1, 2, 3, 4, 5])
         group2 = np.array([3, 4, 5, 6, 7])
         group3 = np.array([5, 6, 7, 8, 9])
-
         eta2_original = eta_squared([group1, group2, group3])
-
-        # Scale and shift all groups equally
         scale = 10
         shift = 100
+        # Act
         eta2_transformed = eta_squared(
             [group1 * scale + shift, group2 * scale + shift, group3 * scale + shift]
         )
-
-        # Should be identical (relative variance is preserved)
+        # Assert
         assert abs(eta2_original - eta2_transformed) < 0.001
 
     def test_more_groups_can_increase_eta2(self):
         """Test that adding well-separated groups increases η²."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(0, 1, 30)
         group2 = np.random.normal(2, 1, 30)
-
         eta2_two = eta_squared([group1, group2])
-
-        # Add a third group well separated
         group3 = np.random.normal(4, 1, 30)
+        # Act
         eta2_three = eta_squared([group1, group2, group3])
-
-        # Usually increases with more separated groups
+        # Assert
         assert eta2_three > eta2_two * 0.8  # Allow some variation
 
 
 class TestInterpretation:
     """Tests for effect size interpretation."""
 
-    def test_interpret_negligible(self):
+    def test_interpret_negligible_interpret_eta_squared(self):
         """Test negligible effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_eta_squared(0.005) == "negligible"
+
+    def test_interpret_negligible_interpret_eta_squared_2(self):
+        """Test negligible effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_eta_squared(0.009) == "negligible"
 
-    def test_interpret_small(self):
+    def test_interpret_small_interpret_eta_squared(self):
         """Test small effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_eta_squared(0.03) == "small"
+
+    def test_interpret_small_interpret_eta_squared_2(self):
+        """Test small effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_eta_squared(0.05) == "small"
 
-    def test_interpret_medium(self):
+    def test_interpret_medium_interpret_eta_squared(self):
         """Test medium effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_eta_squared(0.10) == "medium"
+
+    def test_interpret_medium_interpret_eta_squared_2(self):
+        """Test medium effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_eta_squared(0.12) == "medium"
 
-    def test_interpret_large(self):
+    def test_interpret_large_interpret_eta_squared(self):
         """Test large effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_eta_squared(0.20) == "large"
+
+    def test_interpret_large_interpret_eta_squared_2(self):
+        """Test large effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_eta_squared(0.50) == "large"
 
-    def test_interpret_boundaries(self):
+    def test_interpret_boundaries_small_interpret_eta_squared(self):
         """Test interpretation at boundaries."""
-        # Boundaries: 0.01 (small), 0.06 (medium), 0.14 (large)
+        # Arrange
+        # Act
+        # Assert
         assert interpret_eta_squared(0.01) == "small"
+
+    def test_interpret_boundaries_medium_interpret_eta_squared(self):
+        """Test interpretation at boundaries."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_eta_squared(0.06) == "medium"
+
+    def test_interpret_boundaries_large_interpret_eta_squared(self):
+        """Test interpretation at boundaries."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_eta_squared(0.14) == "large"
 
 
@@ -232,29 +336,36 @@ class TestComparison:
 
     def test_within_vs_between_variance(self):
         """Test effect of within-group vs between-group variance."""
+        # Arrange
         np.random.seed(42)
-
-        # High within-group variance
         g1_high_var = np.random.normal(0, 2, 30)
         g2_high_var = np.random.normal(1, 2, 30)
         eta2_high_var = eta_squared([g1_high_var, g2_high_var])
-
-        # Low within-group variance
         g1_low_var = np.random.normal(0, 0.5, 30)
         g2_low_var = np.random.normal(1, 0.5, 30)
+        # Act
         eta2_low_var = eta_squared([g1_low_var, g2_low_var])
-
-        # Lower within-group variance should give higher η²
+        # Assert
         assert eta2_low_var > eta2_high_var
 
-    def test_balanced_vs_unbalanced_groups(self):
+    def test_balanced_vs_unbalanced_groups_eta2(self):
         """Test that η² works with unbalanced group sizes."""
+        # Arrange
         group1 = np.array([1, 2, 3, 4, 5])
         group2 = np.array([6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
-
+        # Act
         eta2 = eta_squared([group1, group2])
-
+        # Assert
         assert 0 <= eta2 <= 1
+
+    def test_balanced_vs_unbalanced_groups_eta2_2(self):
+        """Test that η² works with unbalanced group sizes."""
+        # Arrange
+        group1 = np.array([1, 2, 3, 4, 5])
+        group2 = np.array([6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
+        # Act
+        eta2 = eta_squared([group1, group2])
+        # Assert
         assert eta2 > 0.5  # Should show strong effect
 
 

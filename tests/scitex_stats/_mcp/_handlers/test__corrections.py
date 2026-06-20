@@ -18,9 +18,18 @@ def _run(**kwargs):
     return asyncio.run(correct_pvalues_handler(**kwargs))
 
 
-def test_returns_success_with_required_keys():
+def test_returns_success_with_required_keys_case_1():
+    # Arrange
+    # Act
     out = _run(pvalues=[0.01, 0.02, 0.03, 0.04])
+    # Assert
     assert out["success"] is True
+
+def test_returns_success_with_required_keys_original_pvalues_corrected_reject():
+    # Arrange
+    # Act
+    out = _run(pvalues=[0.01, 0.02, 0.03, 0.04])
+    # Assert
     for k in (
         "original_pvalues",
         "corrected_pvalues",
@@ -32,45 +41,74 @@ def test_returns_success_with_required_keys():
 
 
 def test_n_tests_matches_input():
+    # Arrange
     pv = [0.01, 0.05, 0.1, 0.5, 0.9]
+    # Act
     out = _run(pvalues=pv)
+    # Assert
     assert out["n_tests"] == 5
 
 
-def test_corrected_array_same_length_as_input():
+def test_corrected_array_same_length_as_input_pvalues():
+    # Arrange
     pv = [0.01, 0.02, 0.03]
+    # Act
     out = _run(pvalues=pv)
+    # Assert
     assert len(out["corrected_pvalues"]) == 3
+
+def test_corrected_array_same_length_as_input_reject_null():
+    # Arrange
+    pv = [0.01, 0.02, 0.03]
+    # Act
+    out = _run(pvalues=pv)
+    # Assert
     assert len(out["reject_null"]) == 3
 
 
 def test_bonferroni_multiplies_by_n():
     """Bonferroni correction: corrected = min(1, p × n)."""
+    # Arrange
     pv = [0.01, 0.02, 0.03]
+    # Act
     out = _run(pvalues=pv, method="bonferroni")
-    # 0.01 × 3 = 0.03
+    # Assert
     assert abs(out["corrected_pvalues"][0] - 0.03) < 1e-9
 
 
 def test_corrected_pvalues_at_least_originals():
     """Any correction must be ≥ the raw p-value (more conservative)."""
+    # Arrange
     pv = [0.001, 0.05, 0.5, 0.9]
+    # Act
     out = _run(pvalues=pv, method="bonferroni")
+    # Assert
     for raw, corr in zip(pv, out["corrected_pvalues"]):
         assert corr >= raw - 1e-12
 
 
-def test_n_significant_counts_rejections():
+def test_n_significant_counts_rejections_case_1():
+    # Arrange
     pv = [0.001, 0.001, 0.5, 0.9]
+    # Act
     out = _run(pvalues=pv, method="bonferroni", alpha=0.05)
-    # 0.001 × 4 = 0.004 < 0.05; 0.5 × 4 = 2.0 capped → not rejected.
+    # Assert
     assert out["n_significant"] == 2
+
+def test_n_significant_counts_rejections_reject_null():
+    # Arrange
+    pv = [0.001, 0.001, 0.5, 0.9]
+    # Act
+    out = _run(pvalues=pv, method="bonferroni", alpha=0.05)
+    # Assert
     assert out["reject_null"] == [True, True, False, False]
 
 
 def test_fdr_bh_default():
+    # Arrange
+    # Act
     out = _run(pvalues=[0.01, 0.02, 0.03])
-    # Default method should be FDR-BH; no exception, success path.
+    # Assert
     assert out["success"] is True
 
 
@@ -78,27 +116,39 @@ def test_fdr_bh_default():
     "method",
     ["bonferroni", "fdr_bh", "fdr_by", "holm", "sidak"],
 )
-def test_supported_methods(method):
+def test_supported_methods_success(method):
+    # Arrange
+    # Act
     out = _run(pvalues=[0.001, 0.01, 0.05, 0.5], method=method)
+    # Assert
     assert out["success"] is True
 
 
 def test_alpha_changes_n_significant():
+    # Arrange
     pv = [0.01, 0.02, 0.04, 0.08]
     out_loose = _run(pvalues=pv, alpha=0.10)
+    # Act
     out_strict = _run(pvalues=pv, alpha=0.001)
+    # Assert
     assert out_strict["n_significant"] <= out_loose["n_significant"]
 
 
 def test_unknown_method_falls_back_to_fdr_bh():
     """Method map default routes anything unknown to fdr_bh."""
+    # Arrange
     pv = [0.01, 0.02, 0.03]
     out_explicit = _run(pvalues=pv, method="fdr_bh")
+    # Act
     out_unknown = _run(pvalues=pv, method="not-a-method")
+    # Assert
     assert out_explicit["corrected_pvalues"] == out_unknown["corrected_pvalues"]
 
 
 def test_original_pvalues_echoed():
+    # Arrange
     pv = [0.012, 0.034]
+    # Act
     out = _run(pvalues=pv)
+    # Assert
     assert out["original_pvalues"] == pv

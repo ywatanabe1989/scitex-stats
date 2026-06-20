@@ -14,107 +14,280 @@ from scitex_stats._utils._formatters import _p2stars_scalar, p2stars
 class TestP2stars:
     """Test p2stars function."""
 
-    def test_highly_significant(self):
+    def test_highly_significant_p2stars(self):
         """Test p < 0.001."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.0001) == "***"
+
+    def test_highly_significant_p2stars_2(self):
+        """Test p < 0.001."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.0005) == "***"
 
-    def test_very_significant(self):
+    def test_very_significant_p2stars(self):
         """Test 0.001 <= p < 0.01."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.005) == "**"
+
+    def test_very_significant_p2stars_2(self):
+        """Test 0.001 <= p < 0.01."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.009) == "**"
 
-    def test_significant(self):
+    def test_significant_p2stars_1(self):
         """Test 0.01 <= p < 0.05."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.023) == "*"
+
+    def test_significant_p2stars_2(self):
+        """Test 0.01 <= p < 0.05."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.049) == "*"
 
-    def test_not_significant(self):
+    def test_not_significant_ns_p2stars(self):
         """Test p >= 0.05."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.051) == "ns"
+
+    def test_not_significant_ns_p2stars_2(self):
+        """Test p >= 0.05."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.15) == "ns"
+
+    def test_not_significant_ns_p2stars_3(self):
+        """Test p >= 0.05."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.999) == "ns"
 
-    def test_exact_thresholds(self):
+    def test_exact_thresholds_p2stars(self):
         """Test at exact threshold values."""
-        # Test boundary behavior: thresholds use <= comparison
-        # At exact threshold, we include it in the more significant category
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.05) == "*"  # p <= 0.05 → True, so *
+
+    def test_exact_thresholds_p2stars_2(self):
+        """Test at exact threshold values."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.01) == "**"  # p <= 0.01 → True, so **
+
+    def test_exact_thresholds_p2stars_3(self):
+        """Test at exact threshold values."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.001) == "***"  # p <= 0.001 → True, so ***
-        # Just inside the threshold gives the better significance
+
+    def test_exact_thresholds_p2stars_4(self):
+        """Test at exact threshold values."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.049) == "*"  # p <= 0.05 → True
+
+    def test_exact_thresholds_p2stars_5(self):
+        """Test at exact threshold values."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.0099) == "**"  # p <= 0.01 → True
+
+    def test_exact_thresholds_p2stars_6(self):
+        """Test at exact threshold values."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.0009) == "***"  # p <= 0.001 → True
 
-    def test_boundary_cases(self):
+    def test_boundary_cases_p2stars(self):
         """Test boundary p-values."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.0) == "***"
+
+    def test_boundary_cases_ns_p2stars(self):
+        """Test boundary p-values."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(1.0) == "ns"
 
-    def test_no_ns_symbol(self):
+    def test_no_ns_symbol_p2stars(self):
         """Test without ns symbol."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.15, ns_symbol=False) == ""
+
+    def test_no_ns_symbol_p2stars_2(self):
+        """Test without ns symbol."""
+        # Arrange
+        # Act
+        # Assert
         assert p2stars(0.001, ns_symbol=False) == "***"  # 0.001 <= 0.001 is True
 
-    def test_array_input(self):
+    def test_array_input_case_1(self):
         """Test with numpy array."""
+        # Arrange
         pvals = np.array([0.0001, 0.005, 0.045, 0.15])
+        # Act
         result = p2stars(pvals)
-
+        # Assert
         assert result[0] == "***"
+
+    def test_array_input_case_2(self):
+        """Test with numpy array."""
+        # Arrange
+        pvals = np.array([0.0001, 0.005, 0.045, 0.15])
+        # Act
+        result = p2stars(pvals)
+        # Assert
         assert result[1] == "**"
+
+    def test_array_input_case_3(self):
+        """Test with numpy array."""
+        # Arrange
+        pvals = np.array([0.0001, 0.005, 0.045, 0.15])
+        # Act
+        result = p2stars(pvals)
+        # Assert
         assert result[2] == "*"
+
+    def test_array_input_ns(self):
+        """Test with numpy array."""
+        # Arrange
+        pvals = np.array([0.0001, 0.005, 0.045, 0.15])
+        # Act
+        result = p2stars(pvals)
+        # Assert
         assert result[3] == "ns"
 
-    def test_series_input(self):
+    def test_series_input_case_1(self):
         """Test with pandas Series."""
+        # Arrange
         pvals = pd.Series([0.001, 0.02, 0.08])
+        # Act
         result = p2stars(pvals)
-
+        # Assert
         assert isinstance(result, pd.Series)
+
+    def test_series_input_iloc(self):
+        """Test with pandas Series."""
+        # Arrange
+        pvals = pd.Series([0.001, 0.02, 0.08])
+        # Act
+        result = p2stars(pvals)
+        # Assert
         assert result.iloc[0] == "***"  # 0.001 <= 0.001 is True
+
+    def test_series_input_iloc_2(self):
+        """Test with pandas Series."""
+        # Arrange
+        pvals = pd.Series([0.001, 0.02, 0.08])
+        # Act
+        result = p2stars(pvals)
+        # Assert
         assert result.iloc[1] == "*"
+
+    def test_series_input_ns_iloc(self):
+        """Test with pandas Series."""
+        # Arrange
+        pvals = pd.Series([0.001, 0.02, 0.08])
+        # Act
+        result = p2stars(pvals)
+        # Assert
         assert result.iloc[2] == "ns"
 
-    def test_dataframe_input(self):
+    def test_dataframe_input_series(self):
         """Test with pandas DataFrame."""
+        # Arrange
         df = pd.DataFrame({"pvalue": [0.001, 0.05, 0.15]})
+        # Act
         result = p2stars(df["pvalue"])
-
+        # Assert
         assert isinstance(result, pd.Series)
+
+    def test_dataframe_input_case_2(self):
+        """Test with pandas DataFrame."""
+        # Arrange
+        df = pd.DataFrame({"pvalue": [0.001, 0.05, 0.15]})
+        # Act
+        result = p2stars(df["pvalue"])
+        # Assert
         assert len(result) == 3
 
-    def test_custom_thresholds(self):
+    def test_custom_thresholds_stars(self):
         """Test with custom thresholds."""
-        # Test a value clearly within the middle range
+        # Arrange
+        # Act
         stars = p2stars(
             0.005,  # 0.005 < 0.001 is False, 0.005 < 0.01 is True → '**'
             thresholds=(0.0001, 0.001, 0.01),
             symbols=("****", "***", "**", "ns"),
         )
+        # Assert
         assert stars == "**"
 
-    def test_invalid_pvalue(self):
+    def test_invalid_pvalue_case_1(self):
         """Test with invalid p-value (should warn but not crash)."""
+        # Arrange
+        # Act
         result = p2stars(-0.1)
+        # Assert
         assert result == "invalid"
-
         result = p2stars(1.5)
+
+    def test_invalid_pvalue_case_2(self):
+        """Test with invalid p-value (should warn but not crash)."""
+        # Arrange
+        result = p2stars(-0.1)
+        # Act
+        result = p2stars(1.5)
+        # Assert
         assert result == "invalid"
 
-    def test_nan_pvalue(self):
+    def test_nan_pvalue_case(self):
         """Test with NaN p-value."""
+        # Arrange
+        # Act
         result = p2stars(np.nan)
+        # Assert
         assert result == "NaN"
 
     def test_invalid_threshold_order(self):
         """Test error with unordered thresholds."""
+        # Arrange
+        # Act
+        # Assert
         with pytest.raises(ValueError, match="ascending order"):
             p2stars(0.05, thresholds=(0.05, 0.01, 0.001))
 
     def test_invalid_symbols_length(self):
         """Test error with wrong number of symbols."""
+        # Arrange
+        # Act
+        # Assert
         with pytest.raises(ValueError, match="one more than thresholds"):
             p2stars(0.05, thresholds=(0.001, 0.01, 0.05), symbols=("***", "**"))
 
@@ -122,21 +295,49 @@ class TestP2stars:
 class TestP2starsScalar:
     """Test _p2stars_scalar helper function."""
 
-    def test_scalar_basic(self):
+    def test_scalar_basic_p2stars_scalar_thresholds_symbols(self):
         """Test basic scalar conversion."""
+        # Arrange
         thresholds = (0.001, 0.01, 0.05)
         symbols = ("***", "**", "*", "ns")
-
+        # Act
+        # Assert
         assert _p2stars_scalar(0.0001, thresholds, symbols, True) == "***"
+
+    def test_scalar_basic_p2stars_scalar_thresholds_symbols_2(self):
+        """Test basic scalar conversion."""
+        # Arrange
+        thresholds = (0.001, 0.01, 0.05)
+        symbols = ("***", "**", "*", "ns")
+        # Act
+        # Assert
         assert _p2stars_scalar(0.005, thresholds, symbols, True) == "**"
+
+    def test_scalar_basic_p2stars_scalar_thresholds_symbols_3(self):
+        """Test basic scalar conversion."""
+        # Arrange
+        thresholds = (0.001, 0.01, 0.05)
+        symbols = ("***", "**", "*", "ns")
+        # Act
+        # Assert
         assert _p2stars_scalar(0.02, thresholds, symbols, True) == "*"
+
+    def test_scalar_basic_ns_p2stars_scalar_thresholds_symbols(self):
+        """Test basic scalar conversion."""
+        # Arrange
+        thresholds = (0.001, 0.01, 0.05)
+        symbols = ("***", "**", "*", "ns")
+        # Act
+        # Assert
         assert _p2stars_scalar(0.1, thresholds, symbols, True) == "ns"
 
     def test_scalar_no_ns(self):
         """Test scalar without ns."""
+        # Arrange
         thresholds = (0.001, 0.01, 0.05)
         symbols = ("***", "**", "*", "")
-
+        # Act
+        # Assert
         assert _p2stars_scalar(0.1, thresholds, symbols, False) == ""
 
 

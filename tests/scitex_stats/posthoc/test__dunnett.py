@@ -12,22 +12,17 @@ from scitex_stats.posthoc import posthoc_dunnett, posthoc_tukey
 class TestBasicComputations:
     """Test basic Dunnett computations."""
 
-    def test_basic_control_vs_treatments(self):
+    def test_basic_control_vs_treatments_results_dataframe(self):
         """Test basic control vs treatments comparison."""
+        # Arrange
         np.random.seed(42)
         control = np.random.normal(10, 2, 20)
         treatment1 = np.random.normal(12, 2, 20)
         treatment2 = np.random.normal(14, 2, 20)
-
+        # Act
         results = posthoc_dunnett(control=control, treatments=[treatment1, treatment2])
-
-        # Should return DataFrame by default
+        # Assert
         assert isinstance(results, pd.DataFrame)
-
-        # Should have 2 comparisons (2 treatments vs 1 control)
-        assert len(results) == 2
-
-        # Check required columns
         required_cols = [
             "treatment",
             "control",
@@ -38,133 +33,317 @@ class TestBasicComputations:
             "ci_lower",
             "ci_upper",
         ]
+
+    def test_basic_control_vs_treatments_results(self):
+        """Test basic control vs treatments comparison."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 20)
+        treatment1 = np.random.normal(12, 2, 20)
+        treatment2 = np.random.normal(14, 2, 20)
+        # Act
+        results = posthoc_dunnett(control=control, treatments=[treatment1, treatment2])
+        # Assert
+        assert len(results) == 2
+        required_cols = [
+            "treatment",
+            "control",
+            "mean_diff",
+            "pvalue",
+            "significant",
+            "t_statistic",
+            "ci_lower",
+            "ci_upper",
+        ]
+
+    def test_basic_control_vs_treatments_col_required_cols_columns_results(self):
+        """Test basic control vs treatments comparison."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 20)
+        treatment1 = np.random.normal(12, 2, 20)
+        treatment2 = np.random.normal(14, 2, 20)
+        # Act
+        results = posthoc_dunnett(control=control, treatments=[treatment1, treatment2])
+        required_cols = [
+            "treatment",
+            "control",
+            "mean_diff",
+            "pvalue",
+            "significant",
+            "t_statistic",
+            "ci_lower",
+            "ci_upper",
+        ]
+        # Assert
         for col in required_cols:
             assert col in results.columns
 
-    def test_single_treatment(self):
+    def test_single_treatment_results(self):
         """Test with single treatment vs control."""
+        # Arrange
         np.random.seed(42)
         control = np.random.normal(10, 2, 20)
         treatment = np.random.normal(15, 2, 20)
-
+        # Act
         results = posthoc_dunnett(control=control, treatments=[treatment])
-
-        # Should have exactly 1 comparison
+        # Assert
         assert len(results) == 1
+
+    def test_single_treatment_control_iloc_results(self):
+        """Test with single treatment vs control."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 20)
+        treatment = np.random.normal(15, 2, 20)
+        # Act
+        results = posthoc_dunnett(control=control, treatments=[treatment])
+        # Assert
         assert results.iloc[0]["control"] == "Control"
+
+    def test_single_treatment_iloc_results(self):
+        """Test with single treatment vs control."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 20)
+        treatment = np.random.normal(15, 2, 20)
+        # Act
+        results = posthoc_dunnett(control=control, treatments=[treatment])
+        # Assert
         assert results.iloc[0]["treatment"] == "Treatment 1"
 
-    def test_multiple_treatments(self):
+    def test_multiple_treatments_results(self):
         """Test with multiple treatments."""
+        # Arrange
         np.random.seed(42)
         control = np.random.normal(10, 2, 30)
         treatments = [np.random.normal(10 + i, 2, 30) for i in range(5)]
-
+        # Act
         results = posthoc_dunnett(control=control, treatments=treatments)
-
-        # Should have 5 comparisons
+        # Assert
         assert len(results) == 5
 
-        # All should compare against same control
+    def test_multiple_treatments_all_control_results(self):
+        """Test with multiple treatments."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 30)
+        treatments = [np.random.normal(10 + i, 2, 30) for i in range(5)]
+        # Act
+        results = posthoc_dunnett(control=control, treatments=treatments)
+        # Assert
         assert all(results["control"] == "Control")
 
 
 class TestInputFormats:
     """Test different input formats."""
 
-    def test_numpy_arrays(self):
+    def test_numpy_arrays_results(self):
         """Test with numpy arrays."""
+        # Arrange
         control = np.array([1, 2, 3, 4, 5])
         treatment = np.array([6, 7, 8, 9, 10])
-
+        # Act
         results = posthoc_dunnett(control=control, treatments=[treatment])
-
+        # Assert
         assert len(results) == 1
 
-    def test_pandas_series(self):
+    def test_pandas_series_results(self):
         """Test with pandas Series."""
+        # Arrange
         control = pd.Series([1, 2, 3, 4, 5])
         treatment = pd.Series([6, 7, 8, 9, 10])
-
+        # Act
         results = posthoc_dunnett(control=control, treatments=[treatment])
-
+        # Assert
         assert len(results) == 1
 
-    def test_custom_names(self):
+    def test_custom_names_placebo_control_iloc_results(self):
         """Test with custom treatment and control names."""
+        # Arrange
         control = np.array([1, 2, 3])
         treatments = [np.array([4, 5, 6]), np.array([7, 8, 9])]
-
+        # Act
         results = posthoc_dunnett(
             control=control,
             treatments=treatments,
             treatment_names=["Low Dose", "High Dose"],
             control_name="Placebo",
         )
-
+        # Assert
         assert results.iloc[0]["control"] == "Placebo"
+
+    def test_custom_names_low_dose_treatment_iloc(self):
+        """Test with custom treatment and control names."""
+        # Arrange
+        control = np.array([1, 2, 3])
+        treatments = [np.array([4, 5, 6]), np.array([7, 8, 9])]
+        # Act
+        results = posthoc_dunnett(
+            control=control,
+            treatments=treatments,
+            treatment_names=["Low Dose", "High Dose"],
+            control_name="Placebo",
+        )
+        # Assert
         assert results.iloc[0]["treatment"] == "Low Dose"
+
+    def test_custom_names_high_dose_treatment_iloc(self):
+        """Test with custom treatment and control names."""
+        # Arrange
+        control = np.array([1, 2, 3])
+        treatments = [np.array([4, 5, 6]), np.array([7, 8, 9])]
+        # Act
+        results = posthoc_dunnett(
+            control=control,
+            treatments=treatments,
+            treatment_names=["Low Dose", "High Dose"],
+            control_name="Placebo",
+        )
+        # Assert
         assert results.iloc[1]["treatment"] == "High Dose"
 
-    def test_return_dict_format(self):
+    def test_return_dict_format_results_list(self):
         """Test return_as='dict' option."""
+        # Arrange
         control = np.array([1, 2, 3])
         treatment = np.array([4, 5, 6])
-
+        # Act
         results = posthoc_dunnett(
             control=control, treatments=[treatment], return_as="dict"
         )
-
+        # Assert
         assert isinstance(results, list)
+
+    def test_return_dict_format_results(self):
+        """Test return_as='dict' option."""
+        # Arrange
+        control = np.array([1, 2, 3])
+        treatment = np.array([4, 5, 6])
+        # Act
+        results = posthoc_dunnett(
+            control=control, treatments=[treatment], return_as="dict"
+        )
+        # Assert
         assert isinstance(results[0], dict)
+
+    def test_return_dict_format_mean_diff_results(self):
+        """Test return_as='dict' option."""
+        # Arrange
+        control = np.array([1, 2, 3])
+        treatment = np.array([4, 5, 6])
+        # Act
+        results = posthoc_dunnett(
+            control=control, treatments=[treatment], return_as="dict"
+        )
+        # Assert
         assert "mean_diff" in results[0]
+
+    def test_return_dict_format_treatment_results(self):
+        """Test return_as='dict' option."""
+        # Arrange
+        control = np.array([1, 2, 3])
+        treatment = np.array([4, 5, 6])
+        # Act
+        results = posthoc_dunnett(
+            control=control, treatments=[treatment], return_as="dict"
+        )
+        # Assert
         assert "treatment" in results[0]
 
 
 class TestAlternativeHypotheses:
     """Test different alternative hypotheses."""
 
-    def test_two_sided_default(self):
+    def test_two_sided_default_alternative_iloc_results(self):
         """Test two-sided test (default)."""
+        # Arrange
         np.random.seed(42)
         control = np.random.normal(10, 2, 20)
         treatment = np.random.normal(12, 2, 20)
-
+        # Act
         results = posthoc_dunnett(
             control=control, treatments=[treatment], alternative="two-sided"
         )
-
+        # Assert
         assert results.iloc[0]["alternative"] == "two-sided"
-        # CI should be two-sided
+
+    def test_two_sided_default_ci_lower_mean_diff(self):
+        """Test two-sided test (default)."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 20)
+        treatment = np.random.normal(12, 2, 20)
+        # Act
+        results = posthoc_dunnett(
+            control=control, treatments=[treatment], alternative="two-sided"
+        )
+        # Assert
         assert results.iloc[0]["ci_lower"] < results.iloc[0]["mean_diff"]
+
+    def test_two_sided_default_ci_upper_mean_diff(self):
+        """Test two-sided test (default)."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 20)
+        treatment = np.random.normal(12, 2, 20)
+        # Act
+        results = posthoc_dunnett(
+            control=control, treatments=[treatment], alternative="two-sided"
+        )
+        # Assert
         assert results.iloc[0]["ci_upper"] > results.iloc[0]["mean_diff"]
 
-    def test_greater_one_sided(self):
+    def test_greater_one_sided_alternative_iloc_results(self):
         """Test one-sided test (greater)."""
+        # Arrange
         np.random.seed(42)
         control = np.random.normal(10, 2, 20)
         treatment = np.random.normal(15, 2, 20)
-
+        # Act
         results = posthoc_dunnett(
             control=control, treatments=[treatment], alternative="greater"
         )
-
+        # Assert
         assert results.iloc[0]["alternative"] == "greater"
-        # Upper CI should be inf for one-sided test
+
+    def test_greater_one_sided_inf_ci_upper_iloc(self):
+        """Test one-sided test (greater)."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 20)
+        treatment = np.random.normal(15, 2, 20)
+        # Act
+        results = posthoc_dunnett(
+            control=control, treatments=[treatment], alternative="greater"
+        )
+        # Assert
         assert results.iloc[0]["ci_upper"] == "inf"
 
-    def test_less_one_sided(self):
+    def test_less_one_sided_alternative_iloc_results(self):
         """Test one-sided test (less)."""
+        # Arrange
         np.random.seed(42)
         control = np.random.normal(10, 2, 20)
         treatment = np.random.normal(5, 2, 20)
-
+        # Act
         results = posthoc_dunnett(
             control=control, treatments=[treatment], alternative="less"
         )
-
+        # Assert
         assert results.iloc[0]["alternative"] == "less"
-        # Lower CI should be -inf for one-sided test
+
+    def test_less_one_sided_inf_ci_lower_iloc(self):
+        """Test one-sided test (less)."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 20)
+        treatment = np.random.normal(5, 2, 20)
+        # Act
+        results = posthoc_dunnett(
+            control=control, treatments=[treatment], alternative="less"
+        )
+        # Assert
         assert results.iloc[0]["ci_lower"] == "-inf"
 
 
@@ -173,58 +352,113 @@ class TestEdgeCases:
 
     def test_no_treatment_raises_error(self):
         """Test that no treatment groups raises ValueError."""
+        # Arrange
+        # Act
         control = np.array([1, 2, 3, 4, 5])
-
+        # Assert
         with pytest.raises(ValueError, match="Need at least 1 treatment"):
             posthoc_dunnett(control=control, treatments=[])
 
-    def test_identical_control_and_treatment(self):
+    def test_identical_control_and_treatment_significant_iloc_results(self):
         """Test with identical control and treatment data."""
+        # Arrange
         identical_data = np.array([5, 5, 5, 5, 5])
         control = identical_data.copy()
         treatment = identical_data.copy()
-
+        # Act
         results = posthoc_dunnett(control=control, treatments=[treatment])
-
-        # Should not be significant
+        # Assert
         assert not results.iloc[0]["significant"]
-        # Mean difference should be 0
+
+    def test_identical_control_and_treatment_abs_mean_diff_iloc(self):
+        """Test with identical control and treatment data."""
+        # Arrange
+        identical_data = np.array([5, 5, 5, 5, 5])
+        control = identical_data.copy()
+        treatment = identical_data.copy()
+        # Act
+        results = posthoc_dunnett(control=control, treatments=[treatment])
+        # Assert
         assert abs(results.iloc[0]["mean_diff"]) < 1e-10
 
-    def test_unequal_sample_sizes(self):
+    def test_unequal_sample_sizes_results(self):
         """Test with unequal sample sizes."""
+        # Arrange
         np.random.seed(42)
         control = np.random.normal(10, 2, 50)  # Large control
         treatment1 = np.random.normal(12, 2, 10)  # Small treatment
         treatment2 = np.random.normal(14, 2, 30)  # Medium treatment
-
+        # Act
         results = posthoc_dunnett(control=control, treatments=[treatment1, treatment2])
-
-        # Should handle unequal sizes
+        # Assert
         assert len(results) == 2
+
+    def test_unequal_sample_sizes_control_iloc_results(self):
+        """Test with unequal sample sizes."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 50)  # Large control
+        treatment1 = np.random.normal(12, 2, 10)  # Small treatment
+        treatment2 = np.random.normal(14, 2, 30)  # Medium treatment
+        # Act
+        results = posthoc_dunnett(control=control, treatments=[treatment1, treatment2])
+        # Assert
         assert results.iloc[0]["n_control"] == 50
+
+    def test_unequal_sample_sizes_treatment_iloc_results(self):
+        """Test with unequal sample sizes."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 50)  # Large control
+        treatment1 = np.random.normal(12, 2, 10)  # Small treatment
+        treatment2 = np.random.normal(14, 2, 30)  # Medium treatment
+        # Act
+        results = posthoc_dunnett(control=control, treatments=[treatment1, treatment2])
+        # Assert
         assert results.iloc[0]["n_treatment"] == 10
+
+    def test_unequal_sample_sizes_treatment_iloc_results_2(self):
+        """Test with unequal sample sizes."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 50)  # Large control
+        treatment1 = np.random.normal(12, 2, 10)  # Small treatment
+        treatment2 = np.random.normal(14, 2, 30)  # Medium treatment
+        # Act
+        results = posthoc_dunnett(control=control, treatments=[treatment1, treatment2])
+        # Assert
         assert results.iloc[1]["n_treatment"] == 30
 
-    def test_very_large_differences(self):
+    def test_very_large_differences_significant_iloc_results(self):
         """Test with very large mean differences."""
+        # Arrange
         np.random.seed(42)
-        # Use groups with some variance to avoid division by zero
         control = np.random.normal(0, 0.1, 10)
         treatment = np.random.normal(100, 0.1, 10)
-
+        # Act
         results = posthoc_dunnett(control=control, treatments=[treatment])
-
-        # Should be highly significant
+        # Assert
         assert results.iloc[0]["significant"]
+
+    def test_very_large_differences_pvalue_iloc_results(self):
+        """Test with very large mean differences."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(0, 0.1, 10)
+        treatment = np.random.normal(100, 0.1, 10)
+        # Act
+        results = posthoc_dunnett(control=control, treatments=[treatment])
+        # Assert
         assert results.iloc[0]["pvalue"] < 0.001
 
     def test_mismatched_treatment_names_length(self):
         """Test error when treatment_names length doesn't match."""
+        # Arrange
         control = np.array([1, 2, 3])
+        # Act
         treatments = [np.array([4, 5, 6]), np.array([7, 8, 9])]
         treatment_names = ["Treatment1"]  # Only 1 name for 2 treatments
-
+        # Assert
         with pytest.raises(ValueError, match="Expected 2 treatment names"):
             posthoc_dunnett(
                 control=control, treatments=treatments, treatment_names=treatment_names
@@ -234,109 +468,183 @@ class TestEdgeCases:
 class TestComparisonWithTukey:
     """Compare Dunnett with Tukey HSD."""
 
-    def test_dunnett_only_control_comparisons(self):
+    def test_dunnett_only_control_comparisons_results_dunnett(self):
         """Test that Dunnett only compares vs control."""
+        # Arrange
         np.random.seed(42)
         control = np.random.normal(10, 2, 20)
         treatment1 = np.random.normal(12, 2, 20)
         treatment2 = np.random.normal(14, 2, 20)
-
-        # Dunnett: 2 comparisons (each treatment vs control)
         results_dunnett = posthoc_dunnett(
             control=control, treatments=[treatment1, treatment2]
         )
-
-        # Tukey: 3 comparisons (all pairwise)
+        # Act
         results_tukey = posthoc_tukey(
             [control, treatment1, treatment2],
             group_names=["Control", "Treatment 1", "Treatment 2"],
         )
-
+        # Assert
         assert len(results_dunnett) == 2
+
+    def test_dunnett_only_control_comparisons_results_tukey(self):
+        """Test that Dunnett only compares vs control."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 20)
+        treatment1 = np.random.normal(12, 2, 20)
+        treatment2 = np.random.normal(14, 2, 20)
+        results_dunnett = posthoc_dunnett(
+            control=control, treatments=[treatment1, treatment2]
+        )
+        # Act
+        results_tukey = posthoc_tukey(
+            [control, treatment1, treatment2],
+            group_names=["Control", "Treatment 1", "Treatment 2"],
+        )
+        # Assert
         assert len(results_tukey) == 3
 
-    def test_dunnett_more_powerful_for_control(self):
+    def test_dunnett_more_powerful_for_control_results_dunnett(self):
         """Dunnett should be more powerful than Tukey for control comparisons."""
+        # Arrange
         np.random.seed(42)
         control = np.random.normal(10, 2, 30)
         treatments = [np.random.normal(11, 2, 30) for _ in range(3)]
-
         results_dunnett = posthoc_dunnett(control=control, treatments=treatments)
-
+        # Act
         results_tukey = posthoc_tukey(
             [control] + treatments, group_names=["Control", "T1", "T2", "T3"]
         )
-
-        # Filter Tukey results for control comparisons
         tukey_control = results_tukey[
             (results_tukey["group_i"] == "Control")
             | (results_tukey["group_j"] == "Control")
         ]
-
-        # Both should run without error
+        # Assert
         assert len(results_dunnett) == 3
+
+    def test_dunnett_more_powerful_for_control_tukey_control(self):
+        """Dunnett should be more powerful than Tukey for control comparisons."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 30)
+        treatments = [np.random.normal(11, 2, 30) for _ in range(3)]
+        results_dunnett = posthoc_dunnett(control=control, treatments=treatments)
+        # Act
+        results_tukey = posthoc_tukey(
+            [control] + treatments, group_names=["Control", "T1", "T2", "T3"]
+        )
+        tukey_control = results_tukey[
+            (results_tukey["group_i"] == "Control")
+            | (results_tukey["group_j"] == "Control")
+        ]
+        # Assert
         assert len(tukey_control) == 3
 
 
 class TestStatisticalProperties:
     """Test statistical properties of results."""
 
-    def test_alpha_level_respected(self):
+    def test_alpha_level_respected_iloc_results_005(self):
         """Test that alpha level is recorded."""
+        # Arrange
         np.random.seed(42)
         control = np.random.normal(10, 2, 20)
         treatment = np.random.normal(11, 2, 20)
-
         results_005 = posthoc_dunnett(
             control=control, treatments=[treatment], alpha=0.05
         )
+        # Act
         results_001 = posthoc_dunnett(
             control=control, treatments=[treatment], alpha=0.01
         )
-
+        # Assert
         assert results_005.iloc[0]["alpha"] == 0.05
+
+    def test_alpha_level_respected_iloc_results_001(self):
+        """Test that alpha level is recorded."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 20)
+        treatment = np.random.normal(11, 2, 20)
+        results_005 = posthoc_dunnett(
+            control=control, treatments=[treatment], alpha=0.05
+        )
+        # Act
+        results_001 = posthoc_dunnett(
+            control=control, treatments=[treatment], alpha=0.01
+        )
+        # Assert
         assert results_001.iloc[0]["alpha"] == 0.01
 
     def test_confidence_intervals_two_sided(self):
         """Test confidence interval properties for two-sided test."""
+        # Arrange
         np.random.seed(42)
         control = np.random.normal(10, 2, 20)
         treatments = [np.random.normal(12 + i, 2, 20) for i in range(3)]
-
+        # Act
         results = posthoc_dunnett(
             control=control, treatments=treatments, alternative="two-sided"
         )
-
+        # Assert
         for _, row in results.iterrows():
-            # CI should contain the mean difference
-            assert row["ci_lower"] <= row["mean_diff"] <= row["ci_upper"]
-            # CI width should be positive
-            assert row["ci_upper"] > row["ci_lower"]
+            # CI must contain the mean difference AND have positive width
+            # (a strict lower < upper makes the containment non-degenerate).
+            assert (
+                row["ci_lower"] <= row["mean_diff"] <= row["ci_upper"]
+                and row["ci_upper"] > row["ci_lower"]
+            )
 
-    def test_t_statistic_calculation(self):
+    def test_t_statistic_calculation_abs_iloc_results(self):
         """Test t-statistic calculation."""
+        # Arrange
         np.random.seed(42)
         control = np.random.normal(10, 2, 20)
         treatment = np.random.normal(15, 2, 20)
-
+        # Act
         results = posthoc_dunnett(control=control, treatments=[treatment])
-
-        # t_statistic should be large for well-separated groups
+        # Assert
         assert abs(results.iloc[0]["t_statistic"]) > 2
 
-        # Standard error should be positive
+    def test_t_statistic_calculation_std_error_iloc_results(self):
+        """Test t-statistic calculation."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 20)
+        treatment = np.random.normal(15, 2, 20)
+        # Act
+        results = posthoc_dunnett(control=control, treatments=[treatment])
+        # Assert
         assert results.iloc[0]["std_error"] > 0
 
-    def test_mean_diff_calculation(self):
+    def test_mean_diff_calculation_iloc_results(self):
         """Test mean difference calculation."""
+        # Arrange
         control = np.array([5, 5, 5, 5, 5])
         treatment = np.array([10, 10, 10, 10, 10])
-
+        # Act
         results = posthoc_dunnett(control=control, treatments=[treatment])
-
-        # Mean diff should be treatment - control = 10 - 5 = 5
+        # Assert
         assert results.iloc[0]["mean_diff"] == 5.0
+
+    def test_mean_diff_calculation_control_iloc_results(self):
+        """Test mean difference calculation."""
+        # Arrange
+        control = np.array([5, 5, 5, 5, 5])
+        treatment = np.array([10, 10, 10, 10, 10])
+        # Act
+        results = posthoc_dunnett(control=control, treatments=[treatment])
+        # Assert
         assert results.iloc[0]["mean_control"] == 5.0
+
+    def test_mean_diff_calculation_treatment_iloc_results(self):
+        """Test mean difference calculation."""
+        # Arrange
+        control = np.array([5, 5, 5, 5, 5])
+        treatment = np.array([10, 10, 10, 10, 10])
+        # Act
+        results = posthoc_dunnett(control=control, treatments=[treatment])
+        # Assert
         assert results.iloc[0]["mean_treatment"] == 10.0
 
 
@@ -345,11 +653,11 @@ class TestOutputStructure:
 
     def test_dataframe_output_structure(self):
         """Test DataFrame output has all required fields."""
+        # Arrange
         control = np.random.normal(10, 2, 20)
         treatments = [np.random.normal(i, 2, 20) for i in range(3)]
-
+        # Act
         results = posthoc_dunnett(control=control, treatments=treatments)
-
         required_fields = [
             "treatment",
             "control",
@@ -369,19 +677,19 @@ class TestOutputStructure:
             "alpha",
             "alternative",
         ]
-
+        # Assert
         for field in required_fields:
             assert field in results.columns, f"Missing field: {field}"
 
     def test_dict_output_structure(self):
         """Test dict output has all required fields."""
+        # Arrange
         control = np.random.normal(10, 2, 20)
         treatments = [np.random.normal(i, 2, 20) for i in range(3)]
-
+        # Act
         results = posthoc_dunnett(
             control=control, treatments=treatments, return_as="dict"
         )
-
         required_fields = [
             "treatment",
             "control",
@@ -391,32 +699,32 @@ class TestOutputStructure:
             "t_statistic",
             "alternative",
         ]
-
+        # Assert
         for result in results:
             for field in required_fields:
                 assert field in result, f"Missing field: {field}"
 
     def test_control_name_consistency(self):
         """Test that control name is consistent across all comparisons."""
+        # Arrange
         control = np.random.normal(10, 2, 20)
         treatments = [np.random.normal(i, 2, 20) for i in range(4)]
-
+        # Act
         results = posthoc_dunnett(
             control=control, treatments=treatments, control_name="Baseline"
         )
-
-        # All rows should have same control name
+        # Assert
         assert all(results["control"] == "Baseline")
 
     def test_treatment_names_unique(self):
         """Test that treatment names are unique."""
+        # Arrange
         control = np.random.normal(10, 2, 20)
         treatments = [np.random.normal(i, 2, 20) for i in range(4)]
-
         results = posthoc_dunnett(control=control, treatments=treatments)
-
-        # All treatment names should be unique
+        # Act
         treatment_names = results["treatment"].tolist()
+        # Assert
         assert len(treatment_names) == len(set(treatment_names))
 
 
@@ -425,126 +733,240 @@ class TestRobustness:
 
     def test_small_sample_sizes(self):
         """Test with very small sample sizes."""
+        # Arrange
         control = np.array([1, 2])
         treatment1 = np.array([3, 4])
         treatment2 = np.array([5, 6])
-
+        # Act
         results = posthoc_dunnett(control=control, treatments=[treatment1, treatment2])
-
-        # Should run without error
+        # Assert
         assert len(results) == 2
 
-    def test_many_treatments(self):
+    def test_many_treatments_results(self):
         """Test with many treatment groups."""
+        # Arrange
         np.random.seed(42)
         control = np.random.normal(10, 2, 30)
         treatments = [np.random.normal(10 + i * 0.5, 2, 30) for i in range(10)]
-
+        # Act
         results = posthoc_dunnett(control=control, treatments=treatments)
-
-        # Should have 10 comparisons
+        # Assert
         assert len(results) == 10
 
-    def test_high_variance_data(self):
+    def test_high_variance_data_results(self):
         """Test with high variance data."""
+        # Arrange
         np.random.seed(42)
         control = np.random.normal(10, 100, 30)
         treatment = np.random.normal(12, 100, 30)
-
+        # Act
         results = posthoc_dunnett(control=control, treatments=[treatment])
-
-        # Should handle without error
+        # Assert
         assert len(results) == 1
-        # High variance should lead to large standard error
+
+    def test_high_variance_data_std_error_iloc_results(self):
+        """Test with high variance data."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 100, 30)
+        treatment = np.random.normal(12, 100, 30)
+        # Act
+        results = posthoc_dunnett(control=control, treatments=[treatment])
+        # Assert
         assert results.iloc[0]["std_error"] > 10
 
 
 class TestSpecialCases:
     """Test special cases specific to Dunnett."""
 
-    def test_drug_trial_scenario(self):
+    def test_drug_trial_scenario_all_placebo_results_control(self):
         """Test typical drug trial scenario: placebo vs doses."""
+        # Arrange
         np.random.seed(42)
         placebo = np.random.normal(100, 15, 30)
         low_dose = np.random.normal(105, 15, 30)
         med_dose = np.random.normal(110, 15, 30)
         high_dose = np.random.normal(115, 15, 30)
-
+        # Act
         results = posthoc_dunnett(
             control=placebo,
             treatments=[low_dose, med_dose, high_dose],
             treatment_names=["Low Dose", "Med Dose", "High Dose"],
             control_name="Placebo",
         )
-
-        # All doses should compare to placebo
+        # Assert
         assert all(results["control"] == "Placebo")
+
+    def test_drug_trial_scenario_results(self):
+        """Test typical drug trial scenario: placebo vs doses."""
+        # Arrange
+        np.random.seed(42)
+        placebo = np.random.normal(100, 15, 30)
+        low_dose = np.random.normal(105, 15, 30)
+        med_dose = np.random.normal(110, 15, 30)
+        high_dose = np.random.normal(115, 15, 30)
+        # Act
+        results = posthoc_dunnett(
+            control=placebo,
+            treatments=[low_dose, med_dose, high_dose],
+            treatment_names=["Low Dose", "Med Dose", "High Dose"],
+            control_name="Placebo",
+        )
+        # Assert
         assert len(results) == 3
 
-        # Mean differences should increase with dose
+    def test_drug_trial_scenario_low_dose_treatment_iloc(self):
+        """Test typical drug trial scenario: placebo vs doses."""
+        # Arrange
+        np.random.seed(42)
+        placebo = np.random.normal(100, 15, 30)
+        low_dose = np.random.normal(105, 15, 30)
+        med_dose = np.random.normal(110, 15, 30)
+        high_dose = np.random.normal(115, 15, 30)
+        # Act
+        results = posthoc_dunnett(
+            control=placebo,
+            treatments=[low_dose, med_dose, high_dose],
+            treatment_names=["Low Dose", "Med Dose", "High Dose"],
+            control_name="Placebo",
+        )
+        # Assert
         assert results.iloc[0]["treatment"] == "Low Dose"
+
+    def test_drug_trial_scenario_med_dose_treatment_iloc(self):
+        """Test typical drug trial scenario: placebo vs doses."""
+        # Arrange
+        np.random.seed(42)
+        placebo = np.random.normal(100, 15, 30)
+        low_dose = np.random.normal(105, 15, 30)
+        med_dose = np.random.normal(110, 15, 30)
+        high_dose = np.random.normal(115, 15, 30)
+        # Act
+        results = posthoc_dunnett(
+            control=placebo,
+            treatments=[low_dose, med_dose, high_dose],
+            treatment_names=["Low Dose", "Med Dose", "High Dose"],
+            control_name="Placebo",
+        )
+        # Assert
         assert results.iloc[1]["treatment"] == "Med Dose"
+
+    def test_drug_trial_scenario_high_dose_treatment_iloc(self):
+        """Test typical drug trial scenario: placebo vs doses."""
+        # Arrange
+        np.random.seed(42)
+        placebo = np.random.normal(100, 15, 30)
+        low_dose = np.random.normal(105, 15, 30)
+        med_dose = np.random.normal(110, 15, 30)
+        high_dose = np.random.normal(115, 15, 30)
+        # Act
+        results = posthoc_dunnett(
+            control=placebo,
+            treatments=[low_dose, med_dose, high_dose],
+            treatment_names=["Low Dose", "Med Dose", "High Dose"],
+            control_name="Placebo",
+        )
+        # Assert
         assert results.iloc[2]["treatment"] == "High Dose"
 
-    def test_baseline_intervention_scenario(self):
+    def test_baseline_intervention_scenario_all_results_control(self):
         """Test baseline vs multiple interventions."""
+        # Arrange
         np.random.seed(42)
         baseline = np.random.normal(50, 10, 25)
         intervention_a = np.random.normal(55, 10, 25)
         intervention_b = np.random.normal(58, 10, 25)
-
+        # Act
         results = posthoc_dunnett(
             control=baseline,
             treatments=[intervention_a, intervention_b],
             treatment_names=["Intervention A", "Intervention B"],
             control_name="Baseline",
         )
-
-        # Both interventions should compare to baseline
+        # Assert
         assert all(results["control"] == "Baseline")
+
+    def test_baseline_intervention_scenario_results(self):
+        """Test baseline vs multiple interventions."""
+        # Arrange
+        np.random.seed(42)
+        baseline = np.random.normal(50, 10, 25)
+        intervention_a = np.random.normal(55, 10, 25)
+        intervention_b = np.random.normal(58, 10, 25)
+        # Act
+        results = posthoc_dunnett(
+            control=baseline,
+            treatments=[intervention_a, intervention_b],
+            treatment_names=["Intervention A", "Intervention B"],
+            control_name="Baseline",
+        )
+        # Assert
         assert len(results) == 2
 
-    def test_one_sided_greater_detecting_improvement(self):
+    def test_one_sided_greater_detecting_improvement_significant_iloc_results(self):
         """Test one-sided test for detecting improvements."""
+        # Arrange
         np.random.seed(42)
         control = np.random.normal(10, 2, 30)
         improved_treatment = np.random.normal(15, 2, 30)
         similar_treatment = np.random.normal(10.5, 2, 30)
-
+        # Act
         results = posthoc_dunnett(
             control=control,
             treatments=[improved_treatment, similar_treatment],
             alternative="greater",
         )
-
-        # Improved treatment should be significant
+        # Assert
         assert results.iloc[0]["significant"]
-        # Similar treatment may not be
-        # (depends on random data, just check it runs)
-        assert len(results) == 2
 
-    def test_critical_value_increases_with_treatments(self):
-        """Test that critical value accounts for number of comparisons."""
+    def test_one_sided_greater_detecting_improvement_results(self):
+        """Test one-sided test for detecting improvements."""
+        # Arrange
         np.random.seed(42)
         control = np.random.normal(10, 2, 30)
+        improved_treatment = np.random.normal(15, 2, 30)
+        similar_treatment = np.random.normal(10.5, 2, 30)
+        # Act
+        results = posthoc_dunnett(
+            control=control,
+            treatments=[improved_treatment, similar_treatment],
+            alternative="greater",
+        )
+        # Assert
+        assert len(results) == 2
 
-        # Few treatments
+    def test_critical_value_increases_with_treatments_crit_2(self):
+        """Test that critical value accounts for number of comparisons."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 30)
         results_2 = posthoc_dunnett(
             control=control, treatments=[np.random.normal(12, 2, 30) for _ in range(2)]
         )
-
-        # Many treatments
+        # Act
         results_5 = posthoc_dunnett(
             control=control, treatments=[np.random.normal(12, 2, 30) for _ in range(5)]
         )
-
-        # Critical value should increase with more treatments (more conservative)
-        # This is due to family-wise error rate control
         crit_2 = results_2.iloc[0]["d_critical"]
         crit_5 = results_5.iloc[0]["d_critical"]
-
-        # Both should be positive
+        # Assert
         assert crit_2 > 0
+
+    def test_critical_value_increases_with_treatments_crit_5(self):
+        """Test that critical value accounts for number of comparisons."""
+        # Arrange
+        np.random.seed(42)
+        control = np.random.normal(10, 2, 30)
+        results_2 = posthoc_dunnett(
+            control=control, treatments=[np.random.normal(12, 2, 30) for _ in range(2)]
+        )
+        # Act
+        results_5 = posthoc_dunnett(
+            control=control, treatments=[np.random.normal(12, 2, 30) for _ in range(5)]
+        )
+        crit_2 = results_2.iloc[0]["d_critical"]
+        crit_5 = results_5.iloc[0]["d_critical"]
+        # Assert
         assert crit_5 > 0
 
 
