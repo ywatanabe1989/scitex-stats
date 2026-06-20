@@ -13,24 +13,28 @@ NOTEBOOK = (
 )
 
 
-def test_notebook_exists():
+def test_notebook_exists_case():
+    # Arrange
+    # Act
+    # Assert
     assert NOTEBOOK.exists(), f"missing notebook: {NOTEBOOK}"
 
 
-def test_notebook_executes(tmp_path):
-    subprocess.run(
-        [
-            sys.executable,
-            "-m",
-            "jupyter",
-            "nbconvert",
-            "--to",
-            "notebook",
-            "--execute",
-            "--output",
-            str(tmp_path / "out.ipynb"),
-            str(NOTEBOOK),
-        ],
-        check=True,
-        timeout=180,
-    )
+def test_notebook_executes_without_error(tmp_path):
+    # Arrange
+    cmd = [
+        sys.executable,
+        "-m",
+        "jupyter",
+        "nbconvert",
+        "--to",
+        "notebook",
+        "--execute",
+        "--output",
+        str(tmp_path / "out.ipynb"),
+        str(NOTEBOOK),
+    ]
+    # Act
+    result = subprocess.run(cmd, check=True, timeout=180)
+    # Assert
+    assert result.returncode == 0

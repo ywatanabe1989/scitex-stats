@@ -44,15 +44,27 @@ cli_mcp = importlib.import_module("scitex_stats._cli.mcp")
     ],
 )
 def test_get_tool_module_dispatch(tool_name, expected_module):
+    # Arrange
+    # Act
+    # Assert
     assert cli_mcp._get_tool_module(tool_name) == expected_module
 
 
 # ----- _style ----------------------------------------------------------- #
 
 
-def test_style_passthrough_when_not_tty(capsys):
+def test_style_passthrough_when_not_tty_hello_cli_mcp(capsys):
     # Running under pytest, sys.stdout isn't a tty → _style returns text as-is
+    # Arrange
+    # Act
+    # Assert
     assert cli_mcp._style("hello") == "hello"
+
+def test_style_passthrough_when_not_tty_hello_cli_mcp_green(capsys):
+    # Running under pytest, sys.stdout isn't a tty → _style returns text as-is
+    # Arrange
+    # Act
+    # Assert
     assert cli_mcp._style("hello", fg="green", bold=True) == "hello"
 
 
@@ -69,7 +81,8 @@ class _FakeTool:
         self.description = description
 
 
-def test_format_tool_signature_compact_form():
+def test_format_tool_signature_compact_form_my():
+    # Arrange
     tool = _FakeTool(
         name="my_tool",
         parameters={
@@ -78,12 +91,29 @@ def test_format_tool_signature_compact_form():
             "required": ["x"],
         },
     )
+    # Act
     out = cli_mcp._format_tool_signature(tool, compact=True)
+    # Assert
     assert "my_tool" in out
+
+def test_format_tool_signature_compact_form_case_2():
+    # Arrange
+    tool = _FakeTool(
+        name="my_tool",
+        parameters={
+            "type": "object",
+            "properties": {"x": {"type": "number"}},
+            "required": ["x"],
+        },
+    )
+    # Act
+    out = cli_mcp._format_tool_signature(tool, compact=True)
+    # Assert
     assert "x" in out
 
 
-def test_format_tool_signature_multiline_for_many_params():
+def test_format_tool_signature_multiline_for_many_params_big():
+    # Arrange
     tool = _FakeTool(
         name="big_tool",
         parameters={
@@ -97,125 +127,359 @@ def test_format_tool_signature_multiline_for_many_params():
             "required": ["a"],
         },
     )
+    # Act
     out = cli_mcp._format_tool_signature(tool, compact=False)
+    # Assert
     assert "big_tool" in out
-    # Multiline mode introduces newlines between params
+
+def test_format_tool_signature_multiline_for_many_params_case_2():
+    # Arrange
+    tool = _FakeTool(
+        name="big_tool",
+        parameters={
+            "type": "object",
+            "properties": {
+                "a": {"type": "number"},
+                "b": {"type": "string", "default": "hi"},
+                "c": {"type": "integer"},
+                "d": {"type": "boolean"},
+            },
+            "required": ["a"],
+        },
+    )
+    # Act
+    out = cli_mcp._format_tool_signature(tool, compact=False)
+    # Assert
     assert "\n" in out
 
 
 # ----- cmd_start (dry-run) --------------------------------------------- #
 
 
-def test_cmd_start_dry_run_does_not_run_server(capsys):
+def test_cmd_start_dry_run_does_not_run_server_rc(capsys):
+    # Arrange
     rc = cli_mcp.cmd_start(dry_run=True)
+    # Act
     captured = capsys.readouterr()
+    # Assert
     assert rc == 0
+
+def test_cmd_start_dry_run_does_not_run_server_out_captured(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_start(dry_run=True)
+    # Act
+    captured = capsys.readouterr()
+    # Assert
     assert "DRY RUN" in captured.out
+
+def test_cmd_start_dry_run_does_not_run_server_stdio_out_captured(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_start(dry_run=True)
+    # Act
+    captured = capsys.readouterr()
+    # Assert
     assert "stdio" in captured.out
 
 
-def test_cmd_start_dry_run_honours_transport(capsys):
+def test_cmd_start_dry_run_honours_transport_rc(capsys):
+    # Arrange
+    # Act
     rc = cli_mcp.cmd_start(dry_run=True, transport="sse")
+    # Assert
     assert rc == 0
+
+def test_cmd_start_dry_run_honours_transport_sse_out_readouterr_capsys(capsys):
+    # Arrange
+    # Act
+    rc = cli_mcp.cmd_start(dry_run=True, transport="sse")
+    # Assert
     assert "sse" in capsys.readouterr().out
 
 
 # ----- cmd_config ------------------------------------------------------- #
 
 
-def test_cmd_config_text_form_prints_snippets(capsys):
+def test_cmd_config_text_form_prints_snippets_rc(capsys):
+    # Arrange
     rc = cli_mcp.cmd_config(as_json=False)
+    # Act
     out = capsys.readouterr().out
+    # Assert
     assert rc == 0
+
+def test_cmd_config_text_form_prints_snippets_scitex_stats(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_config(as_json=False)
+    # Act
+    out = capsys.readouterr().out
+    # Assert
     assert "scitex-stats" in out
-    # Either or both config snippets should be referenced
+
+def test_cmd_config_text_form_prints_snippets_option_claude_desktop(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_config(as_json=False)
+    # Act
+    out = capsys.readouterr().out
+    # Assert
     assert "Option 1" in out or "claude_desktop_config" in out
 
 
-def test_cmd_config_json_form_is_parseable(capsys):
+def test_cmd_config_json_form_is_parseable_rc(capsys):
+    # Arrange
     rc = cli_mcp.cmd_config(as_json=True)
+    # Act
     out = capsys.readouterr().out
+    # Assert
     assert rc == 0
     payload = json.loads(out)
+
+def test_cmd_config_json_form_is_parseable_scitex_stats_payload_package(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_config(as_json=True)
+    out = capsys.readouterr().out
+    # Act
+    payload = json.loads(out)
+    # Assert
     assert payload["package"] == "scitex-stats"
+
+def test_cmd_config_json_form_is_parseable_snippets_payload(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_config(as_json=True)
+    out = capsys.readouterr().out
+    # Act
+    payload = json.loads(out)
+    # Assert
     assert "snippets" in payload
+
+def test_cmd_config_json_form_is_parseable_cli_payload_snippets(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_config(as_json=True)
+    out = capsys.readouterr().out
+    # Act
+    payload = json.loads(out)
+    # Assert
     assert "cli" in payload["snippets"]
+
+def test_cmd_config_json_form_is_parseable_python_module_payload_snippets(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_config(as_json=True)
+    out = capsys.readouterr().out
+    # Act
+    payload = json.loads(out)
+    # Assert
     assert "python_module" in payload["snippets"]
+
+def test_cmd_config_json_form_is_parseable_paths_payload(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_config(as_json=True)
+    out = capsys.readouterr().out
+    # Act
+    payload = json.loads(out)
+    # Assert
     assert "config_paths" in payload
 
 
 # ----- cmd_doctor ------------------------------------------------------- #
 
 
-def test_cmd_doctor_returns_zero_or_one(capsys):
+def test_cmd_doctor_returns_zero_or_one_rc(capsys):
+    # Arrange
     rc = cli_mcp.cmd_doctor()
+    # Act
     out = capsys.readouterr().out
+    # Assert
     assert rc in (0, 1)
+
+def test_cmd_doctor_returns_zero_or_one_health_check(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_doctor()
+    # Act
+    out = capsys.readouterr().out
+    # Assert
     assert "Health Check" in out
-    # Always reports on fastmcp + MCP server + CLI
+
+def test_cmd_doctor_returns_zero_or_one_fastmcp(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_doctor()
+    # Act
+    out = capsys.readouterr().out
+    # Assert
     assert "fastmcp" in out
+
+def test_cmd_doctor_returns_zero_or_one_cli(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_doctor()
+    # Act
+    out = capsys.readouterr().out
+    # Assert
     assert "CLI" in out
 
 
 # ----- cmd_list_tools (in-process, FastMCP 3.x compatible) ----------- #
 
 
-def test_cmd_list_tools_text_output(capsys):
+def test_cmd_list_tools_text_output_rc(capsys):
+    # Arrange
     rc = cli_mcp.cmd_list_tools(verbose=0)
+    # Act
     out = capsys.readouterr().out
+    # Assert
     assert rc == 0
+
+def test_cmd_list_tools_text_output_scitex_stats_mcp(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_list_tools(verbose=0)
+    # Act
+    out = capsys.readouterr().out
+    # Assert
     assert "SciTeX Stats MCP" in out
-    # verbose=0 emits one tool per line
+
+def test_cmd_list_tools_text_output_recommend_tests(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_list_tools(verbose=0)
+    # Act
+    out = capsys.readouterr().out
+    # Assert
     assert "recommend_tests" in out
+
+def test_cmd_list_tools_text_output_run_test(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_list_tools(verbose=0)
+    # Act
+    out = capsys.readouterr().out
+    # Assert
     assert "run_test" in out
 
 
-def test_cmd_list_tools_json_output(capsys):
+def test_cmd_list_tools_json_output_rc(capsys):
+    # Arrange
     import json as _json
-
     rc = cli_mcp.cmd_list_tools(verbose=0, as_json=True)
+    # Act
     out = capsys.readouterr().out
+    # Assert
     assert rc == 0
     payload = _json.loads(out)
+
+def test_cmd_list_tools_json_output_scitex_stats_payload_name(capsys):
+    # Arrange
+    import json as _json
+    rc = cli_mcp.cmd_list_tools(verbose=0, as_json=True)
+    out = capsys.readouterr().out
+    # Act
+    payload = _json.loads(out)
+    # Assert
     assert payload["name"] == "scitex-stats"
+
+def test_cmd_list_tools_json_output_payload_total(capsys):
+    # Arrange
+    import json as _json
+    rc = cli_mcp.cmd_list_tools(verbose=0, as_json=True)
+    out = capsys.readouterr().out
+    # Act
+    payload = _json.loads(out)
+    # Assert
     assert payload["total"] >= 10
+
+def test_cmd_list_tools_json_output_modules_payload(capsys):
+    # Arrange
+    import json as _json
+    rc = cli_mcp.cmd_list_tools(verbose=0, as_json=True)
+    out = capsys.readouterr().out
+    # Act
+    payload = _json.loads(out)
+    # Assert
     assert "modules" in payload
 
 
-def test_cmd_list_tools_verbose_1_emits_signatures(capsys):
+def test_cmd_list_tools_verbose_1_emits_signatures_rc(capsys):
+    # Arrange
     rc = cli_mcp.cmd_list_tools(verbose=1)
+    # Act
     out = capsys.readouterr().out
+    # Assert
     assert rc == 0
-    # verbose=1 prints function-like signatures; expect param names
+
+def test_cmd_list_tools_verbose_1_emits_signatures_test_name_data(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_list_tools(verbose=1)
+    # Act
+    out = capsys.readouterr().out
+    # Assert
     assert "test_name" in out or "data" in out
 
 
-def test_cmd_list_tools_verbose_2_emits_descriptions(capsys):
+def test_cmd_list_tools_verbose_2_emits_descriptions_rc(capsys):
+    # Arrange
     rc = cli_mcp.cmd_list_tools(verbose=2, compact=True)
+    # Act
     out = capsys.readouterr().out
+    # Assert
     assert rc == 0
-    # verbose=2 also prints the first description line per tool
+
+def test_cmd_list_tools_verbose_2_emits_descriptions_value_statistical_test(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_list_tools(verbose=2, compact=True)
+    # Act
+    out = capsys.readouterr().out
+    # Assert
     assert "p_value" in out or "Statistical" in out or "test" in out
 
 
-def test_cmd_list_tools_verbose_3_emits_full_descriptions(capsys):
+def test_cmd_list_tools_verbose_3_emits_full_descriptions_rc(capsys):
+    # Arrange
     rc = cli_mcp.cmd_list_tools(verbose=3, compact=True)
+    # Act
     out = capsys.readouterr().out
+    # Assert
     assert rc == 0
-    # verbose=3 prints multi-line descriptions
+
+def test_cmd_list_tools_verbose_3_emits_full_descriptions_case_2(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_list_tools(verbose=3, compact=True)
+    # Act
+    out = capsys.readouterr().out
+    # Assert
     assert out
 
 
-def test_cmd_list_tools_module_filter_accepts_known_module(capsys):
+def test_cmd_list_tools_module_filter_accepts_known_module_rc(capsys):
+    # Arrange
     rc = cli_mcp.cmd_list_tools(verbose=0, module_filter="auto")
+    # Act
     out = capsys.readouterr().out
+    # Assert
     assert rc == 0
+
+def test_cmd_list_tools_module_filter_accepts_known_module_recommend_tests(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_list_tools(verbose=0, module_filter="auto")
+    # Act
+    out = capsys.readouterr().out
+    # Assert
     assert "recommend_tests" in out
 
 
-def test_cmd_list_tools_module_filter_rejects_unknown(capsys):
+def test_cmd_list_tools_module_filter_rejects_unknown_rc(capsys):
+    # Arrange
     rc = cli_mcp.cmd_list_tools(verbose=0, module_filter="not_a_module")
+    # Act
     out = capsys.readouterr().out
+    # Assert
     assert rc == 1
+
+def test_cmd_list_tools_module_filter_rejects_unknown_case_2(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_list_tools(verbose=0, module_filter="not_a_module")
+    # Act
+    out = capsys.readouterr().out
+    # Assert
     assert "Unknown module" in out
+
+def test_cmd_list_tools_module_filter_rejects_unknown_available_modules(capsys):
+    # Arrange
+    rc = cli_mcp.cmd_list_tools(verbose=0, module_filter="not_a_module")
+    # Act
+    out = capsys.readouterr().out
+    # Assert
     assert "Available modules" in out

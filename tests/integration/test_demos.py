@@ -86,12 +86,13 @@ MODULE_DEMOS = [
 ]
 
 
-@pytest.mark.parametrize(
-    "rel_path", EXAMPLE_DEMOS, ids=lambda p: Path(p).stem
-)
+@pytest.mark.parametrize("rel_path", EXAMPLE_DEMOS, ids=lambda p: Path(p).stem)
 def test_example_demo_runs(rel_path, tmp_path):
     """Each ``examples/**/demo_*.py`` script must run to exit 0."""
+    # Arrange
     script = REPO_ROOT / rel_path
+    # Act
+    # Assert
     assert script.is_file(), f"missing demo script: {script}"
     subprocess.run(
         [sys.executable, str(script)],
@@ -102,16 +103,19 @@ def test_example_demo_runs(rel_path, tmp_path):
     )
 
 
-@pytest.mark.parametrize(
-    "module", MODULE_DEMOS, ids=lambda m: m.rsplit(".", 1)[-1]
-)
-def test_module_demo_runs(module, tmp_path):
+@pytest.mark.parametrize("module", MODULE_DEMOS, ids=lambda m: m.rsplit(".", 1)[-1])
+def test_module_demo_runs_to_exit_zero(module, tmp_path):
     """Each ``src/scitex_stats/.../_test_*.py`` or standalone module with
     an embedded ``__main__`` demo must run to exit 0."""
-    subprocess.run(
-        [sys.executable, "-m", module],
+    # Arrange
+    cmd = [sys.executable, "-m", module]
+    # Act
+    result = subprocess.run(
+        cmd,
         cwd=tmp_path,
         check=True,
         timeout=180,
         capture_output=True,
     )
+    # Assert
+    assert result.returncode == 0

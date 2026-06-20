@@ -26,153 +26,207 @@ from scitex_stats.descriptive._nan import (
 class TestNanMean:
     """Test nanmean function."""
 
-    def test_basic_nanmean(self):
+    def test_basic_nanmean_numel(self):
         """Test basic NaN-aware mean."""
-        # Use 2D tensor to work properly with batch_fn decorator
+        # Arrange
         x = torch.tensor([[1.0, 2.0, float("nan"), 4.0, 5.0]])
+        # Act
         result = nanmean(x, dim=1)
-
-        # Mean of [1, 2, 4, 5] = 3.0
+        # Assert
         assert result.numel() == 1
+
+    def test_basic_nanmean_isclose_torch_tensor(self):
+        """Test basic NaN-aware mean."""
+        # Arrange
+        x = torch.tensor([[1.0, 2.0, float("nan"), 4.0, 5.0]])
+        # Act
+        result = nanmean(x, dim=1)
+        # Assert
         assert torch.isclose(result, torch.tensor(3.0)), f"Expected 3.0, got {result}"
 
-    def test_all_nan(self):
+    def test_all_nan_any_isnan_torch(self):
         """Test with all NaN values."""
+        # Arrange
         x = torch.full((1, 5), float("nan"))
+        # Act
         result = nanmean(x, dim=1)
-
+        # Assert
         assert torch.isnan(result).any(), "All NaN should return NaN"
 
-    def test_no_nan(self):
+    def test_no_nan_isclose_torch_tensor(self):
         """Test with no NaN values."""
+        # Arrange
         x = torch.tensor([[1.0, 2.0, 3.0, 4.0, 5.0]])
+        # Act
         result = nanmean(x, dim=1)
-
+        # Assert
         assert torch.isclose(result, torch.tensor(3.0)), "Should work like regular mean"
 
-    def test_2d_tensor(self):
+    def test_2d_tensor_shape(self):
         """Test with 2D tensor."""
-        # Use 3D tensor to avoid batch_fn decorator issues
+        # Arrange
         x = torch.randn(1, 5, 10)
         x[0, 0, 3] = float("nan")
         x[0, 2, 7] = float("nan")
-
+        # Act
         result = nanmean(x, dim=2)
-
+        # Assert
         assert result.shape == (1, 5)
+
+    def test_2d_tensor_all_isnan_torch(self):
+        """Test with 2D tensor."""
+        # Arrange
+        x = torch.randn(1, 5, 10)
+        x[0, 0, 3] = float("nan")
+        x[0, 2, 7] = float("nan")
+        # Act
+        result = nanmean(x, dim=2)
+        # Assert
         assert not torch.isnan(result).all()
 
 
 class TestNanStd:
     """Test nanstd function."""
 
-    def test_basic_nanstd(self):
+    def test_basic_nanstd_item(self):
         """Test basic NaN-aware std."""
+        # Arrange
         x = torch.tensor([[1.0, 2.0, float("nan"), 4.0, 5.0]])
+        # Act
         result = nanstd(x, dim=1)
-
-        # Should compute std of [1, 2, 4, 5]
+        # Assert
         assert result.item() > 0
 
-    def test_constant_values(self):
+    def test_constant_values_isclose_torch_tensor(self):
         """Test with constant values."""
+        # Arrange
         x = torch.tensor([[2.0, float("nan"), 2.0, 2.0]])
+        # Act
         result = nanstd(x, dim=1)
-
-        # Std of constant is 0
+        # Assert
         assert torch.isclose(result, torch.tensor(0.0), atol=1e-6)
 
 
 class TestNanQuantiles:
     """Test NaN-aware quantile functions."""
 
-    def test_nanq50(self):
+    def test_nanq50_abs_item(self):
         """Test NaN-aware median."""
+        # Arrange
         x = torch.tensor([[1.0, 2.0, float("nan"), 3.0, 4.0, 5.0]])
+        # Act
         result = nanq50(x, dim=1)
-
-        # Median of [1, 2, 3, 4, 5] = 3.0, allow wider tolerance for quantile
+        # Assert
         assert abs(result.item() - 3.0) < 0.6
 
-    def test_nanq25(self):
+    def test_nanq25_case_case(self):
         """Test NaN-aware 25th percentile."""
+        # Arrange
         x = torch.tensor([[1.0, 2.0, float("nan"), 3.0, 4.0, 5.0]])
         result = nanq25(x, dim=1)
-
-        # Should be around 2.0
+        # Act
         val = result.item()
+        # Assert
         assert 1.5 < val < 2.5
 
-    def test_nanq75(self):
+    def test_nanq75_case_case(self):
         """Test NaN-aware 75th percentile."""
+        # Arrange
         x = torch.tensor([[1.0, 2.0, float("nan"), 3.0, 4.0, 5.0]])
         result = nanq75(x, dim=1)
-
-        # Should be around 4.0-4.75 (75th percentile can vary with interpolation)
+        # Act
         val = result.item()
+        # Assert
         assert 3.5 < val < 5.0
 
 
 class TestNanMaxMin:
     """Test NaN-aware max and min."""
 
-    def test_nanmax(self):
+    def test_nanmax_isclose_torch_tensor(self):
         """Test NaN-aware max."""
+        # Arrange
         x = torch.tensor([1.0, float("nan"), 5.0, 3.0])
+        # Act
         result = nanmax(x, dim=0)
-
+        # Assert
         assert torch.isclose(result, torch.tensor(5.0))
 
-    def test_nanmin(self):
+    def test_nanmin_isclose_torch_tensor(self):
         """Test NaN-aware min."""
+        # Arrange
         x = torch.tensor([1.0, float("nan"), 5.0, 3.0])
+        # Act
         result = nanmin(x, dim=0)
-
+        # Assert
         assert torch.isclose(result, torch.tensor(1.0))
 
 
 class TestNanSkewnessKurtosis:
     """Test NaN-aware skewness and kurtosis."""
 
-    def test_nanskewness(self):
+    def test_nanskewness_item_case(self):
         """Test NaN-aware skewness."""
+        # Arrange
         x = torch.tensor([[1.0, 2.0, float("nan"), 3.0, 4.0, 5.0, 100.0]])
+        # Act
         result = nanskewness(x, dim=1)
-
-        # Should be positive (right-skewed due to 100)
+        # Assert
         assert result.item() > 0
 
-    def test_nankurtosis(self):
+    def test_nankurtosis_item_case(self):
         """Test NaN-aware kurtosis."""
+        # Arrange
         x = torch.tensor([[1.0, 2.0, float("nan"), 3.0, 4.0, 5.0, 100.0]])
+        # Act
         result = nankurtosis(x, dim=1)
-
-        # Should be high (heavy tail due to 100)
+        # Assert
         assert result.item() > 0
 
 
 class TestNanCount:
     """Test nancount function."""
 
-    def test_nancount_basic(self):
+    def test_nancount_basic_item(self):
         """Test basic NaN counting."""
+        # Arrange
         x = torch.tensor([[1.0, float("nan"), 3.0, float("nan"), 5.0]])
+        # Act
         result = nancount(x, dim=1)
-
-        # 3 non-NaN values
+        # Assert
         assert result.item() == 3
 
-    def test_nancount_2d(self):
+    def test_nancount_2d_shape(self):
         """Test NaN counting on 2D tensor."""
-        # Use 3D tensor to avoid batch_fn decorator issues
+        # Arrange
         x = torch.randn(1, 5, 10)
         x[0, 0, [1, 3, 5]] = float("nan")
         x[0, 2, [2, 4]] = float("nan")
-
+        # Act
         result = nancount(x, dim=2)
-
+        # Assert
         assert result.shape == (1, 5)
+
+    def test_nancount_2d_case_2(self):
+        """Test NaN counting on 2D tensor."""
+        # Arrange
+        x = torch.randn(1, 5, 10)
+        x[0, 0, [1, 3, 5]] = float("nan")
+        x[0, 2, [2, 4]] = float("nan")
+        # Act
+        result = nancount(x, dim=2)
+        # Assert
         assert result[0, 0] == 7  # 10 - 3 NaN
+
+    def test_nancount_2d_case_3(self):
+        """Test NaN counting on 2D tensor."""
+        # Arrange
+        x = torch.randn(1, 5, 10)
+        x[0, 0, [1, 3, 5]] = float("nan")
+        x[0, 2, [2, 4]] = float("nan")
+        # Act
+        result = nancount(x, dim=2)
+        # Assert
         assert result[0, 2] == 8  # 10 - 2 NaN
 
 

@@ -14,111 +14,199 @@ from scitex_stats.descriptive._describe import describe, verify_non_leakage
 class TestDescribe:
     """Test describe function."""
 
-    def test_basic_describe(self):
+    def test_basic_describe_shape_described(self):
         """Test basic descriptive statistics."""
+        # Arrange
         x = torch.randn(10, 100)
+        # Act
         described, names = describe(x, dim=-1)
-
+        # Assert
         assert described.shape == (
             10,
             7,
         ), f"Expected shape (10, 7), got {described.shape}"
+
+    def test_basic_describe_names(self):
+        """Test basic descriptive statistics."""
+        # Arrange
+        x = torch.randn(10, 100)
+        # Act
+        described, names = describe(x, dim=-1)
+        # Assert
         assert len(names) == 7, "Should return 7 stat names"
+
+    def test_basic_describe_mean_names(self):
+        """Test basic descriptive statistics."""
+        # Arrange
+        x = torch.randn(10, 100)
+        # Act
+        described, names = describe(x, dim=-1)
+        # Assert
         assert "mean" in names
+
+    def test_basic_describe_std_names(self):
+        """Test basic descriptive statistics."""
+        # Arrange
+        x = torch.randn(10, 100)
+        # Act
+        described, names = describe(x, dim=-1)
+        # Assert
         assert "std" in names
+
+    def test_basic_describe_median_names(self):
+        """Test basic descriptive statistics."""
+        # Arrange
+        x = torch.randn(10, 100)
+        # Act
+        described, names = describe(x, dim=-1)
+        # Assert
         assert "median" in names
 
-    def test_with_nans(self):
+    def test_with_nans_all_isnan_described_torch(self):
         """Test with NaN values."""
+        # Arrange
         x = torch.randn(5, 50)
         x[0, 10:20] = float("nan")
-
+        # Act
         described, names = describe(x, dim=-1)
-
-        # NaN-aware functions should handle NaN
+        # Assert
         assert not torch.isnan(described).all(), "Should compute valid statistics"
 
-    def test_different_dims(self):
+    def test_different_dims_shape_desc1(self):
         """Test with different dimensions."""
+        # Arrange
         x = torch.randn(4, 8, 16)
-
-        # Reduce last dim
+        # Act
         desc1, _ = describe(x, dim=-1)
+        # Assert
         assert desc1.shape == (4, 8, 7)
-
-        # Reduce multiple dims
         desc2, _ = describe(x, dim=(1, 2))
+
+    def test_different_dims_shape_desc2(self):
+        """Test with different dimensions."""
+        # Arrange
+        x = torch.randn(4, 8, 16)
+        desc1, _ = describe(x, dim=-1)
+        # Act
+        desc2, _ = describe(x, dim=(1, 2))
+        # Assert
         assert desc2.shape == (4, 7)
 
-    def test_keepdims(self):
+    def test_keepdims_shape_described(self):
         """Test keepdims option."""
+        # Arrange
         x = torch.randn(5, 10, 20)
-
+        # Act
         described, _ = describe(x, dim=-1, keepdims=True)
+        # Assert
         assert described.shape == (5, 10, 1, 7), "keepdims should preserve dimensions"
 
-    def test_all_funcs(self):
+    def test_all_funcs_names(self):
         """Test with funcs='all'."""
+        # Arrange
         x = torch.randn(5, 20)
-
+        # Act
         described, names = describe(x, dim=-1, funcs="all")
-
+        # Assert
         assert len(names) > 7, "Should return all available functions"
+
+    def test_all_funcs_max_names(self):
+        """Test with funcs='all'."""
+        # Arrange
+        x = torch.randn(5, 20)
+        # Act
+        described, names = describe(x, dim=-1, funcs="all")
+        # Assert
         assert "max" in names
+
+    def test_all_funcs_min_names(self):
+        """Test with funcs='all'."""
+        # Arrange
+        x = torch.randn(5, 20)
+        # Act
+        described, names = describe(x, dim=-1, funcs="all")
+        # Assert
         assert "min" in names
+
+    def test_all_funcs_count_names(self):
+        """Test with funcs='all'."""
+        # Arrange
+        x = torch.randn(5, 20)
+        # Act
+        described, names = describe(x, dim=-1, funcs="all")
+        # Assert
         assert "count" in names
 
-    def test_custom_funcs(self):
+    def test_custom_funcs_names(self):
         """Test with custom function list."""
+        # Arrange
         x = torch.randn(5, 20)
-
         custom_funcs = ["nanmean", "nanstd", "nanmax", "nanmin"]
+        # Act
         described, names = describe(x, dim=-1, funcs=custom_funcs)
-
+        # Assert
         assert len(names) == 4
+
+    def test_custom_funcs_names_custom_funcs(self):
+        """Test with custom function list."""
+        # Arrange
+        x = torch.randn(5, 20)
+        custom_funcs = ["nanmean", "nanstd", "nanmax", "nanmin"]
+        # Act
+        described, names = describe(x, dim=-1, funcs=custom_funcs)
+        # Assert
         assert names == custom_funcs
 
-    def test_numpy_input(self):
+    def test_numpy_input_described_ndarray(self):
         """Test with numpy array input."""
+        # Arrange
         x = np.random.randn(5, 20)
-
+        # Act
         described, names = describe(x, dim=-1)
-
-        # New behavior: numpy in -> numpy out
+        # Assert
         assert isinstance(described, np.ndarray)
+
+    def test_numpy_input_shape_described(self):
+        """Test with numpy array input."""
+        # Arrange
+        x = np.random.randn(5, 20)
+        # Act
+        described, names = describe(x, dim=-1)
+        # Assert
         assert described.shape == (5, 7)
 
 
 class TestVerifyNonLeakage:
     """Test verify_non_leakage function."""
 
-    def test_no_leakage(self):
+    def test_no_leakage_verify_non_leakage(self):
         """Test that no information leaks across batch."""
+        # Arrange
+        # Act
         x = torch.randn(10, 5, 20)
-
-        # Should not raise error
+        # Assert
         assert verify_non_leakage(x, dim=(1, 2))
 
 
 class TestDescribeEdgeCases:
     """Test edge cases."""
 
-    def test_all_nan(self):
+    def test_all_nan_shape_described(self):
         """Test with all NaN values."""
+        # Arrange
         x = torch.full((5, 10), float("nan"))
-
+        # Act
         described, names = describe(x, dim=-1)
-
-        # Should return NaN but not crash
+        # Assert
         assert described.shape == (5, 7)
 
-    def test_single_value(self):
+    def test_single_value_shape_described(self):
         """Test with single value."""
+        # Arrange
         x = torch.randn(5, 1)
-
+        # Act
         described, _ = describe(x, dim=-1)
-
-        # Should handle single values
+        # Assert
         assert described.shape == (5, 7)
 
 

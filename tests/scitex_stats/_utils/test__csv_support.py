@@ -70,37 +70,99 @@ def df_with_nan():
 
 
 class TestResolveColumns:
-    def test_two_columns(self, sample_df):
+    def test_two_columns_resolved(self, sample_df):
+        # Arrange
+        # Act
         resolved = resolve_columns(sample_df, x="before", y="after")
+        # Assert
         assert "x" in resolved
+
+    def test_two_columns_resolved_2(self, sample_df):
+        # Arrange
+        # Act
+        resolved = resolve_columns(sample_df, x="before", y="after")
+        # Assert
         assert "y" in resolved
+
+    def test_two_columns_ndarray_resolved(self, sample_df):
+        # Arrange
+        # Act
+        resolved = resolve_columns(sample_df, x="before", y="after")
+        # Assert
         assert isinstance(resolved["x"], np.ndarray)
+
+    def test_two_columns_resolved_3(self, sample_df):
+        # Arrange
+        # Act
+        resolved = resolve_columns(sample_df, x="before", y="after")
+        # Assert
         assert len(resolved["x"]) == 30
 
-    def test_single_column(self, sample_df):
+    def test_single_column_resolved(self, sample_df):
+        # Arrange
+        # Act
         resolved = resolve_columns(sample_df, x="before")
+        # Assert
         assert "x" in resolved
+
+    def test_single_column_resolved_2(self, sample_df):
+        # Arrange
+        # Act
+        resolved = resolve_columns(sample_df, x="before")
+        # Assert
         assert len(resolved["x"]) == 30
 
-    def test_csv_path(self, csv_path):
+    def test_csv_path_ndarray_resolved(self, csv_path):
+        # Arrange
         _skip_without_scitex_io()
+        # Act
         resolved = resolve_columns(csv_path, x="before", y="after")
+        # Assert
         assert isinstance(resolved["x"], np.ndarray)
+
+    def test_csv_path_resolved(self, csv_path):
+        # Arrange
+        _skip_without_scitex_io()
+        # Act
+        resolved = resolve_columns(csv_path, x="before", y="after")
+        # Assert
         assert len(resolved["x"]) == 30
 
     def test_missing_column_raises(self, sample_df):
+        # Arrange
+        # Act
+        # Assert
         with pytest.raises(ValueError, match="Column 'nonexistent' not found"):
             resolve_columns(sample_df, x="nonexistent")
 
-    def test_nan_dropped(self, df_with_nan):
+    def test_nan_dropped_resolved(self, df_with_nan):
+        # Arrange
+        # Act
         resolved = resolve_columns(df_with_nan, x="x")
+        # Assert
         assert len(resolved["x"]) == 4
+
+    def test_nan_dropped_any_isnan_resolved(self, df_with_nan):
+        # Arrange
+        # Act
+        resolved = resolve_columns(df_with_nan, x="x")
+        # Assert
         assert not np.isnan(resolved["x"]).any()
 
-    def test_passthrough_non_string(self, sample_df):
+    def test_passthrough_non_string_array_equal_resolved(self, sample_df):
+        # Arrange
         arr = np.array([1, 2, 3])
+        # Act
         resolved = resolve_columns(sample_df, x=arr, y="after")
+        # Assert
         assert np.array_equal(resolved["x"], arr)
+
+    def test_passthrough_non_string_ndarray_resolved(self, sample_df):
+        # Arrange
+        arr = np.array([1, 2, 3])
+        # Act
+        resolved = resolve_columns(sample_df, x=arr, y="after")
+        # Assert
         assert isinstance(resolved["y"], np.ndarray)
 
 
@@ -110,28 +172,62 @@ class TestResolveColumns:
 
 
 class TestResolveGroups:
-    def test_basic_split(self, sample_df):
+    def test_basic_split_groups(self, sample_df):
+        # Arrange
+        # Act
         groups, names = resolve_groups(sample_df, "score", "group")
+        # Assert
         assert len(groups) == 3
+
+    def test_basic_split_names(self, sample_df):
+        # Arrange
+        # Act
+        groups, names = resolve_groups(sample_df, "score", "group")
+        # Assert
         assert names == ["A", "B", "C"]
+
+    def test_basic_split_all_ndarray_groups(self, sample_df):
+        # Arrange
+        # Act
+        groups, names = resolve_groups(sample_df, "score", "group")
+        # Assert
         assert all(isinstance(g, np.ndarray) for g in groups)
 
-    def test_two_groups(self, sample_df):
+    def test_two_groups_case_1(self, sample_df):
+        # Arrange
         df2 = sample_df[sample_df["group"].isin(["A", "B"])]
+        # Act
         groups, names = resolve_groups(df2, "score", "group")
+        # Assert
         assert len(groups) == 2
+
+    def test_two_groups_names(self, sample_df):
+        # Arrange
+        df2 = sample_df[sample_df["group"].isin(["A", "B"])]
+        # Act
+        groups, names = resolve_groups(df2, "score", "group")
+        # Assert
         assert names == ["A", "B"]
 
-    def test_csv_path(self, csv_path):
+    def test_csv_path_groups(self, csv_path):
+        # Arrange
         _skip_without_scitex_io()
+        # Act
         groups, names = resolve_groups(csv_path, "score", "group")
+        # Assert
         assert len(groups) == 3
 
     def test_missing_value_col_raises(self, sample_df):
+        # Arrange
+        # Act
+        # Assert
         with pytest.raises(ValueError, match="value_col 'bad'"):
             resolve_groups(sample_df, "bad", "group")
 
     def test_missing_group_col_raises(self, sample_df):
+        # Arrange
+        # Act
+        # Assert
         with pytest.raises(ValueError, match="group_col 'bad'"):
             resolve_groups(sample_df, "score", "bad")
 
@@ -145,40 +241,52 @@ class TestTwoSampleDataParam:
     """Test data= parameter on two-sample (x, y) test functions."""
 
     def test_ttest_ind_with_data(self, sample_df):
+        # Arrange
         from scitex_stats import test_ttest_ind
-
+        # Act
         result = test_ttest_ind(x="before", y="after", data=sample_df)
+        # Assert
         assert "pvalue" in result
 
     def test_ttest_rel_with_data(self, sample_df):
+        # Arrange
         from scitex_stats import test_ttest_rel
-
+        # Act
         result = test_ttest_rel(x="before", y="after", data=sample_df)
+        # Assert
         assert "pvalue" in result
 
     def test_pearson_with_data(self, sample_df):
+        # Arrange
         from scitex_stats import test_pearson
-
+        # Act
         result = test_pearson(x="before", y="after", data=sample_df)
+        # Assert
         assert "pvalue" in result
 
     def test_mannwhitneyu_with_data(self, sample_df):
+        # Arrange
         from scitex_stats import test_mannwhitneyu
-
+        # Act
         result = test_mannwhitneyu(x="before", y="after", data=sample_df)
+        # Assert
         assert "pvalue" in result
 
     def test_csv_path_as_data(self, csv_path):
+        # Arrange
         _skip_without_scitex_io()
         from scitex_stats import test_ttest_ind
-
+        # Act
         result = test_ttest_ind(x="before", y="after", data=csv_path)
+        # Assert
         assert "pvalue" in result
 
     def test_backward_compat_arrays(self, sample_df):
+        # Arrange
         from scitex_stats import test_ttest_ind
-
+        # Act
         result = test_ttest_ind(sample_df["before"].values, sample_df["after"].values)
+        # Assert
         assert "pvalue" in result
 
 
@@ -186,21 +294,27 @@ class TestOneSampleDataParam:
     """Test data= parameter on one-sample (x) test functions."""
 
     def test_shapiro_with_data(self, sample_df):
+        # Arrange
         from scitex_stats import test_shapiro
-
+        # Act
         result = test_shapiro(x="before", data=sample_df)
+        # Assert
         assert "pvalue" in result
 
     def test_ttest_1samp_with_data(self, sample_df):
+        # Arrange
         from scitex_stats import test_ttest_1samp
-
+        # Act
         result = test_ttest_1samp(x="before", popmean=100, data=sample_df)
+        # Assert
         assert "pvalue" in result
 
     def test_backward_compat_array(self, sample_df):
+        # Arrange
         from scitex_stats import test_shapiro
-
+        # Act
         result = test_shapiro(sample_df["before"].values)
+        # Assert
         assert "pvalue" in result
 
 
@@ -208,24 +322,30 @@ class TestMultiGroupDataParam:
     """Test data= parameter on multi-group (groups) test functions."""
 
     def test_anova_with_data(self, sample_df):
+        # Arrange
         from scitex_stats import test_anova
-
+        # Act
         result = test_anova(data=sample_df, value_col="score", group_col="group")
+        # Assert
         assert "pvalue" in result
 
     def test_kruskal_with_data(self, sample_df):
+        # Arrange
         from scitex_stats import test_kruskal
-
+        # Act
         result = test_kruskal(data=sample_df, value_col="score", group_col="group")
+        # Assert
         assert "pvalue" in result
 
     def test_anova_backward_compat(self, sample_df):
+        # Arrange
         from scitex_stats import test_anova
-
         groups = [
             sample_df[sample_df["group"] == g]["score"].values for g in ["A", "B", "C"]
         ]
+        # Act
         result = test_anova(groups)
+        # Assert
         assert "pvalue" in result
 
 

@@ -14,33 +14,58 @@ from scitex_stats._cli import stats as cli
 # ----- run_tests_list ------------------------------------------------------ #
 
 
-def test_run_tests_list_returns_zero(capsys):
+def test_run_tests_list_returns_zero_rc(capsys):
+    # Arrange
+    # Act
     rc = cli.run_tests_list(as_json=True)
+    # Assert
     assert rc == 0
     payload = json.loads(capsys.readouterr().out)
+
+def test_run_tests_list_returns_zero_payload(capsys):
+    # Arrange
+    rc = cli.run_tests_list(as_json=True)
+    # Act
+    payload = json.loads(capsys.readouterr().out)
+    # Assert
     assert isinstance(payload, list) and len(payload) > 0
 
 
 def test_run_tests_list_text_format_one_per_line(capsys):
+    # Arrange
     cli.run_tests_list(as_json=False)
+    # Act
     out = capsys.readouterr().out.strip().splitlines()
+    # Assert
     assert len(out) > 0
 
 
 # ----- run_format_pvalue --------------------------------------------------- #
 
 
-def test_run_format_pvalue_significant(capsys):
+def test_run_format_pvalue_significant_rc(capsys):
+    # Arrange
+    # Act
     rc = cli.run_format_pvalue(p=0.001)
+    # Assert
     assert rc == 0
     out = capsys.readouterr().out.strip()
+
+def test_run_format_pvalue_significant_case_2(capsys):
+    # Arrange
+    rc = cli.run_format_pvalue(p=0.001)
+    # Act
+    out = capsys.readouterr().out.strip()
+    # Assert
     assert "*" in out
 
 
 def test_run_format_pvalue_not_significant(capsys):
+    # Arrange
     cli.run_format_pvalue(p=0.5)
+    # Act
     out = capsys.readouterr().out.strip()
-    # NS marker is typically "ns" (or empty) — not asterisks.
+    # Assert
     assert "*" not in out
 
 
@@ -53,37 +78,74 @@ def _write_csv(tmp_path: Path, df: pd.DataFrame, name: str = "data.csv") -> str:
     return str(p)
 
 
-def test_run_tests_describe_csv_input(tmp_path, capsys):
+def test_run_tests_describe_csv_input_rc(tmp_path, capsys):
+    # Arrange
     df = pd.DataFrame({"x": [1.0, 2.0, 3.0, 4.0, 5.0]})
+    # Act
     rc = cli.run_tests_describe(data=_write_csv(tmp_path, df), column="x")
+    # Assert
     assert rc == 0
     payload = json.loads(capsys.readouterr().out)
-    # Mean of 1..5 = 3.0; the API returns names+values, mean must be among them.
+
+def test_run_tests_describe_csv_input_any_values_int_float(tmp_path, capsys):
+    # Arrange
+    df = pd.DataFrame({"x": [1.0, 2.0, 3.0, 4.0, 5.0]})
+    rc = cli.run_tests_describe(data=_write_csv(tmp_path, df), column="x")
+    # Act
+    payload = json.loads(capsys.readouterr().out)
+    # Assert
     assert any(
         isinstance(v, (int, float)) and abs(v - 3.0) < 1e-9 for v in payload.values()
     )
 
 
 def test_run_tests_describe_npy_input(tmp_path, capsys):
+    # Arrange
     arr = np.array([1.0, 2.0, 3.0, 4.0])
     p = tmp_path / "x.npy"
     np.save(p, arr)
+    # Act
     rc = cli.run_tests_describe(data=str(p))
+    # Assert
     assert rc == 0
     json.loads(capsys.readouterr().out)  # raises if malformed
 
 
 def test_run_tests_describe_json_input(tmp_path, capsys):
+    # Arrange
     p = tmp_path / "x.json"
     p.write_text(json.dumps([1.0, 2.0, 3.0]))
+    # Act
     rc = cli.run_tests_describe(data=str(p))
+    # Assert
     assert rc == 0
 
 
 # ----- run_tests_execute --------------------------------------------------- #
 
 
-def test_run_tests_execute_with_groups(tmp_path, capsys):
+def test_run_tests_execute_with_groups_rc(tmp_path, capsys):
+    # Arrange
+    rng = np.random.default_rng(0)
+    df = pd.DataFrame(
+        {
+            "g1": rng.normal(0, 1, 30),
+            "g2": rng.normal(2, 1, 30),
+        }
+    )
+    # Act
+    rc = cli.run_tests_execute(
+        test_name="kruskal",
+        data=_write_csv(tmp_path, df),
+        groups="g1,g2",
+    )
+    # Assert
+    assert rc == 0
+    payload = json.loads(capsys.readouterr().out)
+    p = payload.get("pvalue", payload.get("p_value"))
+
+def test_run_tests_execute_with_groups_case_2(tmp_path, capsys):
+    # Arrange
     rng = np.random.default_rng(0)
     df = pd.DataFrame(
         {
@@ -96,21 +158,53 @@ def test_run_tests_execute_with_groups(tmp_path, capsys):
         data=_write_csv(tmp_path, df),
         groups="g1,g2",
     )
-    assert rc == 0
     payload = json.loads(capsys.readouterr().out)
+    # Act
     p = payload.get("pvalue", payload.get("p_value"))
+    # Assert
     assert p is not None
-    # Two clearly different means → significant.
+
+def test_run_tests_execute_with_groups_case_3(tmp_path, capsys):
+    # Arrange
+    rng = np.random.default_rng(0)
+    df = pd.DataFrame(
+        {
+            "g1": rng.normal(0, 1, 30),
+            "g2": rng.normal(2, 1, 30),
+        }
+    )
+    rc = cli.run_tests_execute(
+        test_name="kruskal",
+        data=_write_csv(tmp_path, df),
+        groups="g1,g2",
+    )
+    payload = json.loads(capsys.readouterr().out)
+    # Act
+    p = payload.get("pvalue", payload.get("p_value"))
+    # Assert
     assert p < 0.05
 
 
-def test_run_tests_execute_unknown_test_returns_nonzero(tmp_path, capsys):
+def test_run_tests_execute_unknown_test_returns_nonzero_rc(tmp_path, capsys):
+    # Arrange
+    df = pd.DataFrame({"x": [1.0, 2.0, 3.0]})
+    # Act
+    rc = cli.run_tests_execute(
+        test_name="not_a_real_test", data=_write_csv(tmp_path, df), x="x"
+    )
+    # Assert
+    assert rc == 1
+    err = capsys.readouterr().err
+
+def test_run_tests_execute_unknown_test_returns_nonzero_error_lower_err(tmp_path, capsys):
+    # Arrange
     df = pd.DataFrame({"x": [1.0, 2.0, 3.0]})
     rc = cli.run_tests_execute(
         test_name="not_a_real_test", data=_write_csv(tmp_path, df), x="x"
     )
-    assert rc == 1
+    # Act
     err = capsys.readouterr().err
+    # Assert
     assert "error" in err.lower()
 
 
@@ -118,34 +212,56 @@ def test_run_tests_execute_unknown_test_returns_nonzero(tmp_path, capsys):
 
 
 def test_read_data_unsupported_format_raises(tmp_path):
+    # Arrange
     bogus = tmp_path / "data.bogus"
+    # Act
     bogus.write_text("noop")
+    # Assert
     with pytest.raises(ValueError):
         cli._read_data(str(bogus))
 
 
 def test_read_data_csv_returns_dataframe(tmp_path):
+    # Arrange
     df = pd.DataFrame({"x": [1, 2, 3]})
+    # Act
     out = cli._read_data(_write_csv(tmp_path, df))
-    pd.testing.assert_frame_equal(out, df)
+    # Assert
+    assert out.equals(df)
 
 
 def test_read_data_tsv(tmp_path):
+    # Arrange
     p = tmp_path / "x.tsv"
     p.write_text("a\tb\n1\t2\n3\t4\n")
+    # Act
     out = cli._read_data(str(p))
+    # Assert
     assert list(out.columns) == ["a", "b"]
 
 
-def test_select_column_one_column_dataframe_returns_array(tmp_path):
+def test_select_column_one_column_dataframe_returns_array_ndarray(tmp_path):
+    # Arrange
     df = pd.DataFrame({"x": [1, 2, 3]})
+    # Act
     out = cli._select_column(df, name=None)
+    # Assert
     assert isinstance(out, np.ndarray)
+
+def test_select_column_one_column_dataframe_returns_array_list(tmp_path):
+    # Arrange
+    df = pd.DataFrame({"x": [1, 2, 3]})
+    # Act
+    out = cli._select_column(df, name=None)
+    # Assert
     assert list(out) == [1, 2, 3]
 
 
 def test_select_column_missing_raises(tmp_path):
+    # Arrange
+    # Act
     df = pd.DataFrame({"a": [1, 2]})
+    # Assert
     with pytest.raises(SystemExit):
         cli._select_column(df, name="nonexistent")
 
@@ -153,7 +269,24 @@ def test_select_column_missing_raises(tmp_path):
 # ----- run_tests_execute: --x/--y branches --------------------------------- #
 
 
-def test_run_tests_execute_x_and_y_columns(tmp_path, capsys):
+def test_run_tests_execute_x_and_y_columns_rc(tmp_path, capsys):
+    # Arrange
+    p = tmp_path / "two.csv"
+    rng_e = np.random.default_rng(0)
+    pd.DataFrame(
+        {"g1": rng_e.normal(0, 1, 30), "g2": rng_e.normal(0.5, 1, 30)}
+    ).to_csv(p, index=False)
+    rc = cli.run_tests_execute(
+        test_name="ttest_ind", data=str(p), x="g1", y="g2", as_json=True
+    )
+    # Act
+    out = capsys.readouterr().out
+    # Assert
+    assert rc == 0
+    payload = json.loads(out)
+
+def test_run_tests_execute_x_and_y_columns_value_payload_pvalue(tmp_path, capsys):
+    # Arrange
     p = tmp_path / "two.csv"
     rng_e = np.random.default_rng(0)
     pd.DataFrame(
@@ -163,12 +296,31 @@ def test_run_tests_execute_x_and_y_columns(tmp_path, capsys):
         test_name="ttest_ind", data=str(p), x="g1", y="g2", as_json=True
     )
     out = capsys.readouterr().out
-    assert rc == 0
+    # Act
     payload = json.loads(out)
+    # Assert
     assert "p_value" in payload or "pvalue" in payload
 
 
-def test_run_tests_execute_x_only_one_sample(tmp_path, capsys):
+def test_run_tests_execute_x_only_one_sample_rc(tmp_path, capsys):
+    # Arrange
+    p = tmp_path / "one.csv"
+    pd.DataFrame({"a": [1.0, 2.0, 3.0, 4.0, 5.0]}).to_csv(p, index=False)
+    rc = cli.run_tests_execute(
+        test_name="ttest_1samp",
+        data=str(p),
+        x="a",
+        popmean=3.0,
+        as_json=True,
+    )
+    # Act
+    out = capsys.readouterr().out
+    # Assert
+    assert rc == 0
+    payload = json.loads(out)
+
+def test_run_tests_execute_x_only_one_sample_value_payload_pvalue(tmp_path, capsys):
+    # Arrange
     p = tmp_path / "one.csv"
     pd.DataFrame({"a": [1.0, 2.0, 3.0, 4.0, 5.0]}).to_csv(p, index=False)
     rc = cli.run_tests_execute(
@@ -179,28 +331,63 @@ def test_run_tests_execute_x_only_one_sample(tmp_path, capsys):
         as_json=True,
     )
     out = capsys.readouterr().out
-    assert rc == 0
+    # Act
     payload = json.loads(out)
+    # Assert
     assert "p_value" in payload or "pvalue" in payload
 
 
-def test_run_tests_execute_npy_data_fallback(tmp_path, capsys):
+def test_run_tests_execute_npy_data_fallback_rc(tmp_path, capsys):
     """No --x / --y / --groups → falls back to `df.to_numpy()` (or array)."""
+    # Arrange
+    p = tmp_path / "arr.npy"
+    np.save(p, np.array([1.0, 2.0, 3.0, 4.0, 5.0]))
+    rc = cli.run_tests_execute(
+        test_name="shapiro", data=str(p), as_json=True
+    )
+    # Act
+    out = capsys.readouterr().out
+    # Assert
+    assert rc == 0
+    payload = json.loads(out)
+
+def test_run_tests_execute_npy_data_fallback_value_payload_pvalue(tmp_path, capsys):
+    """No --x / --y / --groups → falls back to `df.to_numpy()` (or array)."""
+    # Arrange
     p = tmp_path / "arr.npy"
     np.save(p, np.array([1.0, 2.0, 3.0, 4.0, 5.0]))
     rc = cli.run_tests_execute(
         test_name="shapiro", data=str(p), as_json=True
     )
     out = capsys.readouterr().out
-    assert rc == 0
+    # Act
     payload = json.loads(out)
+    # Assert
     assert "p_value" in payload or "pvalue" in payload
 
 
 # ----- run_tests_recommend ------------------------------------------------ #
 
 
-def test_run_tests_recommend_json(capsys):
+def test_run_tests_recommend_json_rc(capsys):
+    # Arrange
+    rc = cli.run_tests_recommend(
+        n_groups=2,
+        sample_sizes="30,30",
+        outcome="continuous",
+        design="between",
+        paired=False,
+        top_k=3,
+        as_json=True,
+    )
+    # Act
+    out = capsys.readouterr().out
+    # Assert
+    assert rc == 0
+    tests = json.loads(out)
+
+def test_run_tests_recommend_json_list(capsys):
+    # Arrange
     rc = cli.run_tests_recommend(
         n_groups=2,
         sample_sizes="30,30",
@@ -211,12 +398,14 @@ def test_run_tests_recommend_json(capsys):
         as_json=True,
     )
     out = capsys.readouterr().out
-    assert rc == 0
+    # Act
     tests = json.loads(out)
+    # Assert
     assert isinstance(tests, list) and 0 < len(tests) <= 3
 
 
-def test_run_tests_recommend_plain_output(capsys):
+def test_run_tests_recommend_plain_output_rc(capsys):
+    # Arrange
     rc = cli.run_tests_recommend(
         n_groups=2,
         sample_sizes="25,25",
@@ -226,13 +415,49 @@ def test_run_tests_recommend_plain_output(capsys):
         top_k=2,
         as_json=False,
     )
+    # Act
     out = capsys.readouterr().out
+    # Assert
     assert rc == 0
+
+def test_run_tests_recommend_plain_output_strip(capsys):
+    # Arrange
+    rc = cli.run_tests_recommend(
+        n_groups=2,
+        sample_sizes="25,25",
+        outcome="continuous",
+        design="between",
+        paired=False,
+        top_k=2,
+        as_json=False,
+    )
+    # Act
+    out = capsys.readouterr().out
+    # Assert
     assert out.strip()
 
 
-def test_run_tests_recommend_paired_forces_within(capsys):
+def test_run_tests_recommend_paired_forces_within_rc(capsys):
     """`paired=True` should override `design="between"` → "within"."""
+    # Arrange
+    rc = cli.run_tests_recommend(
+        n_groups=2,
+        sample_sizes="20,20",
+        outcome="continuous",
+        design="between",
+        paired=True,
+        top_k=3,
+        as_json=True,
+    )
+    # Act
+    out = capsys.readouterr().out
+    # Assert
+    assert rc == 0
+    tests = json.loads(out)
+
+def test_run_tests_recommend_paired_forces_within_ttest_ind(capsys):
+    """`paired=True` should override `design="between"` → "within"."""
+    # Arrange
     rc = cli.run_tests_recommend(
         n_groups=2,
         sample_sizes="20,20",
@@ -243,9 +468,9 @@ def test_run_tests_recommend_paired_forces_within(capsys):
         as_json=True,
     )
     out = capsys.readouterr().out
-    assert rc == 0
+    # Act
     tests = json.loads(out)
-    # Paired designs should not recommend independent t-test as top pick.
+    # Assert
     assert "ttest_ind" not in tests[:1]
 
 
@@ -253,10 +478,13 @@ def test_run_tests_recommend_paired_forces_within(capsys):
 
 
 def test_read_data_json_file(tmp_path):
+    # Arrange
     p = tmp_path / "x.json"
     p.write_text(json.dumps([1, 2, 3]))
+    # Act
     out = cli._read_data(str(p))
-    np.testing.assert_array_equal(out, [1, 2, 3])
+    # Assert
+    assert np.array_equal(out, [1, 2, 3], equal_nan=True)
 
 
 def test_read_data_stdin_path_reads_json(tmp_path):
@@ -267,33 +495,41 @@ def test_read_data_stdin_path_reads_json(tmp_path):
     ``sys.stdin`` reassignment in a ``try/finally`` covers the same wire
     without leaving an after-effect on the test runner.
     """
+    # Arrange
     import sys
-
     p = tmp_path / "stdin.json"
     p.write_text(json.dumps([7, 8, 9]))
     saved_stdin = sys.stdin
     f = open(p)
     sys.stdin = f
+    # Act
     try:
         out = cli._read_data("-")
     finally:
         sys.stdin = saved_stdin
         f.close()
-    np.testing.assert_array_equal(out, [7, 8, 9])
+    # Assert
+    assert np.array_equal(out, [7, 8, 9], equal_nan=True)
 
 
 # ----- _emit -------------------------------------------------------------- #
 
 
 def test_emit_plain_dict(capsys):
+    # Arrange
     cli._emit({"k": 1, "v": [1, 2, 3]}, as_json=False)
+    # Act
     out = capsys.readouterr().out
+    # Assert
     assert "k" in out and "1" in out
 
 
 def test_emit_plain_list(capsys):
+    # Arrange
     cli._emit(["one", "two"], as_json=False)
+    # Act
     out = capsys.readouterr().out
+    # Assert
     assert "one" in out and "two" in out
 
 
@@ -301,17 +537,26 @@ def test_emit_plain_list(capsys):
 
 
 def test_select_column_pass_through_non_dataframe():
+    # Arrange
+    # Act
     arr = np.array([1, 2, 3])
+    # Assert
     assert cli._select_column(arr, None) is arr
 
 
 def test_select_column_named_lookup_2col_df():
+    # Arrange
     df = pd.DataFrame({"a": [1, 2], "b": [3, 4]})
+    # Act
     out = cli._select_column(df, "b")
-    np.testing.assert_array_equal(out, [3, 4])
+    # Assert
+    assert np.array_equal(out, [3, 4], equal_nan=True)
 
 
 def test_select_column_ambiguous_no_name_exits():
+    # Arrange
+    # Act
     df = pd.DataFrame({"a": [1], "b": [2]})
+    # Assert
     with pytest.raises(SystemExit, match="specify --x"):
         cli._select_column(df, None)

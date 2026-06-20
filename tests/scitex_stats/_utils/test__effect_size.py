@@ -26,72 +26,72 @@ class TestCohensD:
 
     def test_basic_cohens_d(self):
         """Test basic Cohen's d calculation."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([2, 3, 4, 5, 6])
-
+        # Act
         d = cohens_d(x, y)
-
-        # Mean diff = -1, pooled SD ~ 1.58, so d ~ -0.63
+        # Assert
         assert -1.5 < d < -0.3
 
-    def test_zero_effect(self):
+    def test_zero_effect_abs(self):
         """Test with no difference."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([1, 2, 3, 4, 5])
-
+        # Act
         d = cohens_d(x, y)
-
+        # Assert
         assert abs(d) < 0.01
 
-    def test_one_sample(self):
+    def test_one_sample_case(self):
         """Test one-sample Cohen's d."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
-
+        # Act
         d = cohens_d(x)
-
-        # Mean = 3, SD ~ 1.58, so d ~ 1.90
+        # Assert
         assert d > 0
 
-    def test_paired(self):
+    def test_paired_case_case(self):
         """Test paired Cohen's d."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([2, 3, 4, 5, 6])
-
+        # Act
         d = cohens_d(x, y, paired=True)
-
-        # Diff = [-1, -1, -1, -1, -1], mean = -1, SD = 0
-        # Actually SD of constant is 0, so this is a special case
+        # Assert
         assert d != 0 or True  # May be inf or special value
 
-    def test_hedges_correction(self):
+    def test_hedges_correction_abs_d_hedges_d_standard(self):
         """Test Hedges' g correction."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([3, 4, 5, 6, 7])
-
         d_standard = cohens_d(x, y)
+        # Act
         d_hedges = cohens_d(x, y, correction="hedges")
-
-        # Hedges' g should be slightly smaller
+        # Assert
         assert abs(d_hedges) < abs(d_standard)
 
-    def test_glass_delta(self):
+    def test_glass_delta_d_glass(self):
         """Test Glass's delta."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([3, 4, 5, 6, 7])
-
+        # Act
         d_glass = cohens_d(x, y, correction="glass")
-
-        # Uses only y SD
+        # Assert
         assert d_glass != 0
 
-    def test_nan_handling(self):
+    def test_nan_handling_isnan(self):
         """Test NaN removal."""
+        # Arrange
         x = np.array([1, 2, np.nan, 4, 5])
         y = np.array([2, 3, 4, np.nan, 6])
-
+        # Act
         d = cohens_d(x, y)
-
-        # Should compute on non-NaN values
+        # Assert
         assert not np.isnan(d)
 
 
@@ -100,40 +100,42 @@ class TestCliffsDelta:
 
     def test_basic_cliffs_delta(self):
         """Test basic Cliff's delta."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([3, 4, 5, 6, 7])
-
+        # Act
         delta = cliffs_delta(x, y)
-
-        # X values mostly less than Y values
+        # Assert
         assert delta < 0
 
-    def test_no_difference(self):
+    def test_no_difference_abs_delta(self):
         """Test with identical distributions."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([1, 2, 3, 4, 5])
-
+        # Act
         delta = cliffs_delta(x, y)
-
+        # Assert
         assert abs(delta) < 0.1
 
-    def test_complete_dominance(self):
+    def test_complete_dominance_abs_delta(self):
         """Test with complete dominance."""
+        # Arrange
         x = np.array([6, 7, 8, 9, 10])
         y = np.array([1, 2, 3, 4, 5])
-
+        # Act
         delta = cliffs_delta(x, y)
-
-        # All X > all Y, so delta = 1
+        # Assert
         assert abs(delta - 1.0) < 0.01
 
-    def test_range(self):
+    def test_range_delta_case(self):
         """Test that result is in [-1, 1]."""
+        # Arrange
         x = np.random.randn(50)
         y = np.random.randn(50)
-
+        # Act
         delta = cliffs_delta(x, y)
-
+        # Assert
         assert -1 <= delta <= 1
 
 
@@ -142,44 +144,44 @@ class TestProbSuperiority:
 
     def test_basic_prob_superiority(self):
         """Test basic probability of superiority."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([3, 4, 5, 6, 7])
-
+        # Act
         prob = prob_superiority(x, y)
-
-        # X values mostly less than Y, so prob low
+        # Assert
         assert prob < 0.5
 
-    def test_no_difference(self):
+    def test_no_difference_prob(self):
         """Test with identical distributions."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([1, 2, 3, 4, 5])
-
+        # Act
         prob = prob_superiority(x, y)
-
-        # Should be around 0.5 (chance level)
+        # Assert
         assert 0.3 < prob < 0.7
 
-    def test_range(self):
+    def test_range_prob_case(self):
         """Test that result is in [0, 1]."""
+        # Arrange
         x = np.random.randn(50)
         y = np.random.randn(50)
-
+        # Act
         prob = prob_superiority(x, y)
-
+        # Assert
         assert 0 <= prob <= 1
 
     def test_relationship_to_cliffs_delta(self):
         """Test P(X>Y) ≈ (1 + delta) / 2 relationship."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([2, 3, 4, 5, 6])
-
         prob = prob_superiority(x, y)
+        # Act
         delta = cliffs_delta(x, y)
-
         expected_prob = (1 + delta) / 2
-
-        # Relationship holds approximately for small samples
+        # Assert
         assert abs(prob - expected_prob) < 0.1
 
 
@@ -188,32 +190,34 @@ class TestEtaSquared:
 
     def test_basic_eta_squared(self):
         """Test basic eta-squared."""
+        # Arrange
         group1 = np.array([1, 2, 3, 4, 5])
         group2 = np.array([3, 4, 5, 6, 7])
         group3 = np.array([5, 6, 7, 8, 9])
-
+        # Act
         eta2 = eta_squared([group1, group2, group3])
-
-        # Strong group effect
+        # Assert
         assert eta2 > 0.5
 
-    def test_no_difference(self):
+    def test_no_difference_eta2(self):
         """Test with no group differences."""
+        # Arrange
         group1 = np.array([1, 2, 3, 4, 5])
         group2 = np.array([1, 2, 3, 4, 5])
-
+        # Act
         eta2 = eta_squared([group1, group2])
-
+        # Assert
         assert eta2 < 0.01
 
-    def test_range(self):
+    def test_range_eta2_case(self):
         """Test that result is in [0, 1]."""
+        # Arrange
         g1 = np.random.randn(30)
         g2 = np.random.randn(30)
         g3 = np.random.randn(30)
-
+        # Act
         eta2 = eta_squared([g1, g2, g3])
-
+        # Assert
         assert 0 <= eta2 <= 1
 
 
@@ -222,61 +226,167 @@ class TestEpsilonSquared:
 
     def test_basic_epsilon_squared(self):
         """Test basic epsilon-squared."""
+        # Arrange
         group1 = np.array([1, 2, 3, 4, 5])
         group2 = np.array([3, 4, 5, 6, 7])
         group3 = np.array([5, 6, 7, 8, 9])
-
+        # Act
         eps2 = epsilon_squared([group1, group2, group3])
-
-        # Strong group effect
+        # Assert
         assert eps2 > 0.5
 
-    def test_range(self):
+    def test_range_eps2_case(self):
         """Test that result is in [0, 1]."""
+        # Arrange
         g1 = np.random.randn(30)
         g2 = np.random.randn(30)
-
+        # Act
         eps2 = epsilon_squared([g1, g2])
-
+        # Assert
         assert 0 <= eps2 <= 1
 
 
 class TestInterpretations:
     """Test interpretation functions."""
 
-    def test_interpret_cohens_d(self):
+    def test_interpret_cohens_d_negligible_interpret_cohens_d(self):
         """Test Cohen's d interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cohens_d(0.1) == "negligible"
+
+    def test_interpret_cohens_d_small_interpret_cohens_d(self):
+        """Test Cohen's d interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cohens_d(0.3) == "small"
+
+    def test_interpret_cohens_d_medium_interpret_cohens_d(self):
+        """Test Cohen's d interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cohens_d(0.6) == "medium"
+
+    def test_interpret_cohens_d_large_interpret_cohens_d(self):
+        """Test Cohen's d interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cohens_d(0.9) == "large"
 
-    def test_interpret_cliffs_delta(self):
+    def test_interpret_cliffs_delta_negligible_interpret_cliffs_delta(self):
         """Test Cliff's delta interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cliffs_delta(0.1) == "negligible"
+
+    def test_interpret_cliffs_delta_small_interpret_cliffs_delta(self):
+        """Test Cliff's delta interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cliffs_delta(0.25) == "small"
+
+    def test_interpret_cliffs_delta_medium_interpret_cliffs_delta(self):
+        """Test Cliff's delta interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cliffs_delta(0.4) == "medium"
+
+    def test_interpret_cliffs_delta_large_interpret_cliffs_delta(self):
+        """Test Cliff's delta interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cliffs_delta(0.6) == "large"
 
-    def test_interpret_prob_superiority(self):
+    def test_interpret_prob_superiority_negligible_interpret_prob_superiority(self):
         """Test probability of superiority interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_prob_superiority(0.51) == "negligible"
+
+    def test_interpret_prob_superiority_small_interpret_prob_superiority(self):
+        """Test probability of superiority interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_prob_superiority(0.60) == "small"
+
+    def test_interpret_prob_superiority_medium_interpret_prob_superiority(self):
+        """Test probability of superiority interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_prob_superiority(0.68) == "medium"
+
+    def test_interpret_prob_superiority_large_interpret_prob_superiority(self):
+        """Test probability of superiority interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_prob_superiority(0.75) == "large"
 
-    def test_interpret_eta_squared(self):
+    def test_interpret_eta_squared_negligible_interpret_eta_squared(self):
         """Test eta-squared interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_eta_squared(0.005) == "negligible"
+
+    def test_interpret_eta_squared_small_interpret_eta_squared(self):
+        """Test eta-squared interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_eta_squared(0.03) == "small"
+
+    def test_interpret_eta_squared_medium_interpret_eta_squared(self):
+        """Test eta-squared interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_eta_squared(0.10) == "medium"
+
+    def test_interpret_eta_squared_large_interpret_eta_squared(self):
+        """Test eta-squared interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_eta_squared(0.20) == "large"
 
-    def test_interpret_epsilon_squared(self):
+    def test_interpret_epsilon_squared_negligible_interpret_epsilon_squared(self):
         """Test epsilon-squared interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_epsilon_squared(0.005) == "negligible"
+
+    def test_interpret_epsilon_squared_small_interpret_epsilon_squared(self):
+        """Test epsilon-squared interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_epsilon_squared(0.03) == "small"
+
+    def test_interpret_epsilon_squared_medium_interpret_epsilon_squared(self):
+        """Test epsilon-squared interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_epsilon_squared(0.10) == "medium"
+
+    def test_interpret_epsilon_squared_large_interpret_epsilon_squared(self):
+        """Test epsilon-squared interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_epsilon_squared(0.20) == "large"
 
 

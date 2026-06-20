@@ -67,14 +67,28 @@ def tools_by_name(mcp_server):
 class TestServerCreation:
     """Test that the MCP server is properly created."""
 
-    def test_server_exists(self, mcp_server):
+    def test_server_exists_mcp_server(self, mcp_server):
+        # Arrange
+        # Act
+        # Assert
         assert mcp_server is not None
 
-    def test_server_name(self, mcp_server):
+    def test_server_name_scitex_stats_mcp_server(self, mcp_server):
+        # Arrange
+        # Act
+        # Assert
         assert mcp_server.name == "scitex-stats"
 
-    def test_server_has_instructions(self, mcp_server):
+    def test_server_has_instructions_mcp_server(self, mcp_server):
+        # Arrange
+        # Act
+        # Assert
         assert mcp_server.instructions is not None
+
+    def test_server_has_instructions_mcp_server_2(self, mcp_server):
+        # Arrange
+        # Act
+        # Assert
         assert len(mcp_server.instructions) > 0
 
 
@@ -99,16 +113,25 @@ EXPECTED_TOOLS = [
 class TestToolListing:
     """Test that all expected tools are registered."""
 
-    def test_tool_count(self, tool_names):
+    def test_tool_count_tool_names(self, tool_names):
+        # Arrange
+        # Act
+        # Assert
         assert len(tool_names) >= 10, (
             f"Expected at least 10 tools, got {len(tool_names)}: {tool_names}"
         )
 
     @pytest.mark.parametrize("tool_name", EXPECTED_TOOLS)
-    def test_tool_registered(self, tool_name, tool_names):
+    def test_tool_registered_tool_name_tool_names(self, tool_name, tool_names):
+        # Arrange
+        # Act
+        # Assert
         assert tool_name in tool_names, f"Tool '{tool_name}' not found in {tool_names}"
 
     def test_all_tools_have_descriptions(self, tools_by_name):
+        # Arrange
+        # Act
+        # Assert
         for name, tool in tools_by_name.items():
             assert tool.description is not None and len(tool.description) > 0, (
                 f"Tool '{name}' has no description"
@@ -124,29 +147,51 @@ class TestToolSchemas:
     """Test that tools have proper input schemas (via FastMCP parameters attr)."""
 
     def test_run_test_has_test_name_param(self, tools_by_name):
+        # Arrange
         tool = tools_by_name["run_test"]
+        # Act
         props = tool.inputSchema.get("properties", {})
+        # Assert
         assert "test_name" in props
 
     def test_recommend_tests_has_n_groups(self, tools_by_name):
+        # Arrange
         tool = tools_by_name["recommend_tests"]
+        # Act
         props = tool.inputSchema.get("properties", {})
+        # Assert
         assert "n_groups" in props
 
     def test_correct_pvalues_has_pvalues(self, tools_by_name):
+        # Arrange
         tool = tools_by_name["correct_pvalues"]
+        # Act
         props = tool.inputSchema.get("properties", {})
+        # Assert
         assert "pvalues" in props
 
-    def test_effect_size_has_groups(self, tools_by_name):
+    def test_effect_size_has_groups_group1_props(self, tools_by_name):
+        # Arrange
         tool = tools_by_name["effect_size"]
+        # Act
         props = tool.inputSchema.get("properties", {})
+        # Assert
         assert "group1" in props
+
+    def test_effect_size_has_groups_group2_props(self, tools_by_name):
+        # Arrange
+        tool = tools_by_name["effect_size"]
+        # Act
+        props = tool.inputSchema.get("properties", {})
+        # Assert
         assert "group2" in props
 
     def test_p_to_stars_has_p_value(self, tools_by_name):
+        # Arrange
         tool = tools_by_name["p_to_stars"]
+        # Act
         props = tool.inputSchema.get("properties", {})
+        # Assert
         assert "p_value" in props
 
 
@@ -159,14 +204,24 @@ class TestRunServerFunction:
     """Test that run_server is importable and callable."""
 
     def test_run_server_importable(self):
+        # Arrange
         from scitex_stats._server import run_server
-
+        # Act
+        # Assert
         assert callable(run_server)
 
-    def test_mcp_module_re_exports(self):
+    def test_mcp_module_re_exports_case_1(self):
+        # Arrange
         from scitex_stats._mcp import mcp, run_server
-
+        # Act
+        # Assert
         assert mcp is not None
+
+    def test_mcp_module_re_exports_callable_run_server(self):
+        # Arrange
+        from scitex_stats._mcp import mcp, run_server
+        # Act
+        # Assert
         assert callable(run_server)
 
 
@@ -203,22 +258,39 @@ def _tool_fn(name):
 
 
 def test_recommend_tests_direct():
+    # Arrange
+    # Act
     out = _decode(
         _run_async(_tool_fn("recommend_tests")(n_groups=2, sample_sizes=[30, 30], top_k=3))
     )
+    # Assert
     assert out["success"] is True
 
 
-def test_run_test_direct_ttest_ind():
+def test_run_test_direct_ttest_ind_success():
+    # Arrange
     rng_s = np.random.default_rng(0)
     g1 = rng_s.normal(0, 1, 30).tolist()
     g2 = rng_s.normal(0.5, 1, 30).tolist()
+    # Act
     out = _decode(_run_async(_tool_fn("run_test")(test_name="ttest_ind", data=[g1, g2])))
+    # Assert
     assert out["success"] is True
+
+def test_run_test_direct_ttest_ind_value():
+    # Arrange
+    rng_s = np.random.default_rng(0)
+    g1 = rng_s.normal(0, 1, 30).tolist()
+    g2 = rng_s.normal(0.5, 1, 30).tolist()
+    # Act
+    out = _decode(_run_async(_tool_fn("run_test")(test_name="ttest_ind", data=[g1, g2])))
+    # Assert
     assert "p_value" in out
 
 
-def test_format_results_direct():
+def test_format_results_direct_success():
+    # Arrange
+    # Act
     out = _decode(
         _run_async(
             _tool_fn("format_results")(
@@ -232,11 +304,32 @@ def test_format_results_direct():
             )
         )
     )
+    # Assert
     assert out["success"] is True
+
+def test_format_results_direct_formatted():
+    # Arrange
+    # Act
+    out = _decode(
+        _run_async(
+            _tool_fn("format_results")(
+                test_name="ttest_ind",
+                statistic=-3.21,
+                p_value=0.002,
+                df=58,
+                effect_size=-0.83,
+                effect_size_name="d",
+                style="apa",
+            )
+        )
+    )
+    # Assert
     assert "formatted" in out
 
 
 def test_power_analysis_direct():
+    # Arrange
+    # Act
     out = _decode(
         _run_async(
             _tool_fn("power_analysis")(
@@ -247,10 +340,13 @@ def test_power_analysis_direct():
             )
         )
     )
+    # Assert
     assert out["success"] is True
 
 
 def test_correct_pvalues_direct():
+    # Arrange
+    # Act
     out = _decode(
         _run_async(
             _tool_fn("correct_pvalues")(
@@ -260,16 +356,28 @@ def test_correct_pvalues_direct():
             )
         )
     )
+    # Assert
     assert isinstance(out, dict)
 
 
-def test_describe_direct():
+def test_describe_direct_success():
+    # Arrange
+    # Act
     out = _decode(_run_async(_tool_fn("describe")(data=[1.0, 2.0, 3.0, 4.0, 5.0])))
+    # Assert
     assert out["success"] is True
+
+def test_describe_direct_mean():
+    # Arrange
+    # Act
+    out = _decode(_run_async(_tool_fn("describe")(data=[1.0, 2.0, 3.0, 4.0, 5.0])))
+    # Assert
     assert "mean" in out
 
 
-def test_effect_size_direct():
+def test_effect_size_direct_success():
+    # Arrange
+    # Act
     out = _decode(
         _run_async(
             _tool_fn("effect_size")(
@@ -279,22 +387,51 @@ def test_effect_size_direct():
             )
         )
     )
+    # Assert
     assert out["success"] is True
+
+def test_effect_size_direct_cohen_measure():
+    # Arrange
+    # Act
+    out = _decode(
+        _run_async(
+            _tool_fn("effect_size")(
+                group1=[1, 2, 3, 4, 5],
+                group2=[2, 3, 4, 5, 6],
+                measure="cohens_d",
+            )
+        )
+    )
+    # Assert
     assert out["measure"] == "Cohen's d"
 
 
-def test_normality_test_direct():
+def test_normality_test_direct_success():
+    # Arrange
     rng_n = np.random.default_rng(0)
+    # Act
     out = _decode(
         _run_async(_tool_fn("normality_test")(data=rng_n.normal(0, 1, 50).tolist()))
     )
+    # Assert
     assert out["success"] is True
+
+def test_normality_test_direct_shapiro_wilk():
+    # Arrange
+    rng_n = np.random.default_rng(0)
+    # Act
+    out = _decode(
+        _run_async(_tool_fn("normality_test")(data=rng_n.normal(0, 1, 50).tolist()))
+    )
+    # Assert
     assert out["test"] == "Shapiro-Wilk"
 
 
-def test_posthoc_test_direct():
+def test_posthoc_test_direct_success():
+    # Arrange
     rng_p = np.random.default_rng(0)
     groups = [rng_p.normal(0, 1, 25).tolist() for _ in range(3)]
+    # Act
     out = _decode(
         _run_async(
             _tool_fn("posthoc_test")(
@@ -304,25 +441,54 @@ def test_posthoc_test_direct():
             )
         )
     )
+    # Assert
     assert out["success"] is True
+
+def test_posthoc_test_direct_tukey_method():
+    # Arrange
+    rng_p = np.random.default_rng(0)
+    groups = [rng_p.normal(0, 1, 25).tolist() for _ in range(3)]
+    # Act
+    out = _decode(
+        _run_async(
+            _tool_fn("posthoc_test")(
+                groups=groups,
+                group_names=["A", "B", "C"],
+                method="tukey",
+            )
+        )
+    )
+    # Assert
     assert out["method"] == "tukey"
 
 
 def test_p_to_stars_direct():
+    # Arrange
+    # Act
     out = _decode(_run_async(_tool_fn("p_to_stars")(p_value=0.001)))
+    # Assert
     assert isinstance(out, dict)
 
 
 def test_skills_list_direct_returns_json_envelope():
+    # Arrange
+    # Act
     out = _decode(_run_async(_tool_fn("skills_list")()))
+    # Assert
     assert "success" in out
 
 
 def test_skills_get_main_skill_direct():
+    # Arrange
+    # Act
     out = _decode(_run_async(_tool_fn("skills_get")()))
+    # Assert
     assert "success" in out
 
 
 def test_skills_get_unknown_name_direct():
+    # Arrange
+    # Act
     out = _decode(_run_async(_tool_fn("skills_get")(name="definitely-not-a-real-skill")))
+    # Assert
     assert out["success"] is False

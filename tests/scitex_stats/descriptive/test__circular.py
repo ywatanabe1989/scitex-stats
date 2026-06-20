@@ -22,169 +22,218 @@ class TestCircularMean:
 
     def test_basic_circular_mean(self):
         """Test basic circular mean."""
-        # Angles around 0
+        # Arrange
         angles = torch.tensor([[0.1, 0.2, -0.1, -0.2]])
         values = torch.ones_like(angles)
-
+        # Act
         result = circular_mean(angles, values, dim=-1)
+        # Circular mean wraps around, so every element is close to 0 or 2π.
+        near_zero_or_2pi = (
+            (torch.abs(result) < 0.1) | (torch.abs(result - 2 * np.pi) < 0.1)
+        )
+        # Assert
+        assert bool(near_zero_or_2pi.all()), f"Expected ~0 or ~2π, got {result}"
 
-        # Mean should be close to 0
-        # Handle tensor result - may have batch dimension or be in [0, 2π]
-        if result.numel() == 1:
-            val = result.item()
-            # Circular mean wraps around, so close to 0 or 2π
-            assert abs(val) < 0.1 or abs(val - 2 * np.pi) < 0.1, (
-                f"Expected ~0, got {val}"
-            )
-        else:
-            # Check all values close to 0 or 2π
-            assert (
-                (torch.abs(result) < 0.1) | (torch.abs(result - 2 * np.pi) < 0.1)
-            ).all()
-
-    def test_opposite_angles(self):
+    def test_opposite_angles_isfinite_torch(self):
         """Test mean of opposite angles."""
+        # Arrange
         angles = torch.tensor([[0.0, np.pi]])
         values = torch.ones_like(angles)
-
+        # Act
         result = circular_mean(angles, values, dim=-1)
-
-        # Could be 0 or pi depending on cancellation
+        # Assert
         assert torch.isfinite(result)
 
-    def test_weighted_mean(self):
+    def test_weighted_mean_pi(self):
         """Test weighted circular mean."""
+        # Arrange
         angles = torch.tensor([[0.0, np.pi / 2]])
         values = torch.tensor([[3.0, 1.0]])  # Heavily weighted towards 0
-
+        # Act
         result = circular_mean(angles, values, dim=-1)
-
-        # Should be closer to 0 than pi/2
+        # Assert
         assert result < np.pi / 4
 
-    def test_range_0_to_2pi(self):
+    def test_range_0_to_2pi_all_torch(self):
         """Test that result is in [0, 2π]."""
+        # Arrange
         angles = torch.rand(10, 20) * 2 * np.pi
         values = torch.ones_like(angles)
-
+        # Act
         result = circular_mean(angles, values, dim=-1)
-
+        # Assert
         assert torch.all(result >= 0)
+
+    def test_range_0_to_2pi_all_torch_pi(self):
+        """Test that result is in [0, 2π]."""
+        # Arrange
+        angles = torch.rand(10, 20) * 2 * np.pi
+        values = torch.ones_like(angles)
+        # Act
+        result = circular_mean(angles, values, dim=-1)
+        # Assert
         assert torch.all(result < 2 * np.pi)
 
 
 class TestCircularConcentration:
     """Test circular_concentration function."""
 
-    def test_high_concentration(self):
+    def test_high_concentration_case(self):
         """Test high concentration for clustered angles."""
-        # All angles close together
+        # Arrange
         angles = torch.tensor([[0.1, 0.2, 0.15, 0.12]])
         values = torch.ones_like(angles)
-
+        # Act
         result = circular_concentration(angles, values, dim=-1)
-
-        # Should be close to 1
+        # Assert
         assert result > 0.9
 
-    def test_low_concentration(self):
+    def test_low_concentration_case(self):
         """Test low concentration for dispersed angles."""
-        # Uniformly distributed angles
+        # Arrange
         angles = torch.linspace(0, 2 * np.pi, 100).unsqueeze(0)
         values = torch.ones_like(angles)
-
+        # Act
         result = circular_concentration(angles, values, dim=-1)
-
-        # Should be close to 0
+        # Assert
         assert result < 0.2
 
-    def test_range_0_to_1(self):
+    def test_range_0_to_1_all_torch(self):
         """Test that concentration is in [0, 1]."""
+        # Arrange
         angles = torch.rand(10, 20) * 2 * np.pi
         values = torch.ones_like(angles)
-
+        # Act
         result = circular_concentration(angles, values, dim=-1)
-
+        # Assert
         assert torch.all(result >= 0)
+
+    def test_range_0_to_1_all_torch_2(self):
+        """Test that concentration is in [0, 1]."""
+        # Arrange
+        angles = torch.rand(10, 20) * 2 * np.pi
+        values = torch.ones_like(angles)
+        # Act
+        result = circular_concentration(angles, values, dim=-1)
+        # Assert
         assert torch.all(result <= 1)
 
 
 class TestCircularSkewness:
     """Test circular_skewness function."""
 
-    def test_circular_skewness(self):
+    def test_circular_skewness_isfinite_torch(self):
         """Test circular skewness calculation."""
+        # Arrange
         angles = torch.tensor([[0.5, 1.2, 2.1, 3.8, 4.9, 5.7]])
         values = torch.tensor([[1.0, 2.0, 1.5, 1.0, 3.0, 1.2]])
-
+        # Act
         result = circular_skewness(angles, values, dim=-1)
-
-        # Should be a finite value
+        # Assert
         assert torch.isfinite(result)
 
 
 class TestCircularKurtosis:
     """Test circular_kurtosis function."""
 
-    def test_circular_kurtosis(self):
+    def test_circular_kurtosis_isfinite_torch(self):
         """Test circular kurtosis calculation."""
+        # Arrange
         angles = torch.tensor([[0.5, 1.2, 2.1, 3.8, 4.9, 5.7]])
         values = torch.tensor([[1.0, 2.0, 1.5, 1.0, 3.0, 1.2]])
-
+        # Act
         result = circular_kurtosis(angles, values, dim=-1)
-
-        # Should be a finite value
+        # Assert
         assert torch.isfinite(result)
 
 
 class TestDescribeCircular:
     """Test describe_circular function."""
 
-    def test_describe_all(self):
+    def test_describe_all_shape(self):
         """Test comprehensive circular statistics."""
+        # Arrange
         angles = torch.rand(5, 20) * 2 * np.pi
         values = torch.ones_like(angles)
-
+        # Act
         result, names = describe_circular(angles, values, dim=-1, funcs="all")
-
+        # Assert
         assert result.shape == (5, 4)  # 4 circular stats
+
+    def test_describe_all_names(self):
+        """Test comprehensive circular statistics."""
+        # Arrange
+        angles = torch.rand(5, 20) * 2 * np.pi
+        values = torch.ones_like(angles)
+        # Act
+        result, names = describe_circular(angles, values, dim=-1, funcs="all")
+        # Assert
         assert len(names) == 4
+
+    def test_describe_all_circular_mean_names(self):
+        """Test comprehensive circular statistics."""
+        # Arrange
+        angles = torch.rand(5, 20) * 2 * np.pi
+        values = torch.ones_like(angles)
+        # Act
+        result, names = describe_circular(angles, values, dim=-1, funcs="all")
+        # Assert
         assert "circular_mean" in names
+
+    def test_describe_all_circular_concentration_names(self):
+        """Test comprehensive circular statistics."""
+        # Arrange
+        angles = torch.rand(5, 20) * 2 * np.pi
+        values = torch.ones_like(angles)
+        # Act
+        result, names = describe_circular(angles, values, dim=-1, funcs="all")
+        # Assert
         assert "circular_concentration" in names
 
-    def test_custom_funcs(self):
+    def test_custom_funcs_shape(self):
         """Test with custom function list."""
+        # Arrange
         angles = torch.rand(5, 20) * 2 * np.pi
         values = torch.ones_like(angles)
-
         custom_funcs = ["circular_mean", "circular_concentration"]
+        # Act
         result, names = describe_circular(angles, values, dim=-1, funcs=custom_funcs)
-
+        # Assert
         assert result.shape == (5, 2)
+
+    def test_custom_funcs_names_custom_funcs(self):
+        """Test with custom function list."""
+        # Arrange
+        angles = torch.rand(5, 20) * 2 * np.pi
+        values = torch.ones_like(angles)
+        custom_funcs = ["circular_mean", "circular_concentration"]
+        # Act
+        result, names = describe_circular(angles, values, dim=-1, funcs=custom_funcs)
+        # Assert
         assert names == custom_funcs
 
 
 class TestCircularEdgeCases:
     """Test edge cases."""
 
-    def test_single_angle(self):
+    def test_single_angle_isclose_torch_tensor(self):
         """Test with single angle."""
+        # Arrange
         angles = torch.tensor([[0.5]])
         values = torch.ones_like(angles)
-
+        # Act
         result = circular_mean(angles, values, dim=-1)
-
-        # Mean of single angle is itself
+        # Assert
         assert torch.isclose(result, torch.tensor(0.5), atol=1e-5)
 
-    def test_zero_weights(self):
+    def test_zero_weights_isfinite_torch(self):
         """Test with some zero weights."""
+        # Arrange
         angles = torch.tensor([[0.0, np.pi, np.pi / 2]])
         values = torch.tensor([[1.0, 0.0, 1.0]])  # Middle angle has 0 weight
-
+        # Act
         result = circular_mean(angles, values, dim=-1)
-
-        # Should only consider first and third angles
+        # Assert
         assert torch.isfinite(result)
 
 
