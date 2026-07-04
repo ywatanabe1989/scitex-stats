@@ -115,6 +115,9 @@ _LAZY_ATTRS: dict[str, str] = {
     "auc_ci": "resampling",
     "delta_auc_ci": "resampling",
     "bootstrap_ci": "resampling",
+    "paired_auc_effect_size": "resampling",
+    # CI-derived effect size (no raw samples required)
+    "effect_size_from_ci": "effect_sizes",
     # Dispatcher
     "available_tests": "_dispatch",
     "run_test": "_dispatch",
@@ -223,6 +226,9 @@ __all__ = [
     "auc_ci",
     "delta_auc_ci",
     "bootstrap_ci",
+    "paired_auc_effect_size",
+    # CI-derived effect size (no raw samples required)
+    "effect_size_from_ci",
     # Dispatcher
     "run_test",
     "available_tests",

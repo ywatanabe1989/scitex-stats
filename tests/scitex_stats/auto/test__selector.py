@@ -2281,3 +2281,88 @@ def test_pretty_label_unknown_name_returns_raw_input():
     # Act
     # Assert
     assert _pretty_label("definitely_unknown_test_name") == "definitely_unknown_test_name"
+
+
+class TestRecommendTestsRawArrayOverload:
+    """Tests for the raw-vector convenience overload of recommend_tests()
+    (scitex_stats.auto._recommend_overload.recommend_tests), which accepts
+    either a StatContext (original interface) or two raw arrays + `paired`."""
+
+    def test_raw_arrays_between_design_recommends_brunner_munzel(self):
+        # Arrange
+        import numpy as np
+
+        from scitex_stats.auto import recommend_tests
+
+        rng = np.random.default_rng(0)
+        x = rng.normal(0, 1, 30)
+        y = rng.normal(0.5, 1, 32)
+        # Act
+        recommended = recommend_tests(x, y, paired=False, top_k=5)
+        # Assert
+        assert "brunner_munzel" in recommended
+
+    def test_raw_arrays_result_matches_manually_built_context(self):
+        # Arrange
+        import numpy as np
+
+        from scitex_stats.auto import StatContext, recommend_tests
+        from scitex_stats.auto._selector import recommend_tests as recommend_tests_ctx
+
+        rng = np.random.default_rng(1)
+        x = rng.normal(0, 1, 20)
+        y = rng.normal(0, 1, 25)
+        ctx = StatContext(
+            n_groups=2,
+            sample_sizes=[20, 25],
+            outcome_type="continuous",
+            design="between",
+            paired=False,
+        )
+        # Act
+        from_arrays = recommend_tests(x, y, paired=False, top_k=5)
+        from_ctx = recommend_tests_ctx(ctx, top_k=5)
+        # Assert
+        assert from_arrays == from_ctx
+
+    def test_raw_arrays_paired_true_sets_within_design(self):
+        # Arrange
+        import numpy as np
+
+        from scitex_stats.auto import recommend_tests
+
+        rng = np.random.default_rng(2)
+        x = rng.normal(0, 1, 20)
+        y = x + rng.normal(0, 0.1, 20)
+        # Act
+        recommended = recommend_tests(x, y, paired=True, top_k=10)
+        # Assert
+        assert "wilcoxon" in recommended
+
+    def test_ctx_first_argument_still_works_unchanged(self):
+        # Arrange
+        from scitex_stats.auto import StatContext, recommend_tests
+
+        ctx = StatContext(
+            n_groups=2,
+            sample_sizes=[30, 32],
+            outcome_type="continuous",
+            design="between",
+        )
+        # Act
+        recommended = recommend_tests(ctx, top_k=3)
+        # Assert
+        assert recommended[0] == "brunner_munzel"
+
+    def test_missing_y_with_raw_first_argument_raises_type_error(self):
+        # Arrange
+        import numpy as np
+
+        from scitex_stats.auto import recommend_tests
+
+        x = np.array([1.0, 2.0, 3.0])
+        # Act
+        # (call happens inside the Assert block below)
+        # Assert
+        with pytest.raises(TypeError):
+            recommend_tests(x)

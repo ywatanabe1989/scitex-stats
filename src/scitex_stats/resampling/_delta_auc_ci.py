@@ -194,4 +194,69 @@ def delta_auc_ci(
     }
 
 
+def paired_auc_effect_size(y_true, score_a, score_b) -> Dict[str, Any]:
+    """Standardized effect size for two AUCs on the SAME samples.
+
+    A matched-classifier analogue of Cohen's d: expresses the
+    difference of two correlated AUCs (evaluated on the same
+    samples/labels) as ``delta_auc / SE``, where ``SE`` is derived
+    from the full DeLong covariance matrix — i.e. it reuses the exact
+    same covariance machinery as :func:`delta_auc_ci` (via
+    :func:`scitex_stats.resampling._delong._delong_two_auc_covar`)
+    rather than re-deriving the DeLong variance/covariance terms.
+
+    Parameters
+    ----------
+    y_true : array-like
+        Binary class labels shared by both score arrays.
+    score_a, score_b : array-like
+        Continuous scores from the two competing classifiers,
+        evaluated on the same samples as ``y_true``.
+
+    Returns
+    -------
+    dict
+        ``effect_size`` (``delta_auc / se``, 0.0 if ``se`` is 0),
+        ``delta_auc``, ``se``, ``auc_a``, ``auc_b``, ``formatted``.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> y_true = np.array([0, 0, 0, 1, 1, 1])
+    >>> score_a = np.array([0.1, 0.2, 0.35, 0.6, 0.7, 0.9])  # perfect
+    >>> score_b = np.array([0.5, 0.5, 0.5, 0.5, 0.5, 0.5])  # chance
+    >>> result = paired_auc_effect_size(y_true, score_a, score_b)
+    >>> result["effect_size"] > 0
+    True
+    """
+    y_true = np.asarray(y_true)
+    score_a = np.asarray(score_a, dtype=float)
+    score_b = np.asarray(score_b, dtype=float)
+    if not (y_true.shape[0] == score_a.shape[0] == score_b.shape[0]):
+        raise ValueError("y_true, score_a, and score_b must all have the same length")
+    _validate_binary_labels(y_true)
+
+    auc_a, auc_b, var_a, var_b, covar_ab, _, _ = _delong_two_auc_covar(
+        y_true, score_a, score_b
+    )
+    delta = auc_a - auc_b
+    var_delta = max(var_a + var_b - 2.0 * covar_ab, 0.0)
+    se = float(np.sqrt(var_delta))
+    effect_size = float(delta / se) if se > 0 else 0.0
+
+    formatted = (
+        f"Paired AUC effect size = {effect_size:.2f} "
+        f"(ΔAUC={delta:.2f}, SE={se:.3f})"
+    )
+
+    return {
+        "effect_size": effect_size,
+        "delta_auc": delta,
+        "se": se,
+        "auc_a": auc_a,
+        "auc_b": auc_b,
+        "formatted": formatted,
+    }
+
+
 # EOF

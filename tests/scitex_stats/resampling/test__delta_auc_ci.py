@@ -1,4 +1,5 @@
-"""Tests for `scitex_stats.resampling._delta_auc_ci.delta_auc_ci`."""
+"""Tests for `scitex_stats.resampling._delta_auc_ci` (delta_auc_ci and
+paired_auc_effect_size)."""
 
 from __future__ import annotations
 
@@ -7,7 +8,10 @@ import pytest
 from scipy.stats import norm
 
 from scitex_stats.resampling._delong import _delong_two_auc_covar
-from scitex_stats.resampling._delta_auc_ci import delta_auc_ci
+from scitex_stats.resampling._delta_auc_ci import (
+    delta_auc_ci,
+    paired_auc_effect_size,
+)
 
 
 def test_delta_auc_matches_auc_a_minus_auc_b():
@@ -262,3 +266,71 @@ def test_delta_auc_ci_bootstrap_delta_matches_auc_a_minus_auc_b():
     result = delta_auc_ci(y_true, score_a, score_b, method="bootstrap", n_boot=200, seed=42)
     # Assert
     assert np.isclose(result["delta_auc"], result["auc_a"] - result["auc_b"])
+
+
+def test_paired_auc_effect_size_delta_matches_auc_a_minus_auc_b():
+    # Arrange
+    y_true = np.array([0, 0, 0, 1, 1, 1])
+    score_a = np.array([0.1, 0.2, 0.35, 0.6, 0.7, 0.9])  # perfect, auc=1.0
+    score_b = np.array([0.5, 0.5, 0.5, 0.5, 0.5, 0.5])  # chance, auc=0.5
+    # Act
+    result = paired_auc_effect_size(y_true, score_a, score_b)
+    # Assert
+    assert np.isclose(result["delta_auc"], result["auc_a"] - result["auc_b"])
+
+
+def test_paired_auc_effect_size_is_positive_when_a_beats_b():
+    # Arrange
+    rng = np.random.default_rng(22)
+    n = 100
+    y_true = rng.integers(0, 2, size=n)
+    score_a = y_true + rng.normal(0, 0.5, size=n)  # strong signal
+    score_b = rng.normal(0, 1, size=n)  # near-chance, uncorrelated noise
+    # Act
+    result = paired_auc_effect_size(y_true, score_a, score_b)
+    # Assert
+    assert result["effect_size"] > 0
+
+
+def test_paired_auc_effect_size_uses_same_se_as_delta_auc_ci_delong():
+    """Verify paired_auc_effect_size reuses the same DeLong covariance
+    path as delta_auc_ci (no reimplementation): its `se` must equal
+    the SE implied by delta_auc_ci's 95% CI half-width."""
+    # Arrange
+    rng = np.random.default_rng(20)
+    n = 100
+    y_true = rng.integers(0, 2, size=n)
+    score_a = y_true + rng.normal(0, 1, size=n)
+    score_b = y_true + rng.normal(0, 1, size=n)
+    ci_result = delta_auc_ci(y_true, score_a, score_b, ci=95, method="delong")
+    z = norm.ppf(0.5 + 95 / 200.0)
+    expected_se = (ci_result["ci_upper"] - ci_result["ci_lower"]) / (2.0 * z)
+    # Act
+    effect_result = paired_auc_effect_size(y_true, score_a, score_b)
+    # Assert
+    assert np.isclose(effect_result["se"], expected_se, atol=1e-9)
+
+
+def test_paired_auc_effect_size_zero_when_scores_identical():
+    # Arrange
+    rng = np.random.default_rng(21)
+    n = 50
+    y_true = rng.integers(0, 2, size=n)
+    score_a = y_true + rng.normal(0, 1, size=n)
+    score_b = score_a.copy()
+    # Act
+    result = paired_auc_effect_size(y_true, score_a, score_b)
+    # Assert
+    assert np.isclose(result["effect_size"], 0.0)
+
+
+def test_paired_auc_effect_size_raises_on_single_class():
+    # Arrange
+    y_true = np.array([1, 1, 1, 1])
+    score_a = np.array([0.1, 0.2, 0.3, 0.4])
+    score_b = np.array([0.4, 0.3, 0.2, 0.1])
+    # Act
+    # (call happens inside the Assert block below)
+    # Assert
+    with pytest.raises(ValueError):
+        paired_auc_effect_size(y_true, score_a, score_b)

@@ -13,14 +13,18 @@ This module provides:
   between the two classifiers' scores).
 - ``bootstrap_ci``: generic percentile bootstrap CI for any metric
   function of one or more equally-sized, paired-resampled arrays.
+- ``paired_auc_effect_size``: standardized (Cohen's-d-like) effect
+  size for the difference of two correlated AUCs, reusing the same
+  DeLong covariance machinery as ``delta_auc_ci``.
 """
 
 from ._auc_ci import auc_ci
 from ._bootstrap_ci import bootstrap_ci
-from ._delta_auc_ci import delta_auc_ci
+from ._delta_auc_ci import delta_auc_ci, paired_auc_effect_size
 
 __all__ = [
     "auc_ci",
     "delta_auc_ci",
     "bootstrap_ci",
+    "paired_auc_effect_size",
 ]

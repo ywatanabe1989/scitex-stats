@@ -105,9 +105,13 @@ from ._selector import (
     get_menu_items,
     recommend_effect_sizes,
     recommend_posthoc,
-    recommend_tests,
 )
 from ._selector import run_all_applicable_tests as _run_all_applicable_tests
+
+# recommend_tests: raw-vector convenience overload (accepts either a
+# StatContext OR two raw arrays + `paired`) — delegates to
+# ._selector.recommend_tests for the actual recommendation logic.
+from ._recommend_overload import recommend_tests
 
 # =============================================================================
 # Styles (public)
