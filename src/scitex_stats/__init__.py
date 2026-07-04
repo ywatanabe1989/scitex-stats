@@ -14,6 +14,8 @@ Functionalities
   `auto` — submodules exposing the primitives behind `run_test`
   (Cohen's d / Cliff's delta / eta-sq / sample-size-ttest /
   Bonferroni / FDR / Tukey HSD / Dunn / ...).
+- `resampling` — `auc_ci` / `delta_auc_ci` (DeLong + bootstrap CIs
+  for one or two correlated ROC-AUCs) and generic `bootstrap_ci`.
 - APA / Nature / LaTeX formatting via `result["formatted"]`.
 
 IO
@@ -108,6 +110,11 @@ _LAZY_ATTRS: dict[str, str] = {
     "posthoc": "posthoc",
     "power": "power",
     "tests": "tests",
+    "resampling": "resampling",
+    # Resampling / CI (DeLong, bootstrap)
+    "auc_ci": "resampling",
+    "delta_auc_ci": "resampling",
+    "bootstrap_ci": "resampling",
     # Dispatcher
     "available_tests": "_dispatch",
     "run_test": "_dispatch",
@@ -211,6 +218,11 @@ __all__ = [
     "posthoc",
     "power",
     "tests",
+    "resampling",
+    # Resampling / CI (DeLong, bootstrap)
+    "auc_ci",
+    "delta_auc_ci",
+    "bootstrap_ci",
     # Dispatcher
     "run_test",
     "available_tests",
