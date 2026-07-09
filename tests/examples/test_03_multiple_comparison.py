@@ -25,7 +25,14 @@ def test_notebook_executes_without_error(tmp_path):
     cmd = [
         sys.executable,
         "-m",
-        "jupyter",
+        # `-m nbconvert` (not `-m jupyter nbconvert`): the latter goes
+        # through jupyter_core's subcommand dispatch, which resolves
+        # `jupyter-nbconvert` by searching PATH — NOT via sys.path — so
+        # on a machine with a stray global `~/.local/bin/jupyter-nbconvert`
+        # ahead of this venv on PATH, it launches that Python instead of
+        # this venv's, crashing with ModuleNotFoundError: nbconvert.
+        # `-m nbconvert` uses Python's own sys.path-based module
+        # resolution, always the interpreter actually running this test.
         "nbconvert",
         "--to",
         "notebook",
