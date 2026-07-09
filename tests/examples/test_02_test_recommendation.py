@@ -30,6 +30,12 @@ def test_notebook_executes_without_error(tmp_path):
         "--to",
         "notebook",
         "--execute",
+        # nbclient's kernel-handshake default (60s) is too tight for a
+        # heavy `import scitex_stats` (numpy/scipy/pandas/matplotlib
+        # font-cache build) under CI load — was intermittently raising
+        # "Kernel didn't respond in 60 seconds" unrelated to notebook
+        # content. Stay comfortably under the outer subprocess timeout.
+        "--ExecutePreprocessor.startup_timeout=120",
         "--output",
         str(tmp_path / "out.ipynb"),
         str(NOTEBOOK),
