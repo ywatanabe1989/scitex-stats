@@ -12,8 +12,57 @@ from scitex_stats.correct import correct_bonferroni, correct_holm
 class TestHolmBasic:
     """Basic functionality tests for Holm correction."""
 
-    def test_basic_correction_list(self):
+    def test_basic_correction_list_corrected(self):
         """Test basic Holm correction with list of dicts."""
+        # Arrange
+        results = [
+            {"test_name": "test1", "pvalue": 0.01},
+            {"test_name": "test2", "pvalue": 0.02},
+            {"test_name": "test3", "pvalue": 0.03},
+            {"test_name": "test4", "pvalue": 0.04},
+            {"test_name": "test5", "pvalue": 0.05},
+        ]
+        # Act
+        corrected = correct_holm(results, verbose=False)
+        # Assert
+        assert isinstance(corrected, list)
+        m = len(results)
+
+    def test_basic_correction_list_corrected_results(self):
+        """Test basic Holm correction with list of dicts."""
+        # Arrange
+        results = [
+            {"test_name": "test1", "pvalue": 0.01},
+            {"test_name": "test2", "pvalue": 0.02},
+            {"test_name": "test3", "pvalue": 0.03},
+            {"test_name": "test4", "pvalue": 0.04},
+            {"test_name": "test5", "pvalue": 0.05},
+        ]
+        # Act
+        corrected = correct_holm(results, verbose=False)
+        # Assert
+        assert len(corrected) == len(results)
+        m = len(results)
+
+    def test_basic_correction_list_all_pvalue_adjusted_corrected(self):
+        """Test basic Holm correction with list of dicts."""
+        # Arrange
+        results = [
+            {"test_name": "test1", "pvalue": 0.01},
+            {"test_name": "test2", "pvalue": 0.02},
+            {"test_name": "test3", "pvalue": 0.03},
+            {"test_name": "test4", "pvalue": 0.04},
+            {"test_name": "test5", "pvalue": 0.05},
+        ]
+        # Act
+        corrected = correct_holm(results, verbose=False)
+        # Assert
+        assert all("pvalue_adjusted" in r for r in corrected)
+        m = len(results)
+
+    def test_basic_correction_list_corrected_pvalue_adjusted(self):
+        """Test basic Holm correction with list of dicts."""
+        # Arrange
         results = [
             {"test_name": "test1", "pvalue": 0.01},
             {"test_name": "test2", "pvalue": 0.02},
@@ -22,30 +71,47 @@ class TestHolmBasic:
             {"test_name": "test5", "pvalue": 0.05},
         ]
         corrected = correct_holm(results, verbose=False)
-
-        assert isinstance(corrected, list)
-        assert len(corrected) == len(results)
-        assert all("pvalue_adjusted" in r for r in corrected)
-
-        # Holm uses sequential step-down procedure
-        # Smallest p-value gets multiplied by m, next by m-1, etc.
-        # With monotonicity enforcement
+        # Act
         m = len(results)
+        # Assert
         for r in corrected:
-            assert r["pvalue_adjusted"] >= r["pvalue"]
-            assert r["pvalue_adjusted"] <= 1.0
+            assert r["pvalue"] <= r["pvalue_adjusted"] <= 1.0
 
-    def test_single_pvalue(self):
+    def test_single_pvalue_list(self):
         """Test with single p-value."""
+        # Arrange
+        # Act
         result = correct_holm({"pvalue": 0.01}, verbose=False)
-
+        # Assert
         assert isinstance(result, list)
+
+    def test_single_pvalue_case_2(self):
+        """Test with single p-value."""
+        # Arrange
+        # Act
+        result = correct_holm({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert len(result) == 1
+
+    def test_single_pvalue_adjusted(self):
+        """Test with single p-value."""
+        # Arrange
+        # Act
+        result = correct_holm({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert result[0]["pvalue_adjusted"] == 0.01  # Single test, no adjustment
+
+    def test_single_pvalue_rejected(self):
+        """Test with single p-value."""
+        # Arrange
+        # Act
+        result = correct_holm({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert "rejected" in result[0]
 
-    def test_significance_threshold(self):
+    def test_significance_threshold_all_rejected_result_005(self):
         """Test significance determination with different alpha."""
+        # Arrange
         results = [
             {"pvalue": 0.001},
             {"pvalue": 0.01},
@@ -53,20 +119,53 @@ class TestHolmBasic:
             {"pvalue": 0.05},
             {"pvalue": 0.1},
         ]
-
         result_005 = correct_holm(results, alpha=0.05, verbose=False)
+        # Act
         result_001 = correct_holm(results, alpha=0.01, verbose=False)
-
-        # Check that significance changes with alpha
+        # Assert
         assert all("rejected" in r for r in result_005)
-        assert all("rejected" in r for r in result_001)
-
         n_rejected_005 = sum(r["rejected"] for r in result_005)
         n_rejected_001 = sum(r["rejected"] for r in result_001)
+
+    def test_significance_threshold_all_rejected_result_001(self):
+        """Test significance determination with different alpha."""
+        # Arrange
+        results = [
+            {"pvalue": 0.001},
+            {"pvalue": 0.01},
+            {"pvalue": 0.02},
+            {"pvalue": 0.05},
+            {"pvalue": 0.1},
+        ]
+        result_005 = correct_holm(results, alpha=0.05, verbose=False)
+        # Act
+        result_001 = correct_holm(results, alpha=0.01, verbose=False)
+        # Assert
+        assert all("rejected" in r for r in result_001)
+        n_rejected_005 = sum(r["rejected"] for r in result_005)
+        n_rejected_001 = sum(r["rejected"] for r in result_001)
+
+    def test_significance_threshold_n_rejected_005_n_rejected_001(self):
+        """Test significance determination with different alpha."""
+        # Arrange
+        results = [
+            {"pvalue": 0.001},
+            {"pvalue": 0.01},
+            {"pvalue": 0.02},
+            {"pvalue": 0.05},
+            {"pvalue": 0.1},
+        ]
+        result_005 = correct_holm(results, alpha=0.05, verbose=False)
+        result_001 = correct_holm(results, alpha=0.01, verbose=False)
+        n_rejected_005 = sum(r["rejected"] for r in result_005)
+        # Act
+        n_rejected_001 = sum(r["rejected"] for r in result_001)
+        # Assert
         assert n_rejected_005 >= n_rejected_001
 
-    def test_monotonicity(self):
+    def test_monotonicity_range_violated_at_index(self):
         """Test that adjusted p-values are monotonic when sorted by original p-values."""
+        # Arrange
         results = [
             {"pvalue": 0.001},
             {"pvalue": 0.01},
@@ -74,12 +173,10 @@ class TestHolmBasic:
             {"pvalue": 0.03},
             {"pvalue": 0.04},
         ]
+        # Act
         corrected = correct_holm(results, verbose=False)
-
-        # Extract adjusted p-values in original order
         adj_pvals = [r["pvalue_adjusted"] for r in corrected]
-
-        # They should be monotonically increasing (since original p-values are increasing)
+        # Assert
         for i in range(len(adj_pvals) - 1):
             assert (
                 adj_pvals[i] <= adj_pvals[i + 1]
@@ -89,75 +186,153 @@ class TestHolmBasic:
 class TestHolmInputFormats:
     """Test different input formats."""
 
-    def test_single_dict_input(self):
+    def test_single_dict_input_list(self):
         """Test with single dict input."""
+        # Arrange
+        # Act
         result = correct_holm({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert isinstance(result, list)
+
+    def test_single_dict_input_case_2(self):
+        """Test with single dict input."""
+        # Arrange
+        # Act
+        result = correct_holm({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert len(result) == 1
+
+    def test_single_dict_input_pvalue_adjusted(self):
+        """Test with single dict input."""
+        # Arrange
+        # Act
+        result = correct_holm({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert "pvalue_adjusted" in result[0]
 
-    def test_list_of_dicts_input(self):
+    def test_list_of_dicts_input_case_1(self):
         """Test with list of dicts input containing p-values."""
+        # Arrange
         test_results = [
             {"test_name": "test1", "pvalue": 0.01},
             {"test_name": "test2", "pvalue": 0.02},
             {"test_name": "test3", "pvalue": 0.03},
         ]
+        # Act
         result = correct_holm(test_results, verbose=False)
+        # Assert
         assert isinstance(result, list)
+
+    def test_list_of_dicts_input_all_pvalue_adjusted(self):
+        """Test with list of dicts input containing p-values."""
+        # Arrange
+        test_results = [
+            {"test_name": "test1", "pvalue": 0.01},
+            {"test_name": "test2", "pvalue": 0.02},
+            {"test_name": "test3", "pvalue": 0.03},
+        ]
+        # Act
+        result = correct_holm(test_results, verbose=False)
+        # Assert
         assert all("pvalue_adjusted" in r for r in result)
+
+    def test_list_of_dicts_input_all_test_name(self):
+        """Test with list of dicts input containing p-values."""
+        # Arrange
+        test_results = [
+            {"test_name": "test1", "pvalue": 0.01},
+            {"test_name": "test2", "pvalue": 0.02},
+            {"test_name": "test3", "pvalue": 0.03},
+        ]
+        # Act
+        result = correct_holm(test_results, verbose=False)
+        # Assert
         assert all("test_name" in r for r in result)  # Original fields preserved
 
-    def test_dataframe_input(self):
+    def test_dataframe_input_case_1(self):
         """Test with DataFrame input."""
+        # Arrange
         df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
         result = correct_holm(df, verbose=False)
+        # Assert
         assert isinstance(result, pd.DataFrame)
+
+    def test_dataframe_input_pvalue_adjusted_columns(self):
+        """Test with DataFrame input."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_holm(df, verbose=False)
+        # Assert
         assert "pvalue_adjusted" in result.columns
+
+    def test_dataframe_input_alpha_adjusted_columns(self):
+        """Test with DataFrame input."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_holm(df, verbose=False)
+        # Assert
         assert "alpha_adjusted" in result.columns
+
+    def test_dataframe_input_rejected_columns(self):
+        """Test with DataFrame input."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_holm(df, verbose=False)
+        # Assert
         assert "rejected" in result.columns
 
 
 class TestHolmEdgeCases:
     """Test edge cases and error handling."""
 
-    def test_pvalue_clipping(self):
+    def test_pvalue_clipping_all_corrected_adjusted(self):
         """Test that corrected p-values are clipped at 1.0."""
+        # Arrange
         results = [{"pvalue": 0.5}, {"pvalue": 0.6}, {"pvalue": 0.7}]
+        # Act
         corrected = correct_holm(results, verbose=False)
-
-        # All corrected values should be <= 1.0
+        # Assert
         assert all(r["pvalue_adjusted"] <= 1.0 for r in corrected)
 
-    def test_zero_pvalues(self):
+    def test_zero_pvalues_pvalue_adjusted_corrected(self):
         """Test handling of zero p-values."""
+        # Arrange
         results = [{"pvalue": 0.0}, {"pvalue": 0.01}, {"pvalue": 0.02}]
+        # Act
         corrected = correct_holm(results, verbose=False)
-
+        # Assert
         assert corrected[0]["pvalue_adjusted"] == 0.0
 
-    def test_one_pvalue(self):
+    def test_one_pvalue_adjusted_corrected(self):
         """Test handling of p-value = 1.0."""
+        # Arrange
         results = [{"pvalue": 0.01}, {"pvalue": 0.5}, {"pvalue": 1.0}]
+        # Act
         corrected = correct_holm(results, verbose=False)
-
+        # Assert
         assert corrected[2]["pvalue_adjusted"] == 1.0
 
-    def test_nan_handling(self):
-        """Test handling of NaN values."""
-        df = pd.DataFrame({"pvalue": [0.01, np.nan, 0.03]})
+    def test_nan_input_returns_frame_or_raises_documented_error(self):
+        """NaN p-values either return a DataFrame or raise ValueError/TypeError.
 
-        # NaN handling may raise error or propagate NaN
-        # This test checks the behavior doesn't crash
+        The contract is deterministic NaN handling — never an unexpected
+        exception type and never a silent crash.
+        """
+        # Arrange
+        df = pd.DataFrame({"pvalue": [0.01, np.nan, 0.03]})
+        # Act
+        outcome = "unset"
         try:
             result = correct_holm(df, verbose=False)
-            # If it succeeds, NaN should remain NaN or be handled gracefully
-            if not pd.isna(result["pvalue"].iloc[1]):
-                # If NaN was filtered out or replaced, that's acceptable
-                pass
+            outcome = "frame" if isinstance(result, pd.DataFrame) else type(result).__name__
         except (ValueError, TypeError):
-            # If it raises an error on NaN, that's also acceptable behavior
-            pass
+            outcome = "documented_error"
+        # Assert
+        assert outcome in ("frame", "documented_error")
 
 
 class TestHolmComparison:
@@ -165,20 +340,20 @@ class TestHolmComparison:
 
     def test_holm_more_powerful_than_bonferroni(self):
         """Test that Holm rejects at least as many as Bonferroni."""
+        # Arrange
         p_values = [0.001, 0.01, 0.02, 0.03, 0.04]
         results = [{"pvalue": p} for p in p_values]
-
         holm_corrected = correct_holm(results, alpha=0.05, verbose=False)
         bonf_corrected = correct_bonferroni(results, alpha=0.05, verbose=False)
-
         n_rejected_holm = sum(r["rejected"] for r in holm_corrected)
+        # Act
         n_rejected_bonf = sum(r["rejected"] for r in bonf_corrected)
-
-        # Holm should be at least as powerful (reject >= Bonferroni)
+        # Assert
         assert n_rejected_holm >= n_rejected_bonf
 
-    def test_sequential_rejection(self):
+    def test_sequential_rejection_rejected_corrected(self):
         """Test Holm's sequential rejection procedure."""
+        # Arrange
         results = [
             {"pvalue": 0.001},  # Should be rejected
             {"pvalue": 0.005},  # Should be rejected
@@ -186,67 +361,151 @@ class TestHolmComparison:
             {"pvalue": 0.02},  # Less likely
             {"pvalue": 0.05},  # Least likely
         ]
-
+        # Act
         corrected = correct_holm(results, alpha=0.05, verbose=False)
-
-        # At least the first (smallest) p-value should be rejected
+        # Assert
         assert corrected[0]["rejected"] == True
 
-    def test_known_values(self):
+    def test_known_values_allclose_pvalue_adjusted_corrected(self):
         """Test against manually calculated Holm values."""
-        # With m=3, alpha=0.05:
-        # - Sorted p-values: 0.01, 0.02, 0.03
-        # - Holm adjusted: 0.01*3=0.03, max(0.02*2, 0.03)=0.04, max(0.03*1, 0.04)=0.04
+        # Arrange
         results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
-
+        # Act
         corrected = correct_holm(results, verbose=False)
+        # Assert
+        assert np.allclose(corrected[0]['pvalue_adjusted'], 0.03, atol=1.5e-5, rtol=0, equal_nan=True)
 
-        # First p-value: 0.01 * 3 = 0.03
-        np.testing.assert_almost_equal(corrected[0]["pvalue_adjusted"], 0.03, decimal=5)
+    def test_known_values_allclose_pvalue_adjusted_corrected_2(self):
+        """Test against manually calculated Holm values."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_holm(results, verbose=False)
+        # Assert
+        assert np.allclose(corrected[1]['pvalue_adjusted'], 0.04, atol=1.5e-5, rtol=0, equal_nan=True)
 
-        # Second p-value: max(0.02 * 2, 0.03) = 0.04
-        np.testing.assert_almost_equal(corrected[1]["pvalue_adjusted"], 0.04, decimal=5)
-
-        # Third p-value: max(0.03 * 1, 0.04) = 0.04 (monotonicity)
-        np.testing.assert_almost_equal(corrected[2]["pvalue_adjusted"], 0.04, decimal=5)
+    def test_known_values_allclose_pvalue_adjusted_corrected_3(self):
+        """Test against manually calculated Holm values."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_holm(results, verbose=False)
+        # Assert
+        assert np.allclose(corrected[2]['pvalue_adjusted'], 0.04, atol=1.5e-5, rtol=0, equal_nan=True)
 
 
 class TestHolmOutput:
     """Test output structure and format."""
 
-    def test_list_output_keys(self):
+    def test_list_output_keys_corrected(self):
         """Test that list input returns list with expected keys."""
+        # Arrange
         results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
         corrected = correct_holm(results, verbose=False)
-
+        # Assert
         assert isinstance(corrected, list)
+
+    def test_list_output_keys_all_pvalue_adjusted_corrected(self):
+        """Test that list input returns list with expected keys."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_holm(results, verbose=False)
+        # Assert
         assert all("pvalue_adjusted" in r for r in corrected)
+
+    def test_list_output_keys_all_alpha_adjusted_corrected(self):
+        """Test that list input returns list with expected keys."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_holm(results, verbose=False)
+        # Assert
         assert all("alpha_adjusted" in r for r in corrected)
+
+    def test_list_output_keys_all_rejected_corrected(self):
+        """Test that list input returns list with expected keys."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_holm(results, verbose=False)
+        # Assert
         assert all("rejected" in r for r in corrected)
 
-    def test_dataframe_output_keys(self):
+    def test_dataframe_output_keys_case_1(self):
         """Test that DataFrame input returns DataFrame with expected columns."""
+        # Arrange
         df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
         result = correct_holm(df, verbose=False)
-
+        # Assert
         assert isinstance(result, pd.DataFrame)
+
+    def test_dataframe_output_keys_pvalue_adjusted_columns(self):
+        """Test that DataFrame input returns DataFrame with expected columns."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_holm(df, verbose=False)
+        # Assert
         assert "pvalue_adjusted" in result.columns
+
+    def test_dataframe_output_keys_alpha_adjusted_columns(self):
+        """Test that DataFrame input returns DataFrame with expected columns."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_holm(df, verbose=False)
+        # Assert
         assert "alpha_adjusted" in result.columns
+
+    def test_dataframe_output_keys_rejected_columns(self):
+        """Test that DataFrame input returns DataFrame with expected columns."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_holm(df, verbose=False)
+        # Assert
         assert "rejected" in result.columns
 
-    def test_original_order_preserved(self):
+    def test_original_order_preserved_id_corrected(self):
         """Test that original order of results is preserved."""
-        # Input in non-sorted order
+        # Arrange
         results = [
             {"id": 1, "pvalue": 0.03},
             {"id": 2, "pvalue": 0.01},  # Smallest
             {"id": 3, "pvalue": 0.02},
         ]
+        # Act
         corrected = correct_holm(results, verbose=False)
-
-        # Order should be preserved
+        # Assert
         assert corrected[0]["id"] == 1
+
+    def test_original_order_preserved_id_corrected_2(self):
+        """Test that original order of results is preserved."""
+        # Arrange
+        results = [
+            {"id": 1, "pvalue": 0.03},
+            {"id": 2, "pvalue": 0.01},  # Smallest
+            {"id": 3, "pvalue": 0.02},
+        ]
+        # Act
+        corrected = correct_holm(results, verbose=False)
+        # Assert
         assert corrected[1]["id"] == 2
+
+    def test_original_order_preserved_id_corrected_3(self):
+        """Test that original order of results is preserved."""
+        # Arrange
+        results = [
+            {"id": 1, "pvalue": 0.03},
+            {"id": 2, "pvalue": 0.01},  # Smallest
+            {"id": 3, "pvalue": 0.02},
+        ]
+        # Act
+        corrected = correct_holm(results, verbose=False)
+        # Assert
         assert corrected[2]["id"] == 3
 
 
@@ -255,18 +514,19 @@ class TestHolmMathematicalProperties:
 
     def test_alpha_adjusted_range(self):
         """Test that adjusted alpha values are in expected range."""
+        # Arrange
         results = [{"pvalue": 0.01 * i} for i in range(1, 6)]
         corrected = correct_holm(results, alpha=0.05, verbose=False)
-
+        # Act
         m = len(results)
+        # Assert
         for r in corrected:
             # Alpha adjusted should be between alpha/m and alpha
-            assert r["alpha_adjusted"] >= 0.05 / m
-            assert r["alpha_adjusted"] <= 0.05
+            assert 0.05 / m <= r["alpha_adjusted"] <= 0.05
 
     def test_step_down_property(self):
         """Test that Holm uses step-down procedure."""
-        # Step-down means we compare sorted p-values with increasing thresholds
+        # Arrange
         results = [
             {"pvalue": 0.001},
             {"pvalue": 0.01},
@@ -274,18 +534,12 @@ class TestHolmMathematicalProperties:
             {"pvalue": 0.03},
             {"pvalue": 0.04},
         ]
-
         corrected = correct_holm(results, alpha=0.05, verbose=False)
-
-        # The adjusted p-values should reflect the step-down procedure
-        # (smaller p-values get stricter adjustments initially)
         m = len(results)
-
-        # First p-value gets multiplied by m
+        # Act
         expected_first = min(results[0]["pvalue"] * m, 1.0)
-        np.testing.assert_almost_equal(
-            corrected[0]["pvalue_adjusted"], expected_first, decimal=5
-        )
+        # Assert
+        assert np.allclose(corrected[0]['pvalue_adjusted'], expected_first, atol=1.5e-5, rtol=0, equal_nan=True)
 
 
 if __name__ == "__main__":

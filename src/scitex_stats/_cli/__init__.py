@@ -13,74 +13,46 @@ Subcommand groups:
 
 from __future__ import annotations
 
+import sys as _sys
+
+from ._version_fastpath import maybe_print_version_and_exit as _maybe_version_exit
+
+# Must run before any import below that transitively pulls in
+# `scitex_dev._cli` (see `_version_fastpath.py` for why).
+_maybe_version_exit(_sys.argv[1:])
+
 import json
 import sys
 
 import click
 
 from .. import __version__
+from ._help import print_help_recursive as _print_help_recursive
+from ._integrations import attach_scitex_dev_integrations
 from .introspect import (
     cmd_api as _cmd_api,
-)
-from .introspect import (
     cmd_list_python_apis as _cmd_list_python_apis,
 )
 from .mcp import (
     CLAUDE_DESKTOP_CONFIG_CLI,
     CLAUDE_DESKTOP_CONFIG_PYTHON,
-)
-from .mcp import (
     cmd_config as _cmd_config,
-)
-from .mcp import (
     cmd_doctor as _cmd_doctor,
-)
-from .mcp import (
     cmd_list_tools as _cmd_list_tools,
-)
-from .mcp import (
     cmd_start as _cmd_start,
 )
 from .skills_group import skills_group as _skills_group
 from .stats import (
     run_format_pvalue as _run_format_pvalue,
-)
-from .stats import (
     run_tests_describe as _run_tests_describe,
-)
-from .stats import (
     run_tests_execute as _run_tests_execute,
-)
-from .stats import (
     run_tests_list as _run_tests_list,
-)
-from .stats import (
     run_tests_recommend as _run_tests_recommend,
 )
 
 
 def _get_version() -> str:
     return __version__
-
-
-def _print_help_recursive(ctx: click.Context, _param, value):
-    if not value or ctx.resilient_parsing:
-        return
-    cmd = ctx.command
-    click.echo(cmd.get_help(ctx))
-
-    def _walk(c, parent_ctx, prefix):
-        if isinstance(c, click.Group):
-            for name in sorted(c.commands):
-                sub = c.commands[name]
-                sub_ctx = click.Context(sub, info_name=name, parent=parent_ctx)
-                click.echo("\n---\n")
-                click.echo(f"Command: {prefix}{name}\n")
-                click.echo(sub.get_help(sub_ctx))
-                _walk(sub, sub_ctx, f"{prefix}{name} ")
-
-    _walk(cmd, ctx, "")
-    ctx.exit(0)
 
 
 @click.group(
@@ -495,41 +467,9 @@ def format_pvalue(p, style):
 main.add_command(_skills_group, name="skills")
 
 
-# §1a: install-shell-completion + print-shell-completion (canonical leaves)
-try:
-    from scitex_dev._cli._completion import attach_shell_completion
-
-    attach_shell_completion(main, prog_name="scitex-stats")
-except ImportError:
-    pass
-
-
-# ----------------------------------------------------------------------------
-# Optional docs/skills subcommands from scitex-dev
-# ----------------------------------------------------------------------------
-
-try:
-    from scitex_dev.cli import register_docs_subcommand, register_skills_subcommand
-
-    # scitex-dev exposes argparse-compatible registration functions; if a Click
-    # variant is available, use it. Otherwise we silently skip — the docs/skills
-    # subcommands are non-essential and the canonical API is `scitex-dev`.
-    _has_click_register = False
-    try:
-        from scitex_dev.cli import (  # type: ignore
-            register_docs_click_command,
-            register_skills_click_command,
-        )
-
-        _has_click_register = True
-    except ImportError:
-        pass
-
-    if _has_click_register:
-        register_docs_click_command(main, package="scitex-stats")
-        # Skills group is owned locally (skills_group.py) — do not override.
-except ImportError:
-    pass
+# §1a install-shell-completion/print-shell-completion + optional scitex-dev
+# docs/skills subcommands — both best-effort, see _integrations.py.
+attach_scitex_dev_integrations(main)
 
 
 def _entry(argv=None) -> int:

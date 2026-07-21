@@ -27,204 +27,451 @@ from scitex_stats.auto._formatting import (
 class TestGetStatSymbol:
     """Tests for get_stat_symbol function."""
 
-    def test_t_test_returns_t(self):
+    def test_t_test_returns_t_get_stat_symbol_ttest_ind(self):
         """Test t-test returns t symbol."""
+        # Arrange
+        # Act
+        # Assert
         assert get_stat_symbol("ttest_ind") == "t"
+
+    def test_t_test_returns_t_get_stat_symbol_ttest_rel(self):
+        """Test t-test returns t symbol."""
+        # Arrange
+        # Act
+        # Assert
         assert get_stat_symbol("ttest_rel") == "t"
 
-    def test_anova_returns_F(self):
+    def test_anova_returns_F_get_stat_symbol_oneway(self):
         """Test ANOVA tests return F symbol."""
+        # Arrange
+        # Act
+        # Assert
         assert get_stat_symbol("anova_oneway") == "F"
+
+    def test_anova_returns_F_get_stat_symbol_rm_oneway(self):
+        """Test ANOVA tests return F symbol."""
+        # Arrange
+        # Act
+        # Assert
         assert get_stat_symbol("anova_rm_oneway") == "F"
+
+    def test_anova_returns_F_get_stat_symbol_welch(self):
+        """Test ANOVA tests return F symbol."""
+        # Arrange
+        # Act
+        # Assert
         assert get_stat_symbol("welch_anova") == "F"
 
     def test_brunner_munzel_returns_BM(self):
         """Test Brunner-Munzel returns BM symbol."""
+        # Arrange
+        # Act
+        # Assert
         assert get_stat_symbol("brunner_munzel") == "BM"
 
     def test_mannwhitneyu_returns_U(self):
         """Test Mann-Whitney returns U symbol."""
+        # Arrange
+        # Act
+        # Assert
         assert get_stat_symbol("mannwhitneyu") == "U"
 
     def test_chi2_returns_chi2(self):
         """Test chi-square tests return chi2 symbol."""
+        # Arrange
+        # Act
+        # Assert
         assert get_stat_symbol("chi2_independence") == "chi2"
 
-    def test_correlation_returns_r(self):
+    def test_correlation_returns_r_get_stat_symbol_pearsonr(self):
         """Test correlation tests return r symbol."""
+        # Arrange
+        # Act
+        # Assert
         assert get_stat_symbol("pearsonr") == "r"
+
+    def test_correlation_returns_r_get_stat_symbol_spearmanr(self):
+        """Test correlation tests return r symbol."""
+        # Arrange
+        # Act
+        # Assert
         assert get_stat_symbol("spearmanr") == "r"
 
     def test_unknown_returns_stat(self):
         """Test unknown test returns generic 'stat'."""
+        # Arrange
+        # Act
+        # Assert
         assert get_stat_symbol("unknown_test") == "stat"
 
 
 class TestComputeSummaryStats:
     """Tests for compute_summary_stats function."""
 
-    def test_basic_two_groups(self):
+    def test_basic_two_groups_stats(self):
         """Test summary stats for two groups."""
+        # Arrange
         y = np.array([1, 2, 3, 4, 5, 6])
         group = np.array(["A", "A", "A", "B", "B", "B"])
+        # Act
         stats = compute_summary_stats(y, group)
-
+        # Assert
         assert len(stats) == 2
+
+    def test_basic_two_groups_group_stats(self):
+        """Test summary stats for two groups."""
+        # Arrange
+        y = np.array([1, 2, 3, 4, 5, 6])
+        group = np.array(["A", "A", "A", "B", "B", "B"])
+        # Act
+        stats = compute_summary_stats(y, group)
+        # Assert
         assert stats[0]["group"] == "A"
+
+    def test_basic_two_groups_stats_2(self):
+        """Test summary stats for two groups."""
+        # Arrange
+        y = np.array([1, 2, 3, 4, 5, 6])
+        group = np.array(["A", "A", "A", "B", "B", "B"])
+        # Act
+        stats = compute_summary_stats(y, group)
+        # Assert
         assert stats[0]["n"] == 3
+
+    def test_basic_two_groups_group_stats_2(self):
+        """Test summary stats for two groups."""
+        # Arrange
+        y = np.array([1, 2, 3, 4, 5, 6])
+        group = np.array(["A", "A", "A", "B", "B", "B"])
+        # Act
+        stats = compute_summary_stats(y, group)
+        # Assert
         assert stats[1]["group"] == "B"
+
+    def test_basic_two_groups_stats_3(self):
+        """Test summary stats for two groups."""
+        # Arrange
+        y = np.array([1, 2, 3, 4, 5, 6])
+        group = np.array(["A", "A", "A", "B", "B", "B"])
+        # Act
+        stats = compute_summary_stats(y, group)
+        # Assert
         assert stats[1]["n"] == 3
 
-    def test_mean_calculation(self):
+    def test_mean_calculation_approx_stats_pytest(self):
         """Test mean is calculated correctly."""
+        # Arrange
         y = np.array([1, 2, 3, 10, 11, 12])
         group = np.array(["A", "A", "A", "B", "B", "B"])
+        # Act
         stats = compute_summary_stats(y, group)
-
+        # Assert
         assert stats[0]["mean"] == pytest.approx(2.0)
+
+    def test_mean_calculation_approx_stats_pytest_2(self):
+        """Test mean is calculated correctly."""
+        # Arrange
+        y = np.array([1, 2, 3, 10, 11, 12])
+        group = np.array(["A", "A", "A", "B", "B", "B"])
+        # Act
+        stats = compute_summary_stats(y, group)
+        # Assert
         assert stats[1]["mean"] == pytest.approx(11.0)
 
-    def test_sd_calculation(self):
+    def test_sd_calculation_approx_stats_pytest(self):
         """Test standard deviation calculation."""
+        # Arrange
         y = np.array([1, 2, 3, 10, 11, 12])
         group = np.array(["A", "A", "A", "B", "B", "B"])
+        # Act
         stats = compute_summary_stats(y, group)
-
-        # SD with ddof=1
+        # Assert
         assert stats[0]["sd"] == pytest.approx(1.0)
+
+    def test_sd_calculation_approx_stats_pytest_2(self):
+        """Test standard deviation calculation."""
+        # Arrange
+        y = np.array([1, 2, 3, 10, 11, 12])
+        group = np.array(["A", "A", "A", "B", "B", "B"])
+        # Act
+        stats = compute_summary_stats(y, group)
+        # Assert
         assert stats[1]["sd"] == pytest.approx(1.0)
 
-    def test_median_and_quartiles(self):
+    def test_median_and_quartiles_approx_stats_pytest(self):
         """Test median and quartiles are computed."""
+        # Arrange
         y = np.array([1, 2, 3, 4, 5])
         group = np.array(["A", "A", "A", "A", "A"])
+        # Act
         stats = compute_summary_stats(y, group)
-
+        # Assert
         assert stats[0]["median"] == pytest.approx(3.0)
+
+    def test_median_and_quartiles_q1_stats(self):
+        """Test median and quartiles are computed."""
+        # Arrange
+        y = np.array([1, 2, 3, 4, 5])
+        group = np.array(["A", "A", "A", "A", "A"])
+        # Act
+        stats = compute_summary_stats(y, group)
+        # Assert
         assert stats[0]["q1"] is not None
+
+    def test_median_and_quartiles_q3_stats(self):
+        """Test median and quartiles are computed."""
+        # Arrange
+        y = np.array([1, 2, 3, 4, 5])
+        group = np.array(["A", "A", "A", "A", "A"])
+        # Act
+        stats = compute_summary_stats(y, group)
+        # Assert
         assert stats[0]["q3"] is not None
+
+    def test_median_and_quartiles_iqr_stats(self):
+        """Test median and quartiles are computed."""
+        # Arrange
+        y = np.array([1, 2, 3, 4, 5])
+        group = np.array(["A", "A", "A", "A", "A"])
+        # Act
+        stats = compute_summary_stats(y, group)
+        # Assert
         assert stats[0]["iqr"] is not None
 
-    def test_min_max(self):
+    def test_min_max_minimum_stats(self):
         """Test minimum and maximum."""
+        # Arrange
         y = np.array([5, 10, 15, 20, 25])
         group = np.array(["A", "A", "A", "A", "A"])
+        # Act
         stats = compute_summary_stats(y, group)
-
+        # Assert
         assert stats[0]["minimum"] == 5.0
+
+    def test_min_max_maximum_stats(self):
+        """Test minimum and maximum."""
+        # Arrange
+        y = np.array([5, 10, 15, 20, 25])
+        group = np.array(["A", "A", "A", "A", "A"])
+        # Act
+        stats = compute_summary_stats(y, group)
+        # Assert
         assert stats[0]["maximum"] == 25.0
 
-    def test_handles_nan(self):
+    def test_handles_nan_stats(self):
         """Test NaN values are excluded from computation."""
+        # Arrange
         y = np.array([1, 2, np.nan, 4, 5])
         group = np.array(["A", "A", "A", "A", "A"])
+        # Act
         stats = compute_summary_stats(y, group)
-
+        # Assert
         assert stats[0]["n"] == 4  # NaN excluded
 
-    def test_unequal_group_sizes(self):
+    def test_unequal_group_sizes_stats(self):
         """Test with unequal group sizes."""
+        # Arrange
         y = np.array([1, 2, 3, 4, 5, 6, 7])
         group = np.array(["A", "A", "B", "B", "B", "B", "B"])
+        # Act
         stats = compute_summary_stats(y, group)
-
+        # Assert
         assert stats[0]["n"] == 2
+
+    def test_unequal_group_sizes_stats_2(self):
+        """Test with unequal group sizes."""
+        # Arrange
+        y = np.array([1, 2, 3, 4, 5, 6, 7])
+        group = np.array(["A", "A", "B", "B", "B", "B", "B"])
+        # Act
+        stats = compute_summary_stats(y, group)
+        # Assert
         assert stats[1]["n"] == 5
 
 
 class TestComputeSummaryFromGroups:
     """Tests for compute_summary_from_groups function."""
 
-    def test_basic_usage(self):
+    def test_basic_usage_stats(self):
         """Test basic usage with list of arrays."""
+        # Arrange
         groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
+        # Act
         stats = compute_summary_from_groups(groups)
-
+        # Assert
         assert len(stats) == 2
+
+    def test_basic_usage_stats_2(self):
+        """Test basic usage with list of arrays."""
+        # Arrange
+        groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
+        # Act
+        stats = compute_summary_from_groups(groups)
+        # Assert
         assert stats[0]["n"] == 3
+
+    def test_basic_usage_stats_3(self):
+        """Test basic usage with list of arrays."""
+        # Arrange
+        groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
+        # Act
+        stats = compute_summary_from_groups(groups)
+        # Assert
         assert stats[1]["n"] == 3
 
-    def test_custom_names(self):
+    def test_custom_names_control_group_stats(self):
         """Test custom group names."""
+        # Arrange
         groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
+        # Act
         stats = compute_summary_from_groups(
             groups, group_names=["Control", "Treatment"]
         )
-
+        # Assert
         assert stats[0]["group"] == "Control"
+
+    def test_custom_names_treatment_group_stats(self):
+        """Test custom group names."""
+        # Arrange
+        groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
+        # Act
+        stats = compute_summary_from_groups(
+            groups, group_names=["Control", "Treatment"]
+        )
+        # Assert
         assert stats[1]["group"] == "Treatment"
 
-    def test_default_names(self):
+    def test_default_names_group_stats(self):
         """Test default group names."""
+        # Arrange
         groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
+        # Act
         stats = compute_summary_from_groups(groups)
-
+        # Assert
         assert stats[0]["group"] == "Group_1"
+
+    def test_default_names_group_stats_2(self):
+        """Test default group names."""
+        # Arrange
+        groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
+        # Act
+        stats = compute_summary_from_groups(groups)
+        # Assert
         assert stats[1]["group"] == "Group_2"
 
 
 class TestFormatTestLine:
     """Tests for format_test_line function."""
 
-    def test_basic_formatting(self):
+    def test_basic_formatting_line(self):
         """Test basic test line formatting."""
+        # Arrange
         test = {"test_name": "ttest_ind", "stat": 2.31, "df": 28.0, "p_raw": 0.028}
+        # Act
         line = format_test_line(test, style="plain")
-
+        # Assert
         assert "2.31" in line
+
+    def test_basic_formatting_line_2(self):
+        """Test basic test line formatting."""
+        # Arrange
+        test = {"test_name": "ttest_ind", "stat": 2.31, "df": 28.0, "p_raw": 0.028}
+        # Act
+        line = format_test_line(test, style="plain")
+        # Assert
         assert "0.028" in line
 
-    def test_with_effects(self):
+    def test_with_effects_line(self):
         """Test formatting with effect sizes."""
+        # Arrange
         test = {"test_name": "ttest_ind", "stat": 2.31, "p_raw": 0.028}
         effects = [{"name": "cohens_d_ind", "value": 0.72, "label": "Cohen's d"}]
+        # Act
         line = format_test_line(test, effects=effects, style="plain")
-
+        # Assert
         assert "0.72" in line
 
-    def test_with_summary(self):
+    def test_with_summary_line(self):
         """Test formatting with sample sizes."""
+        # Arrange
         test = {"test_name": "ttest_ind", "stat": 2.31, "p_raw": 0.028}
         summary = [{"group": "A", "n": 15}, {"group": "B", "n": 15}]
+        # Act
         line = format_test_line(test, summary=summary, style="plain", include_n=True)
-
+        # Assert
         assert "15" in line
 
-    def test_latex_style(self):
+    def test_latex_style_mathit_line(self):
         """Test LaTeX formatting."""
+        # Arrange
         test = {"test_name": "ttest_ind", "stat": 2.31, "df": 28.0, "p_raw": 0.028}
+        # Act
         line = format_test_line(test, style="apa_latex")
-
+        # Assert
         assert "\\mathit{t}" in line
+
+    def test_latex_style_mathit_line_2(self):
+        """Test LaTeX formatting."""
+        # Arrange
+        test = {"test_name": "ttest_ind", "stat": 2.31, "df": 28.0, "p_raw": 0.028}
+        # Act
+        line = format_test_line(test, style="apa_latex")
+        # Assert
         assert "\\mathit{p}" in line
 
-    def test_html_style(self):
+    def test_html_style_line(self):
         """Test HTML formatting."""
+        # Arrange
         test = {"test_name": "ttest_ind", "stat": 2.31, "df": 28.0, "p_raw": 0.028}
+        # Act
         line = format_test_line(test, style="apa_html")
-
+        # Assert
         assert "<i>t</i>" in line
+
+    def test_html_style_line_2(self):
+        """Test HTML formatting."""
+        # Arrange
+        test = {"test_name": "ttest_ind", "stat": 2.31, "df": 28.0, "p_raw": 0.028}
+        # Act
+        line = format_test_line(test, style="apa_html")
+        # Assert
         assert "<i>p</i>" in line
 
     def test_uses_p_adj_when_available(self):
         """Test that p_adj is used when available."""
+        # Arrange
         test = {"test_name": "ttest_ind", "stat": 2.31, "p_raw": 0.01, "p_adj": 0.03}
+        # Act
         line = format_test_line(test, style="plain")
-
+        # Assert
         assert "0.03" in line  # Should use p_adj
 
-    def test_max_effects_limit(self):
+    def test_max_effects_limit_line(self):
         """Test maximum effects limit."""
+        # Arrange
         test = {"test_name": "ttest_ind", "stat": 2.31, "p_raw": 0.028}
         effects = [
             {"name": "effect1", "value": 0.5},
             {"name": "effect2", "value": 0.6},
             {"name": "effect3", "value": 0.7},
         ]
+        # Act
         line = format_test_line(test, effects=effects, style="plain", max_effects=1)
-
-        # Should only include first effect
+        # Assert
         assert "0.5" in line
+
+    def test_max_effects_limit_line_2(self):
+        """Test maximum effects limit."""
+        # Arrange
+        test = {"test_name": "ttest_ind", "stat": 2.31, "p_raw": 0.028}
+        effects = [
+            {"name": "effect1", "value": 0.5},
+            {"name": "effect2", "value": 0.6},
+            {"name": "effect3", "value": 0.7},
+        ]
+        # Act
+        line = format_test_line(test, effects=effects, style="plain", max_effects=1)
+        # Assert
         assert "0.7" not in line
 
 
@@ -233,36 +480,69 @@ class TestFormatTestLineCompact:
 
     def test_compact_excludes_n(self):
         """Test that compact format excludes sample sizes."""
+        # Arrange
         test = {"test_name": "ttest_ind", "stat": 2.31, "p_raw": 0.028}
+        # Act
         line = format_test_line_compact(test, style="plain")
-
-        # Should not have sample size formatting
+        # Assert
         assert "n" not in line or "n =" not in line
 
 
 class TestFormatForInspector:
     """Tests for format_for_inspector function."""
 
-    def test_basic_structure(self):
+    def test_basic_structure_tests(self):
         """Test returned structure has tests and effects keys."""
+        # Arrange
         tests = [{"test_name": "ttest_ind", "p_raw": 0.03, "stat": 2.2}]
         effects = [{"name": "cohens_d_ind", "value": 0.8, "label": "Cohen's d"}]
+        # Act
         result = format_for_inspector(tests, effects)
-
+        # Assert
         assert "tests" in result
+
+    def test_basic_structure_effects(self):
+        """Test returned structure has tests and effects keys."""
+        # Arrange
+        tests = [{"test_name": "ttest_ind", "p_raw": 0.03, "stat": 2.2}]
+        effects = [{"name": "cohens_d_ind", "value": 0.8, "label": "Cohen's d"}]
+        # Act
+        result = format_for_inspector(tests, effects)
+        # Assert
         assert "effects" in result
+
+    def test_basic_structure_tests_2(self):
+        """Test returned structure has tests and effects keys."""
+        # Arrange
+        tests = [{"test_name": "ttest_ind", "p_raw": 0.03, "stat": 2.2}]
+        effects = [{"name": "cohens_d_ind", "value": 0.8, "label": "Cohen's d"}]
+        # Act
+        result = format_for_inspector(tests, effects)
+        # Assert
         assert len(result["tests"]) == 1
+
+    def test_basic_structure_effects_2(self):
+        """Test returned structure has tests and effects keys."""
+        # Arrange
+        tests = [{"test_name": "ttest_ind", "p_raw": 0.03, "stat": 2.2}]
+        effects = [{"name": "cohens_d_ind", "value": 0.8, "label": "Cohen's d"}]
+        # Act
+        result = format_for_inspector(tests, effects)
+        # Assert
         assert len(result["effects"]) == 1
 
-    def test_empty_effects(self):
+    def test_empty_effects_case(self):
         """Test with no effect sizes."""
+        # Arrange
         tests = [{"test_name": "ttest_ind", "p_raw": 0.03}]
+        # Act
         result = format_for_inspector(tests, None)
-
+        # Assert
         assert len(result["effects"]) == 0
 
-    def test_test_fields_included(self):
+    def test_test_fields_included_ttest_ind_test_item_name(self):
         """Test that all test fields are included."""
+        # Arrange
         tests = [
             {
                 "test_name": "ttest_ind",
@@ -273,185 +553,347 @@ class TestFormatForInspector:
                 "method": "Two-sample t-test",
             }
         ]
+        # Act
         result = format_for_inspector(tests)
-
         test_item = result["tests"][0]
+        # Assert
         assert test_item["name"] == "ttest_ind"
+
+    def test_test_fields_included_test_item_raw(self):
+        """Test that all test fields are included."""
+        # Arrange
+        tests = [
+            {
+                "test_name": "ttest_ind",
+                "p_raw": 0.03,
+                "p_adj": 0.06,
+                "stat": 2.2,
+                "df": 28,
+                "method": "Two-sample t-test",
+            }
+        ]
+        # Act
+        result = format_for_inspector(tests)
+        test_item = result["tests"][0]
+        # Assert
         assert test_item["p_raw"] == 0.03
+
+    def test_test_fields_included_test_item_adj(self):
+        """Test that all test fields are included."""
+        # Arrange
+        tests = [
+            {
+                "test_name": "ttest_ind",
+                "p_raw": 0.03,
+                "p_adj": 0.06,
+                "stat": 2.2,
+                "df": 28,
+                "method": "Two-sample t-test",
+            }
+        ]
+        # Act
+        result = format_for_inspector(tests)
+        test_item = result["tests"][0]
+        # Assert
         assert test_item["p_adj"] == 0.06
 
 
 class TestPToStars:
     """Tests for p_to_stars function."""
 
-    def test_highly_significant(self):
+    def test_highly_significant_p_to_stars(self):
         """Test p < 0.001 returns ***."""
+        # Arrange
+        # Act
+        # Assert
         assert p_to_stars(0.0001) == "***"
 
-    def test_very_significant(self):
+    def test_very_significant_p_to_stars(self):
         """Test p < 0.01 returns **."""
+        # Arrange
+        # Act
+        # Assert
         assert p_to_stars(0.005) == "**"
 
-    def test_significant(self):
+    def test_significant_p_to_stars(self):
         """Test p < 0.05 returns *."""
+        # Arrange
+        # Act
+        # Assert
         assert p_to_stars(0.03) == "*"
 
-    def test_not_significant(self):
+    def test_not_significant_ns_p_to_stars(self):
         """Test p >= 0.05 returns ns."""
+        # Arrange
+        # Act
+        # Assert
         assert p_to_stars(0.08) == "ns"
 
     def test_none_returns_ns(self):
         """Test None p-value returns ns."""
+        # Arrange
+        # Act
+        # Assert
         assert p_to_stars(None) == "ns"
 
     def test_with_custom_style(self):
         """Test using custom style."""
+        # Arrange
+        # Act
         result = p_to_stars(0.03, style="apa_latex")
+        # Assert
         assert result == "*"
 
 
 class TestApplyMultipleCorrection:
     """Tests for apply_multiple_correction function."""
 
-    def test_bonferroni_correction(self):
+    def test_bonferroni_correction_adj_approx_corrected_pytest(self):
         """Test Bonferroni correction multiplies by m."""
+        # Arrange
         results = [
             {"test_name": "t1", "p_raw": 0.01},
             {"test_name": "t2", "p_raw": 0.02},
             {"test_name": "t3", "p_raw": 0.03},
         ]
+        # Act
         corrected = apply_multiple_correction(results, method="bonferroni")
-
+        # Assert
         assert corrected[0]["p_adj"] == pytest.approx(0.03)  # 0.01 * 3
+
+    def test_bonferroni_correction_adj_approx_corrected_pytest_2(self):
+        """Test Bonferroni correction multiplies by m."""
+        # Arrange
+        results = [
+            {"test_name": "t1", "p_raw": 0.01},
+            {"test_name": "t2", "p_raw": 0.02},
+            {"test_name": "t3", "p_raw": 0.03},
+        ]
+        # Act
+        corrected = apply_multiple_correction(results, method="bonferroni")
+        # Assert
         assert corrected[1]["p_adj"] == pytest.approx(0.06)  # 0.02 * 3
+
+    def test_bonferroni_correction_adj_approx_corrected_pytest_3(self):
+        """Test Bonferroni correction multiplies by m."""
+        # Arrange
+        results = [
+            {"test_name": "t1", "p_raw": 0.01},
+            {"test_name": "t2", "p_raw": 0.02},
+            {"test_name": "t3", "p_raw": 0.03},
+        ]
+        # Act
+        corrected = apply_multiple_correction(results, method="bonferroni")
+        # Assert
         assert corrected[2]["p_adj"] == pytest.approx(0.09)  # 0.03 * 3
 
-    def test_bonferroni_caps_at_1(self):
+    def test_bonferroni_caps_at_1_adj_corrected(self):
         """Test Bonferroni caps at 1.0."""
+        # Arrange
         results = [
             {"test_name": "t1", "p_raw": 0.5},
             {"test_name": "t2", "p_raw": 0.6},
         ]
+        # Act
         corrected = apply_multiple_correction(results, method="bonferroni")
-
+        # Assert
         assert corrected[0]["p_adj"] == 1.0  # Would be 1.0, capped
+
+    def test_bonferroni_caps_at_1_adj_corrected_2(self):
+        """Test Bonferroni caps at 1.0."""
+        # Arrange
+        results = [
+            {"test_name": "t1", "p_raw": 0.5},
+            {"test_name": "t2", "p_raw": 0.6},
+        ]
+        # Act
+        corrected = apply_multiple_correction(results, method="bonferroni")
+        # Assert
         assert corrected[1]["p_adj"] == 1.0  # Would be 1.2, capped
 
-    def test_no_correction(self):
+    def test_no_correction_adj_corrected(self):
         """Test no correction method."""
+        # Arrange
         results = [
             {"test_name": "t1", "p_raw": 0.01},
             {"test_name": "t2", "p_raw": 0.03},
         ]
+        # Act
         corrected = apply_multiple_correction(results, method="none")
-
+        # Assert
         assert corrected[0]["p_adj"] == 0.01  # Unchanged
+
+    def test_no_correction_adj_corrected_2(self):
+        """Test no correction method."""
+        # Arrange
+        results = [
+            {"test_name": "t1", "p_raw": 0.01},
+            {"test_name": "t2", "p_raw": 0.03},
+        ]
+        # Act
+        corrected = apply_multiple_correction(results, method="none")
+        # Assert
         assert corrected[1]["p_adj"] == 0.03  # Unchanged
 
-    def test_none_method(self):
+    def test_none_method_adj_corrected(self):
         """Test None method."""
+        # Arrange
         results = [
             {"test_name": "t1", "p_raw": 0.01},
         ]
+        # Act
         corrected = apply_multiple_correction(results, method=None)
-
+        # Assert
         assert corrected[0]["p_adj"] == 0.01
 
-    def test_fdr_bh_correction(self):
+    def test_fdr_bh_correction_adj_raw_corrected(self):
         """Test FDR Benjamini-Hochberg correction."""
+        # Arrange
         results = [
             {"test_name": "t1", "p_raw": 0.01},
             {"test_name": "t2", "p_raw": 0.02},
             {"test_name": "t3", "p_raw": 0.03},
         ]
+        # Act
         corrected = apply_multiple_correction(results, method="fdr_bh")
-
-        # FDR should preserve order and be >= p_raw
+        # Assert
         assert corrected[0]["p_adj"] >= corrected[0]["p_raw"]
+
+    def test_fdr_bh_correction_all_corrected_adj(self):
+        """Test FDR Benjamini-Hochberg correction."""
+        # Arrange
+        results = [
+            {"test_name": "t1", "p_raw": 0.01},
+            {"test_name": "t2", "p_raw": 0.02},
+            {"test_name": "t3", "p_raw": 0.03},
+        ]
+        # Act
+        corrected = apply_multiple_correction(results, method="fdr_bh")
+        # Assert
         assert all(r["p_adj"] <= 1.0 for r in corrected)
 
-    def test_holm_correction(self):
+    def test_holm_correction_corrected_adj_raw(self):
         """Test Holm step-down correction."""
+        # Arrange
         results = [
             {"test_name": "t1", "p_raw": 0.01},
             {"test_name": "t2", "p_raw": 0.03},
             {"test_name": "t3", "p_raw": 0.05},
         ]
+        # Act
         corrected = apply_multiple_correction(results, method="holm")
-
-        # Holm should be >= p_raw and monotonic
+        # Assert
         for r in corrected:
-            assert r["p_adj"] >= r["p_raw"]
-            assert r["p_adj"] <= 1.0
+            assert r["p_raw"] <= r["p_adj"] <= 1.0
 
     def test_sets_correction_method(self):
         """Test that correction_method is set."""
+        # Arrange
         results = [{"test_name": "t1", "p_raw": 0.01}]
+        # Act
         corrected = apply_multiple_correction(results, method="bonferroni")
-
+        # Assert
         assert corrected[0]["correction_method"] == "bonferroni"
 
-    def test_handles_none_p_values(self):
+    def test_handles_none_p_values_adj_approx_corrected_pytest(self):
         """Test results with None p-values are skipped."""
+        # Arrange
         results = [
             {"test_name": "t1", "p_raw": 0.01},
             {"test_name": "t2", "p_raw": None},
             {"test_name": "t3", "p_raw": 0.03},
         ]
+        # Act
         corrected = apply_multiple_correction(results, method="bonferroni")
-
-        # Only 2 valid p-values, so multiply by 2
+        # Assert
         assert corrected[0]["p_adj"] == pytest.approx(0.02)
+
+    def test_handles_none_p_values_adj_approx_corrected_pytest_2(self):
+        """Test results with None p-values are skipped."""
+        # Arrange
+        results = [
+            {"test_name": "t1", "p_raw": 0.01},
+            {"test_name": "t2", "p_raw": None},
+            {"test_name": "t3", "p_raw": 0.03},
+        ]
+        # Act
+        corrected = apply_multiple_correction(results, method="bonferroni")
+        # Assert
         assert corrected[2]["p_adj"] == pytest.approx(0.06)
 
-    def test_empty_results(self):
+    def test_empty_results_corrected(self):
         """Test empty results list."""
+        # Arrange
         results = []
+        # Act
         corrected = apply_multiple_correction(results, method="bonferroni")
+        # Assert
         assert corrected == []
 
     def test_all_none_p_values(self):
         """Test when all p-values are None."""
+        # Arrange
         results = [
             {"test_name": "t1", "p_raw": None},
             {"test_name": "t2", "p_raw": None},
         ]
+        # Act
         corrected = apply_multiple_correction(results, method="bonferroni")
-
-        # Should return unchanged
+        # Assert
         assert len(corrected) == 2
 
 
 class TestTypeDefinitions:
     """Tests for TypedDict definitions."""
 
-    def test_summary_stats_dict_creation(self):
+    def test_summary_stats_dict_creation_group(self):
         """Test SummaryStatsDict can be created."""
+        # Arrange
         stats: SummaryStatsDict = {
             "group": "A",
             "n": 10,
             "mean": 5.0,
             "sd": 1.0,
         }
+        # Act
+        # Assert
         assert stats["group"] == "A"
+
+    def test_summary_stats_dict_creation_case_2(self):
+        """Test SummaryStatsDict can be created."""
+        # Arrange
+        stats: SummaryStatsDict = {
+            "group": "A",
+            "n": 10,
+            "mean": 5.0,
+            "sd": 1.0,
+        }
+        # Act
+        # Assert
         assert stats["n"] == 10
 
     def test_test_result_dict_creation(self):
         """Test TestResultDict can be created."""
+        # Arrange
         result: TestResultDict = {
             "test_name": "ttest_ind",
             "p_raw": 0.03,
             "stat": 2.2,
         }
+        # Act
+        # Assert
         assert result["test_name"] == "ttest_ind"
 
     def test_effect_result_dict_creation(self):
         """Test EffectResultDict can be created."""
+        # Arrange
         effect: EffectResultDict = {
             "name": "cohens_d_ind",
             "value": 0.8,
             "label": "Cohen's d",
         }
+        # Act
+        # Assert
         assert effect["value"] == 0.8
 
 

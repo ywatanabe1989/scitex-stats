@@ -23,38 +23,74 @@ from scitex_stats.effect_sizes import cliffs_delta, interpret_cliffs_delta
 class TestBasicComputation:
     """Tests for basic Cliff's delta computations."""
 
-    def test_basic_comparison(self):
+    def test_basic_comparison_delta_float(self):
         """Test basic two-sample comparison."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([2, 3, 4, 5, 6])
+        # Act
         delta = cliffs_delta(x, y)
-
+        # Assert
         assert isinstance(delta, float)
+
+    def test_basic_comparison_delta(self):
+        """Test basic two-sample comparison."""
+        # Arrange
+        x = np.array([1, 2, 3, 4, 5])
+        y = np.array([2, 3, 4, 5, 6])
+        # Act
+        delta = cliffs_delta(x, y)
+        # Assert
         assert -1 <= delta <= 1
+
+    def test_basic_comparison_delta_2(self):
+        """Test basic two-sample comparison."""
+        # Arrange
+        x = np.array([1, 2, 3, 4, 5])
+        y = np.array([2, 3, 4, 5, 6])
+        # Act
+        delta = cliffs_delta(x, y)
+        # Assert
         assert delta < 0  # y dominates x
 
-    def test_known_value(self):
+    def test_known_value_delta(self):
         """Test with manually calculated known value."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([2, 3, 4, 5, 6])
+        # Act
         delta = cliffs_delta(x, y)
-
-        # Manual calculation:
-        # x=1: >0, <4 (y=2,3,4,5,6); x=2: >1 (y=2), <4 (y=3,4,5,6)
-        # x=3: >2 (y=2,3), <3 (y=4,5,6); x=4: >3 (y=2,3,4), <2 (y=5,6)
-        # x=5: >4 (y=2,3,4,5), <1 (y=6)
-        # Total: more=0+1+2+3+4=10, less=4+4+3+2+1=14
-        # δ = (10-14)/25 = -4/25 = -0.16, but ties... let's just check it's negative
+        # Assert
         assert delta < 0
+
+    def test_known_value_delta_2(self):
+        """Test with manually calculated known value."""
+        # Arrange
+        x = np.array([1, 2, 3, 4, 5])
+        y = np.array([2, 3, 4, 5, 6])
+        # Act
+        delta = cliffs_delta(x, y)
+        # Assert
         assert -0.6 < delta < 0  # Should be negative but reasonable
 
-    def test_pandas_series_input(self):
+    def test_pandas_series_input_delta_float(self):
         """Test that pandas Series work as input."""
+        # Arrange
         x = pd.Series([1, 2, 3, 4, 5])
         y = pd.Series([3, 4, 5, 6, 7])
+        # Act
         delta = cliffs_delta(x, y)
-
+        # Assert
         assert isinstance(delta, float)
+
+    def test_pandas_series_input_isnan_delta(self):
+        """Test that pandas Series work as input."""
+        # Arrange
+        x = pd.Series([1, 2, 3, 4, 5])
+        y = pd.Series([3, 4, 5, 6, 7])
+        # Act
+        delta = cliffs_delta(x, y)
+        # Assert
         assert not np.isnan(delta)
 
 
@@ -63,43 +99,62 @@ class TestEdgeCases:
 
     def test_no_effect_identical_distributions(self):
         """Test that identical distributions give δ = 0."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([1, 2, 3, 4, 5])
+        # Act
         delta = cliffs_delta(x, y)
-
+        # Assert
         assert abs(delta) < 0.01  # Should be very close to 0
 
     def test_perfect_dominance_positive(self):
         """Test perfect dominance (all x > all y) gives δ = 1."""
+        # Arrange
         x = np.array([6, 7, 8, 9, 10])
         y = np.array([1, 2, 3, 4, 5])
+        # Act
         delta = cliffs_delta(x, y)
-
+        # Assert
         assert abs(delta - 1.0) < 0.01
 
     def test_perfect_dominance_negative(self):
         """Test perfect dominance (all x < all y) gives δ = -1."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([6, 7, 8, 9, 10])
+        # Act
         delta = cliffs_delta(x, y)
-
+        # Assert
         assert abs(delta - (-1.0)) < 0.01
 
-    def test_nan_handling(self):
+    def test_nan_handling_delta_float(self):
         """Test that NaN values are properly removed."""
+        # Arrange
         x = np.array([1, 2, np.nan, 4, 5])
         y = np.array([3, np.nan, 5, 6, 7])
+        # Act
         delta = cliffs_delta(x, y)
-
+        # Assert
         assert isinstance(delta, float)
+
+    def test_nan_handling_isnan_delta(self):
+        """Test that NaN values are properly removed."""
+        # Arrange
+        x = np.array([1, 2, np.nan, 4, 5])
+        y = np.array([3, np.nan, 5, 6, 7])
+        # Act
+        delta = cliffs_delta(x, y)
+        # Assert
         assert not np.isnan(delta)
 
-    def test_ties_handling(self):
+    def test_ties_handling_delta(self):
         """Test handling of tied values."""
+        # Arrange
         x = np.array([1, 2, 2, 3, 3])
         y = np.array([2, 2, 3, 3, 4])
+        # Act
         delta = cliffs_delta(x, y)
-
+        # Assert
         assert -1 <= delta <= 1
         # With ties, neither > nor < counts the tie
 
@@ -107,32 +162,46 @@ class TestEdgeCases:
 class TestKnownValues:
     """Tests with manually calculated known values."""
 
-    def test_complete_separation(self):
+    def test_complete_separation_abs_delta(self):
         """Test with completely separated groups."""
+        # Arrange
         x = np.array([10, 11, 12])
         y = np.array([1, 2, 3])
+        # Act
         delta = cliffs_delta(x, y)
-
-        # All x > all y: δ = 1
+        # Assert
         assert abs(delta - 1.0) < 0.01
 
-    def test_partial_overlap(self):
+    def test_partial_overlap_delta(self):
         """Test with partial overlap."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([3, 4, 5, 6, 7])
+        # Act
         delta = cliffs_delta(x, y)
-
-        # Should be negative (y dominates)
+        # Assert
         assert delta < 0
+
+    def test_partial_overlap_delta_2(self):
+        """Test with partial overlap."""
+        # Arrange
+        x = np.array([1, 2, 3, 4, 5])
+        y = np.array([3, 4, 5, 6, 7])
+        # Act
+        delta = cliffs_delta(x, y)
+        # Assert
         assert -1 < delta < 0
 
 
 class TestMathematicalProperties:
     """Tests for mathematical properties of Cliff's delta."""
 
-    def test_range_constraint(self):
+    def test_range_constraint_delta_normal_cliffs_delta_random(self):
         """Test that δ is always between -1 and 1."""
+        # Arrange
+        # Act
         np.random.seed(42)
+        # Assert
         for _ in range(20):
             x = np.random.normal(0, 1, 20)
             y = np.random.normal(np.random.uniform(-2, 2), 1, 20)
@@ -140,44 +209,52 @@ class TestMathematicalProperties:
 
             assert -1 <= delta <= 1
 
-    def test_antisymmetry(self):
+    def test_antisymmetry_abs_delta_xy_delta_yx(self):
         """Test that cliffs_delta(x, y) = -cliffs_delta(y, x)."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([3, 4, 5, 6, 7])
-
         delta_xy = cliffs_delta(x, y)
+        # Act
         delta_yx = cliffs_delta(y, x)
-
-        # Should be negatives of each other
+        # Assert
         assert abs(delta_xy + delta_yx) < 0.001
 
     def test_monotone_transformation_invariance(self):
         """Test that δ is invariant to monotone transformations."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([6, 7, 8, 9, 10])
-
         delta_original = cliffs_delta(x, y)
-
-        # Apply monotone transformation (square)
+        # Act
         delta_transformed = cliffs_delta(x**2, y**2)
-
-        # Should be identical (ordinal, so monotone invariant)
+        # Assert
         assert abs(delta_original - delta_transformed) < 0.01
 
-    def test_ordinal_nature(self):
+    def test_ordinal_nature_abs_delta1_delta2(self):
         """Test that δ only depends on order, not magnitude."""
-        # Two scenarios with same ordering
+        # Arrange
         x1 = np.array([1, 2, 3])
         y1 = np.array([4, 5, 6])
-
         x2 = np.array([1, 2, 3])
         y2 = np.array([100, 200, 300])
-
         delta1 = cliffs_delta(x1, y1)
+        # Act
         delta2 = cliffs_delta(x2, y2)
-
-        # Should be identical (same ordering)
+        # Assert
         assert abs(delta1 - delta2) < 0.01
+
+    def test_ordinal_nature_abs_delta1(self):
+        """Test that δ only depends on order, not magnitude."""
+        # Arrange
+        x1 = np.array([1, 2, 3])
+        y1 = np.array([4, 5, 6])
+        x2 = np.array([1, 2, 3])
+        y2 = np.array([100, 200, 300])
+        delta1 = cliffs_delta(x1, y1)
+        # Act
+        delta2 = cliffs_delta(x2, y2)
+        # Assert
         assert abs(delta1 - (-1.0)) < 0.01  # Perfect separation
 
 
@@ -186,126 +263,198 @@ class TestRobustness:
 
     def test_robust_to_outliers(self):
         """Test that δ is robust to outliers."""
-        # Normal case
+        # Arrange
         x_normal = np.array([1, 2, 3, 4, 5])
         y_normal = np.array([3, 4, 5, 6, 7])
         delta_normal = cliffs_delta(x_normal, y_normal)
-
-        # With extreme outlier in x
         x_outlier = np.array([1, 2, 3, 4, 100])
+        # Act
         delta_outlier = cliffs_delta(x_outlier, y_normal)
-
-        # Cliff's delta should be relatively stable
-        # The outlier only affects 5 out of 25 comparisons
+        # Assert
         assert abs(delta_normal - delta_outlier) < 0.5
 
-    def test_skewed_distributions(self):
+    def test_skewed_distributions_delta(self):
         """Test with heavily skewed distributions."""
+        # Arrange
         np.random.seed(42)
         x = np.random.exponential(1, 30)
         y = np.random.exponential(2, 30)
+        # Act
         delta = cliffs_delta(x, y)
-
+        # Assert
         assert -1 <= delta <= 1
-        # y should tend to dominate (larger scale)
+
+    def test_skewed_distributions_delta_2(self):
+        """Test with heavily skewed distributions."""
+        # Arrange
+        np.random.seed(42)
+        x = np.random.exponential(1, 30)
+        y = np.random.exponential(2, 30)
+        # Act
+        delta = cliffs_delta(x, y)
+        # Assert
         assert delta < 0
 
 
 class TestInterpretation:
     """Tests for effect size interpretation."""
 
-    def test_interpret_negligible(self):
+    def test_interpret_negligible_interpret_cliffs_delta(self):
         """Test negligible effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cliffs_delta(0.1) == "negligible"
+
+    def test_interpret_negligible_interpret_cliffs_delta_2(self):
+        """Test negligible effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cliffs_delta(-0.1) == "negligible"
 
-    def test_interpret_small(self):
+    def test_interpret_small_interpret_cliffs_delta(self):
         """Test small effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cliffs_delta(0.25) == "small"
+
+    def test_interpret_small_interpret_cliffs_delta_2(self):
+        """Test small effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cliffs_delta(-0.25) == "small"
 
-    def test_interpret_medium(self):
+    def test_interpret_medium_interpret_cliffs_delta(self):
         """Test medium effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cliffs_delta(0.4) == "medium"
+
+    def test_interpret_medium_interpret_cliffs_delta_2(self):
+        """Test medium effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cliffs_delta(-0.4) == "medium"
 
-    def test_interpret_large(self):
+    def test_interpret_large_interpret_cliffs_delta(self):
         """Test large effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cliffs_delta(0.6) == "large"
+
+    def test_interpret_large_interpret_cliffs_delta_2(self):
+        """Test large effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cliffs_delta(-0.8) == "large"
 
-    def test_interpret_boundaries(self):
+    def test_interpret_boundaries_small_interpret_cliffs_delta(self):
         """Test interpretation at boundaries."""
-        # Boundaries: 0.147 (small), 0.33 (medium), 0.474 (large)
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cliffs_delta(0.147) == "small"
+
+    def test_interpret_boundaries_medium_interpret_cliffs_delta(self):
+        """Test interpretation at boundaries."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cliffs_delta(0.33) == "medium"
+
+    def test_interpret_boundaries_large_interpret_cliffs_delta(self):
+        """Test interpretation at boundaries."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cliffs_delta(0.474) == "large"
 
 
 class TestOrdinalData:
     """Tests specifically for ordinal data."""
 
-    def test_likert_scale_data(self):
+    def test_likert_scale_data_delta(self):
         """Test with Likert scale responses (1-5)."""
-        # Group 1: mostly low scores
+        # Arrange
         x = np.array([1, 1, 2, 2, 2, 3, 3])
-        # Group 2: mostly high scores
         y = np.array([3, 3, 4, 4, 4, 5, 5])
+        # Act
         delta = cliffs_delta(x, y)
-
+        # Assert
         assert -1 <= delta <= 1
-        # y should dominate
+
+    def test_likert_scale_data_delta_2(self):
+        """Test with Likert scale responses (1-5)."""
+        # Arrange
+        x = np.array([1, 1, 2, 2, 2, 3, 3])
+        y = np.array([3, 3, 4, 4, 4, 5, 5])
+        # Act
+        delta = cliffs_delta(x, y)
+        # Assert
         assert delta < -0.3
 
-    def test_ranking_data(self):
+    def test_ranking_data_abs_delta(self):
         """Test with ranking data."""
-        # Rankings of group A
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
-        # Rankings of group B (better ranks)
         y = np.array([6, 7, 8, 9, 10])
+        # Act
         delta = cliffs_delta(x, y)
-
-        # Perfect separation
+        # Assert
         assert abs(delta - (-1.0)) < 0.01
 
 
 class TestComparisonWithCohensD:
     """Compare Cliff's delta with Cohen's d."""
 
-    def test_similar_conclusions_normal_data(self):
+    def test_similar_conclusions_normal_data_delta(self):
         """Test that δ and d agree on normal data."""
+        # Arrange
         from scitex_stats.effect_sizes import cohens_d
-
         np.random.seed(42)
         x = np.random.normal(0, 1, 50)
         y = np.random.normal(0.8, 1, 50)
-
         delta = cliffs_delta(x, y)
+        # Act
         d = cohens_d(x, y)
-
-        # Both should indicate negative effect (y > x)
+        # Assert
         assert delta < 0
+
+    def test_similar_conclusions_normal_data_case_2(self):
+        """Test that δ and d agree on normal data."""
+        # Arrange
+        from scitex_stats.effect_sizes import cohens_d
+        np.random.seed(42)
+        x = np.random.normal(0, 1, 50)
+        y = np.random.normal(0.8, 1, 50)
+        delta = cliffs_delta(x, y)
+        # Act
+        d = cohens_d(x, y)
+        # Assert
         assert d < 0
 
     def test_robust_vs_sensitive_to_outliers(self):
         """Test robustness difference with outliers."""
+        # Arrange
         from scitex_stats.effect_sizes import cohens_d
-
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([3, 4, 5, 6, 7])
-
         delta_normal = cliffs_delta(x, y)
         d_normal = cohens_d(x, y)
-
-        # Add extreme outlier
         x_outlier = np.array([1, 2, 3, 4, 100])
         delta_outlier = cliffs_delta(x_outlier, y)
         d_outlier = cohens_d(x_outlier, y)
-
-        # Cliff's delta should change less
         delta_change = abs(delta_normal - delta_outlier)
+        # Act
         d_change = abs(d_normal - d_outlier)
-
+        # Assert
         assert delta_change < d_change
 
 

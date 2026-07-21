@@ -22,36 +22,64 @@ from scitex_stats.effect_sizes import interpret_prob_superiority, prob_superiori
 class TestBasicComputation:
     """Tests for basic probability of superiority computations."""
 
-    def test_basic_comparison(self):
+    def test_basic_comparison_prob_float(self):
         """Test basic two-sample comparison."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([2, 3, 4, 5, 6])
+        # Act
         prob = prob_superiority(x, y)
-
+        # Assert
         assert isinstance(prob, float)
+
+    def test_basic_comparison_prob(self):
+        """Test basic two-sample comparison."""
+        # Arrange
+        x = np.array([1, 2, 3, 4, 5])
+        y = np.array([2, 3, 4, 5, 6])
+        # Act
+        prob = prob_superiority(x, y)
+        # Assert
         assert 0 <= prob <= 1
-        # x < y on average, so P(X > Y) should be low
+
+    def test_basic_comparison_prob_2(self):
+        """Test basic two-sample comparison."""
+        # Arrange
+        x = np.array([1, 2, 3, 4, 5])
+        y = np.array([2, 3, 4, 5, 6])
+        # Act
+        prob = prob_superiority(x, y)
+        # Assert
         assert prob < 0.5
 
-    def test_known_value(self):
+    def test_known_value_abs_prob(self):
         """Test with manually calculated known value."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([2, 3, 4, 5, 6])
+        # Act
         prob = prob_superiority(x, y)
-
-        # Expected: count pairs where x_i > y_j
-        # x=5: >y in {2,3,4} = 3 pairs; x=4: >y in {2,3} = 2 pairs
-        # x=3: >y in {2} = 1 pair; x=2: >y in {} = 0; x=1: >y in {} = 0
-        # Total: 3+2+1+0+0 = 6 out of 25 = 0.24
+        # Assert
         assert abs(prob - 0.24) < 0.1
 
-    def test_pandas_series_input(self):
+    def test_pandas_series_input_prob_float(self):
         """Test that pandas Series work as input."""
+        # Arrange
         x = pd.Series([1, 2, 3, 4, 5])
         y = pd.Series([3, 4, 5, 6, 7])
+        # Act
         prob = prob_superiority(x, y)
-
+        # Assert
         assert isinstance(prob, float)
+
+    def test_pandas_series_input_isnan_prob(self):
+        """Test that pandas Series work as input."""
+        # Arrange
+        x = pd.Series([1, 2, 3, 4, 5])
+        y = pd.Series([3, 4, 5, 6, 7])
+        # Act
+        prob = prob_superiority(x, y)
+        # Assert
         assert not np.isnan(prob)
 
 
@@ -60,77 +88,98 @@ class TestEdgeCases:
 
     def test_no_effect_chance_level(self):
         """Test that identical distributions give P = 0.5."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([1, 2, 3, 4, 5])
+        # Act
         prob = prob_superiority(x, y)
-
-        # With identical values, ties don't count as >
-        # So P(X > Y) should be around 0.5 (actually might be less due to ties)
+        # Assert
         assert 0.4 <= prob <= 0.6
 
     def test_perfect_dominance_x_over_y(self):
         """Test perfect dominance (all x > all y) gives P = 1.0."""
+        # Arrange
         x = np.array([6, 7, 8, 9, 10])
         y = np.array([1, 2, 3, 4, 5])
+        # Act
         prob = prob_superiority(x, y)
-
+        # Assert
         assert abs(prob - 1.0) < 0.01
 
     def test_perfect_dominance_y_over_x(self):
         """Test perfect dominance (all x < all y) gives P = 0.0."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([6, 7, 8, 9, 10])
+        # Act
         prob = prob_superiority(x, y)
-
+        # Assert
         assert abs(prob - 0.0) < 0.01
 
-    def test_nan_handling(self):
+    def test_nan_handling_prob_float(self):
         """Test that NaN values are properly removed."""
+        # Arrange
         x = np.array([1, 2, np.nan, 4, 5])
         y = np.array([3, np.nan, 5, 6, 7])
+        # Act
         prob = prob_superiority(x, y)
-
+        # Assert
         assert isinstance(prob, float)
+
+    def test_nan_handling_isnan_prob(self):
+        """Test that NaN values are properly removed."""
+        # Arrange
+        x = np.array([1, 2, np.nan, 4, 5])
+        y = np.array([3, np.nan, 5, 6, 7])
+        # Act
+        prob = prob_superiority(x, y)
+        # Assert
         assert not np.isnan(prob)
 
 
 class TestKnownValues:
     """Tests with manually calculated known values."""
 
-    def test_complete_superiority(self):
+    def test_complete_superiority_abs_prob(self):
         """Test with complete superiority."""
+        # Arrange
         x = np.array([10, 11, 12])
         y = np.array([1, 2, 3])
+        # Act
         prob = prob_superiority(x, y)
-
-        # All x > all y: P = 1.0
+        # Assert
         assert abs(prob - 1.0) < 0.01
 
-    def test_complete_inferiority(self):
+    def test_complete_inferiority_abs_prob(self):
         """Test with complete inferiority."""
+        # Arrange
         x = np.array([1, 2, 3])
         y = np.array([10, 11, 12])
+        # Act
         prob = prob_superiority(x, y)
-
-        # All x < all y: P = 0.0
+        # Assert
         assert abs(prob - 0.0) < 0.01
 
-    def test_partial_overlap(self):
+    def test_partial_overlap_prob(self):
         """Test with partial overlap."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([3, 4, 5, 6, 7])
+        # Act
         prob = prob_superiority(x, y)
-
-        # Should be less than 0.5 (y dominates)
+        # Assert
         assert 0 < prob < 0.5
 
 
 class TestMathematicalProperties:
     """Tests for mathematical properties of probability of superiority."""
 
-    def test_range_constraint(self):
+    def test_range_constraint_prob_normal_prob_superiority_random(self):
         """Test that P is always between 0 and 1."""
+        # Arrange
+        # Act
         np.random.seed(42)
+        # Assert
         for _ in range(20):
             x = np.random.normal(0, 1, 20)
             y = np.random.normal(np.random.uniform(-2, 2), 1, 20)
@@ -138,54 +187,52 @@ class TestMathematicalProperties:
 
             assert 0 <= prob <= 1
 
-    def test_complement_property(self):
+    def test_complement_property_prob_x_gt_y_prob_y_gt_x(self):
         """Test that P(X > Y) + P(Y > X) + P(ties) = 1."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([3, 4, 5, 6, 7])
-
         prob_x_gt_y = prob_superiority(x, y)
+        # Act
         prob_y_gt_x = prob_superiority(y, x)
-
-        # Without ties: P(X>Y) + P(Y>X) should be close to 1
-        # With ties: sum will be < 1
+        # Assert
         assert prob_x_gt_y + prob_y_gt_x <= 1.01  # Allow tiny numerical error
 
     def test_monotone_transformation_invariance(self):
         """Test that P is invariant to monotone transformations."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([6, 7, 8, 9, 10])
-
         prob_original = prob_superiority(x, y)
-
-        # Apply monotone transformation (square)
+        # Act
         prob_transformed = prob_superiority(x**2, y**2)
-
-        # Should be identical (ordinal, so monotone invariant)
+        # Assert
         assert abs(prob_original - prob_transformed) < 0.01
 
 
 class TestRelationshipWithCliffsD:
     """Tests for relationship with Cliff's delta."""
 
-    def test_relationship_formula(self):
+    def test_relationship_formula_abs_prob_expected_prob(self):
         """Test that P(X > Y) = (δ + 1) / 2."""
+        # Arrange
         from scitex_stats.effect_sizes import cliffs_delta
-
         x = np.array([1, 2, 3, 4, 5, 6, 7, 8])
         y = np.array([3, 4, 5, 6, 7, 8, 9, 10])
-
         prob = prob_superiority(x, y)
+        # Act
         delta = cliffs_delta(x, y)
-
         expected_prob = (delta + 1) / 2
-        # Note: This relationship assumes no ties. With some ties, there may be small deviation
+        # Assert
         assert abs(prob - expected_prob) < 0.05  # Allow for ties
 
     def test_relationship_multiple_scenarios(self):
         """Test relationship across multiple scenarios."""
+        # Arrange
         from scitex_stats.effect_sizes import cliffs_delta
-
+        # Act
         np.random.seed(42)
+        # Assert
         for _ in range(10):
             x = np.random.normal(0, 1, 20)
             y = np.random.normal(np.random.uniform(-1, 1), 1, 20)
@@ -198,73 +245,112 @@ class TestRelationshipWithCliffsD:
 
     def test_delta_zero_implies_prob_half(self):
         """Test that δ = 0 implies P ≈ 0.5."""
-        # Create groups with approximately equal distributions
+        # Arrange
         np.random.seed(42)
         x = np.random.normal(0, 1, 50)
         y = np.random.normal(0, 1, 50)
-
+        # Act
         prob = prob_superiority(x, y)
-
-        # Should be close to 0.5
+        # Assert
         assert 0.4 < prob < 0.6
 
 
 class TestInterpretation:
     """Tests for effect size interpretation."""
 
-    def test_interpret_negligible(self):
+    def test_interpret_negligible_interpret_prob_superiority(self):
         """Test negligible effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_prob_superiority(0.51) == "negligible"
+
+    def test_interpret_negligible_interpret_prob_superiority_2(self):
+        """Test negligible effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_prob_superiority(0.49) == "negligible"
 
-    def test_interpret_small(self):
+    def test_interpret_small_interpret_prob_superiority(self):
         """Test small effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_prob_superiority(0.60) == "small"
+
+    def test_interpret_small_interpret_prob_superiority_2(self):
+        """Test small effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_prob_superiority(0.40) == "small"
 
-    def test_interpret_medium(self):
+    def test_interpret_medium_interpret_prob_superiority(self):
         """Test medium effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_prob_superiority(0.68) == "medium"
+
+    def test_interpret_medium_interpret_prob_superiority_2(self):
+        """Test medium effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_prob_superiority(0.32) == "medium"
 
-    def test_interpret_large(self):
+    def test_interpret_large_interpret_prob_superiority(self):
         """Test large effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_prob_superiority(0.75) == "large"
+
+    def test_interpret_large_interpret_prob_superiority_2(self):
+        """Test large effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_prob_superiority(0.25) == "large"
 
-    def test_interpret_symmetric(self):
+    def test_interpret_symmetric_interpret_prob_superiority(self):
         """Test that interpretation is symmetric around 0.5."""
-        # Distance from 0.5 should determine interpretation
+        # Arrange
+        # Act
+        # Assert
         assert interpret_prob_superiority(0.6) == interpret_prob_superiority(0.4)
+
+    def test_interpret_symmetric_interpret_prob_superiority_2(self):
+        """Test that interpretation is symmetric around 0.5."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_prob_superiority(0.7) == interpret_prob_superiority(0.3)
 
 
 class TestCommonLanguageEffect:
     """Tests for common language effect size interpretation."""
 
-    def test_intuitive_interpretation(self):
+    def test_intuitive_interpretation_prob(self):
         """Test intuitive probabilistic interpretation."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([6, 7, 8, 9, 10])
-
+        # Act
         prob = prob_superiority(x, y)
-
-        # Interpretation: If you pick random x and y,
-        # probability that x > y is 'prob'
-        # Here, x is always less, so prob should be 0
+        # Assert
         assert prob == 0.0
 
     def test_medium_effect_interpretation(self):
         """Test interpretation of medium effect."""
-        # P = 0.64 means 64% chance that X > Y
-        # This is considered a medium effect
+        # Arrange
         np.random.seed(42)
         x = np.random.normal(0.5, 1, 100)
         y = np.random.normal(0, 1, 100)
-
+        # Act
         prob = prob_superiority(x, y)
-
-        # Should be > 0.5 since x has higher mean
+        # Assert
         assert prob > 0.5
 
 
@@ -273,28 +359,36 @@ class TestRobustness:
 
     def test_robust_to_outliers(self):
         """Test that P is robust to outliers."""
-        # Normal case
+        # Arrange
         x_normal = np.array([1, 2, 3, 4, 5])
         y_normal = np.array([3, 4, 5, 6, 7])
         prob_normal = prob_superiority(x_normal, y_normal)
-
-        # With extreme outlier
         x_outlier = np.array([1, 2, 3, 4, 100])
+        # Act
         prob_outlier = prob_superiority(x_outlier, y_normal)
-
-        # Should be relatively stable
+        # Assert
         assert abs(prob_normal - prob_outlier) < 0.3
 
-    def test_non_normal_distributions(self):
+    def test_non_normal_distributions_prob(self):
         """Test with non-normal distributions."""
+        # Arrange
         np.random.seed(42)
         x = np.random.exponential(1, 50)
         y = np.random.exponential(2, 50)
+        # Act
         prob = prob_superiority(x, y)
-
+        # Assert
         assert 0 <= prob <= 1
-        # x has smaller scale parameter, so x values tend to be smaller
-        # Thus P(X > Y) should be less than 0.5
+
+    def test_non_normal_distributions_prob_2(self):
+        """Test with non-normal distributions."""
+        # Arrange
+        np.random.seed(42)
+        x = np.random.exponential(1, 50)
+        y = np.random.exponential(2, 50)
+        # Act
+        prob = prob_superiority(x, y)
+        # Assert
         assert 0.2 < prob < 0.5  # Reasonable range for this scenario
 
 

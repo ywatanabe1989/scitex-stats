@@ -61,32 +61,46 @@ def _fake_results(a_levels=("low", "high"), b_levels=("ctrl", "drug")):
     }
 
 
-def test_plot_anova_2way_returns_figure_with_four_panels():
+def test_plot_anova_2way_returns_figure_with_four_panels_fig():
+    # Arrange
+    # Act
     fig = _plot_anova_2way(_fake_results())
+    # Assert
     assert fig is not None
-    # 2 × 2 subplots layout
     axes = fig.get_axes()
+    plt.close(fig)
+
+def test_plot_anova_2way_returns_figure_with_four_panels_axes():
+    # Arrange
+    fig = _plot_anova_2way(_fake_results())
+    # Act
+    axes = fig.get_axes()
+    # Assert
     assert len(axes) == 4
     plt.close(fig)
 
 
 def test_plot_anova_2way_writes_stat_text_box_on_three_panels():
+    # Arrange
     fig = _plot_anova_2way(_fake_results())
     axes = fig.get_axes()
-    # Panels 0 (interaction), 2 (Factor A main), 3 (Factor B main) each
-    # carry a stats text box. Panel 1 (B-on-x interaction) does not.
+    # Act
     text_counts = [len(ax.texts) for ax in axes]
+    # Assert
     assert sum(c >= 1 for c in text_counts) == 3
     plt.close(fig)
 
 
 def test_plot_anova_2way_three_by_two_factor_layout():
     """Non-square design — 3 levels of A, 2 levels of B."""
+    # Arrange
+    # Act
     fig = _plot_anova_2way(
         _fake_results(
             a_levels=("low", "mid", "high"),
             b_levels=("ctrl", "drug"),
         )
     )
+    # Assert
     assert len(fig.get_axes()) == 4
     plt.close(fig)

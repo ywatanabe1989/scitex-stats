@@ -12,22 +12,17 @@ from scitex_stats.posthoc import posthoc_tukey
 class TestBasicComputations:
     """Test basic Tukey HSD computations."""
 
-    def test_three_groups_basic(self):
+    def test_three_groups_basic_results_dataframe(self):
         """Test basic three-group comparison."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(10, 2, 20)
         group2 = np.random.normal(12, 2, 20)
         group3 = np.random.normal(14, 2, 20)
-
+        # Act
         results = posthoc_tukey([group1, group2, group3])
-
-        # Should return DataFrame by default
+        # Assert
         assert isinstance(results, pd.DataFrame)
-
-        # Should have 3 comparisons (3 choose 2)
-        assert len(results) == 3
-
-        # Check required columns
         required_cols = [
             "group_i",
             "group_j",
@@ -38,24 +33,64 @@ class TestBasicComputations:
             "ci_lower",
             "ci_upper",
         ]
+
+    def test_three_groups_basic_results(self):
+        """Test basic three-group comparison."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 2, 20)
+        group2 = np.random.normal(12, 2, 20)
+        group3 = np.random.normal(14, 2, 20)
+        # Act
+        results = posthoc_tukey([group1, group2, group3])
+        # Assert
+        assert len(results) == 3
+        required_cols = [
+            "group_i",
+            "group_j",
+            "mean_diff",
+            "pvalue",
+            "significant",
+            "q_statistic",
+            "ci_lower",
+            "ci_upper",
+        ]
+
+    def test_three_groups_basic_col_required_cols_columns_results(self):
+        """Test basic three-group comparison."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 2, 20)
+        group2 = np.random.normal(12, 2, 20)
+        group3 = np.random.normal(14, 2, 20)
+        # Act
+        results = posthoc_tukey([group1, group2, group3])
+        required_cols = [
+            "group_i",
+            "group_j",
+            "mean_diff",
+            "pvalue",
+            "significant",
+            "q_statistic",
+            "ci_lower",
+            "ci_upper",
+        ]
+        # Assert
         for col in required_cols:
             assert col in results.columns
 
-    def test_four_groups_all_pairs(self):
+    def test_four_groups_all_pairs_results(self):
         """Test that all pairwise comparisons are performed."""
+        # Arrange
         np.random.seed(123)
         groups = [np.random.normal(i * 2, 1, 15) for i in range(4)]
-
+        # Act
         results = posthoc_tukey(groups)
-
-        # 4 groups = 6 pairwise comparisons (4 choose 2)
+        # Assert
         assert len(results) == 6
-
-        # Verify all pairs are present
         pairs = set()
         for _, row in results.iterrows():
             pairs.add((row["group_i"], row["group_j"]))
-
         expected_pairs = {
             ("Group 1", "Group 2"),
             ("Group 1", "Group 3"),
@@ -64,21 +99,48 @@ class TestBasicComputations:
             ("Group 2", "Group 4"),
             ("Group 3", "Group 4"),
         }
+
+    def test_four_groups_all_pairs_expected_pairs(self):
+        """Test that all pairwise comparisons are performed."""
+        # Arrange
+        np.random.seed(123)
+        groups = [np.random.normal(i * 2, 1, 15) for i in range(4)]
+        results = posthoc_tukey(groups)
+        pairs = set()
+        # Act
+        for _, row in results.iterrows():
+            pairs.add((row["group_i"], row["group_j"]))
+        expected_pairs = {
+            ("Group 1", "Group 2"),
+            ("Group 1", "Group 3"),
+            ("Group 1", "Group 4"),
+            ("Group 2", "Group 3"),
+            ("Group 2", "Group 4"),
+            ("Group 3", "Group 4"),
+        }
+        # Assert
         assert pairs == expected_pairs
 
-    def test_known_values_equal_means(self):
+    def test_known_values_equal_means_all_results_significant(self):
         """Test with known values where groups have equal means."""
-        # Three groups with identical means
+        # Arrange
         group1 = np.array([10, 10, 10, 10, 10])
         group2 = np.array([10, 10, 10, 10, 10])
         group3 = np.array([10, 10, 10, 10, 10])
-
+        # Act
         results = posthoc_tukey([group1, group2, group3])
-
-        # All comparisons should be non-significant
+        # Assert
         assert all(~results["significant"])
 
-        # All mean differences should be 0
+    def test_known_values_equal_means_all_abs_results_mean(self):
+        """Test with known values where groups have equal means."""
+        # Arrange
+        group1 = np.array([10, 10, 10, 10, 10])
+        group2 = np.array([10, 10, 10, 10, 10])
+        group3 = np.array([10, 10, 10, 10, 10])
+        # Act
+        results = posthoc_tukey([group1, group2, group3])
+        # Assert
         assert all(abs(results["mean_diff"]) < 1e-10)
 
 
@@ -87,39 +149,76 @@ class TestInputFormats:
 
     def test_list_of_arrays(self):
         """Test with list of numpy arrays."""
+        # Arrange
         groups = [np.array([1, 2, 3]), np.array([4, 5, 6]), np.array([7, 8, 9])]
+        # Act
         results = posthoc_tukey(groups)
+        # Assert
         assert len(results) == 3
 
-    def test_pandas_series(self):
+    def test_pandas_series_results(self):
         """Test with pandas Series."""
+        # Arrange
         groups = [pd.Series([1, 2, 3]), pd.Series([4, 5, 6]), pd.Series([7, 8, 9])]
+        # Act
         results = posthoc_tukey(groups)
+        # Assert
         assert len(results) == 3
 
-    def test_mixed_types(self):
+    def test_mixed_types_results(self):
         """Test with mixed array types."""
+        # Arrange
         groups = [np.array([1, 2, 3]), pd.Series([4, 5, 6]), [7, 8, 9]]
+        # Act
         results = posthoc_tukey(groups)
+        # Assert
         assert len(results) == 3
 
-    def test_custom_group_names(self):
+    def test_custom_group_names_control_iloc_results(self):
         """Test with custom group names."""
+        # Arrange
         groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
         group_names = ["Control", "Treatment"]
-
+        # Act
         results = posthoc_tukey(groups, group_names=group_names)
-
+        # Assert
         assert results.iloc[0]["group_i"] == "Control"
+
+    def test_custom_group_names_treatment_iloc_results(self):
+        """Test with custom group names."""
+        # Arrange
+        groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
+        group_names = ["Control", "Treatment"]
+        # Act
+        results = posthoc_tukey(groups, group_names=group_names)
+        # Assert
         assert results.iloc[0]["group_j"] == "Treatment"
 
-    def test_return_dict_format(self):
+    def test_return_dict_format_results_list(self):
         """Test return_as='dict' option."""
+        # Arrange
         groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
+        # Act
         results = posthoc_tukey(groups, return_as="dict")
-
+        # Assert
         assert isinstance(results, list)
+
+    def test_return_dict_format_results(self):
+        """Test return_as='dict' option."""
+        # Arrange
+        groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
+        # Act
+        results = posthoc_tukey(groups, return_as="dict")
+        # Assert
         assert isinstance(results[0], dict)
+
+    def test_return_dict_format_mean_diff_results(self):
+        """Test return_as='dict' option."""
+        # Arrange
+        groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
+        # Act
+        results = posthoc_tukey(groups, return_as="dict")
+        # Assert
         assert "mean_diff" in results[0]
 
 
@@ -128,64 +227,103 @@ class TestEdgeCases:
 
     def test_two_groups_minimum(self):
         """Test with minimum of two groups."""
+        # Arrange
         group1 = np.array([1, 2, 3, 4, 5])
         group2 = np.array([6, 7, 8, 9, 10])
-
+        # Act
         results = posthoc_tukey([group1, group2])
-
-        # Should have exactly 1 comparison
+        # Assert
         assert len(results) == 1
 
     def test_single_group_raises_error(self):
         """Test that single group raises ValueError."""
+        # Arrange
+        # Act
         group = np.array([1, 2, 3, 4, 5])
-
+        # Assert
         with pytest.raises(ValueError, match="Need at least 2 groups"):
             posthoc_tukey([group])
 
-    def test_identical_groups(self):
+    def test_identical_groups_all_results_significant(self):
         """Test with completely identical groups."""
+        # Arrange
         identical_data = np.array([5, 5, 5, 5, 5])
         groups = [identical_data.copy() for _ in range(3)]
-
+        # Act
         results = posthoc_tukey(groups)
-
-        # All comparisons should be non-significant
+        # Assert
         assert all(~results["significant"])
-        # All p-values should be NaN or close to 1 (zero variance case)
-        # When variance is zero, p-values may be NaN
+
+    def test_identical_groups_all_isna_results_pvalue(self):
+        """Test with completely identical groups."""
+        # Arrange
+        identical_data = np.array([5, 5, 5, 5, 5])
+        groups = [identical_data.copy() for _ in range(3)]
+        # Act
+        results = posthoc_tukey(groups)
+        # Assert
         assert all(results["pvalue"].isna() | (results["pvalue"] > 0.9))
 
-    def test_unequal_sample_sizes(self):
+    def test_unequal_sample_sizes_results(self):
         """Test Tukey-Kramer with unequal sample sizes."""
+        # Arrange
         group1 = np.random.normal(10, 2, 10)
         group2 = np.random.normal(12, 2, 20)
         group3 = np.random.normal(14, 2, 30)
-
+        # Act
         results = posthoc_tukey([group1, group2, group3])
-
-        # Should handle unequal sizes without error
+        # Assert
         assert len(results) == 3
-        # Check sample sizes are recorded
+
+    def test_unequal_sample_sizes_iloc_results(self):
+        """Test Tukey-Kramer with unequal sample sizes."""
+        # Arrange
+        group1 = np.random.normal(10, 2, 10)
+        group2 = np.random.normal(12, 2, 20)
+        group3 = np.random.normal(14, 2, 30)
+        # Act
+        results = posthoc_tukey([group1, group2, group3])
+        # Assert
         assert results.iloc[0]["n_i"] == 10
+
+    def test_unequal_sample_sizes_iloc_results_2(self):
+        """Test Tukey-Kramer with unequal sample sizes."""
+        # Arrange
+        group1 = np.random.normal(10, 2, 10)
+        group2 = np.random.normal(12, 2, 20)
+        group3 = np.random.normal(14, 2, 30)
+        # Act
+        results = posthoc_tukey([group1, group2, group3])
+        # Assert
         assert results.iloc[0]["n_j"] == 20
 
-    def test_very_large_differences(self):
+    def test_very_large_differences_significant_iloc_results(self):
         """Test with very large mean differences."""
+        # Arrange
         group1 = np.array([0, 0, 0, 0, 0])
         group2 = np.array([100, 100, 100, 100, 100])
-
+        # Act
         results = posthoc_tukey([group1, group2])
-
-        # Should be highly significant
+        # Assert
         assert results.iloc[0]["significant"]
+
+    def test_very_large_differences_pvalue_iloc_results(self):
+        """Test with very large mean differences."""
+        # Arrange
+        group1 = np.array([0, 0, 0, 0, 0])
+        group2 = np.array([100, 100, 100, 100, 100])
+        # Act
+        results = posthoc_tukey([group1, group2])
+        # Assert
         assert results.iloc[0]["pvalue"] < 0.001
 
     def test_mismatched_group_names_length(self):
         """Test error when group_names length doesn't match."""
+        # Arrange
+        # Act
         groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
         group_names = ["Group1"]  # Only 1 name for 2 groups
-
+        # Assert
         with pytest.raises(ValueError, match="Expected 2 group names"):
             posthoc_tukey(groups, group_names=group_names)
 
@@ -195,54 +333,74 @@ class TestStatisticalProperties:
 
     def test_alpha_level_respected(self):
         """Test that alpha level affects significance."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(10, 2, 20)
         group2 = np.random.normal(11, 2, 20)
-
         results_005 = posthoc_tukey([group1, group2], alpha=0.05)
+        # Act
         results_001 = posthoc_tukey([group1, group2], alpha=0.01)
-
-        # More conservative alpha should have higher critical value
+        # Assert
         assert results_001.iloc[0]["q_critical"] >= results_005.iloc[0]["q_critical"]
 
-    def test_confidence_intervals(self):
+    def test_confidence_intervals_row_iterrows_results_ci(self):
         """Test confidence interval properties."""
+        # Arrange
         np.random.seed(42)
         groups = [np.random.normal(10 + i, 2, 20) for i in range(3)]
-
+        # Act
         results = posthoc_tukey(groups)
-
+        # Assert
         for _, row in results.iterrows():
-            # CI should contain the mean difference
-            assert row["ci_lower"] <= row["mean_diff"] <= row["ci_upper"]
+            # CI must contain the mean difference AND have positive width
+            # (a strict lower < upper makes the containment non-degenerate).
+            assert (
+                row["ci_lower"] <= row["mean_diff"] <= row["ci_upper"]
+                and row["ci_upper"] > row["ci_lower"]
+            )
 
-            # CI width should be positive
-            assert row["ci_upper"] > row["ci_lower"]
-
-    def test_q_statistic_calculation(self):
+    def test_q_statistic_calculation_iloc_results(self):
         """Test q-statistic calculation."""
+        # Arrange
         np.random.seed(42)
         groups = [np.random.normal(10, 2, 20), np.random.normal(15, 2, 20)]
-
+        # Act
         results = posthoc_tukey(groups)
-
-        # q_statistic should be positive
+        # Assert
         assert results.iloc[0]["q_statistic"] > 0
-
-        # Significance should match q_stat vs q_critical
         row = results.iloc[0]
+
+    def test_q_statistic_calculation_row_significant_critical(self):
+        """Test q-statistic calculation."""
+        # Arrange
+        np.random.seed(42)
+        groups = [np.random.normal(10, 2, 20), np.random.normal(15, 2, 20)]
+        # Act
+        results = posthoc_tukey(groups)
+        row = results.iloc[0]
+        # Assert
         assert row["significant"] == (row["q_statistic"] > row["q_critical"])
 
-    def test_symmetric_comparisons(self):
+    def test_symmetric_comparisons_mean_diff_iloc_results(self):
         """Test that mean_diff has correct sign."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(10, 2, 20)
         group2 = np.random.normal(15, 2, 20)
-
+        # Act
         results = posthoc_tukey([group1, group2], group_names=["A", "B"])
-
-        # mean_diff should be A - B (negative since B > A)
+        # Assert
         assert results.iloc[0]["mean_diff"] < 0
+
+    def test_symmetric_comparisons_abs_approx_mean_diff(self):
+        """Test that mean_diff has correct sign."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 2, 20)
+        group2 = np.random.normal(15, 2, 20)
+        # Act
+        results = posthoc_tukey([group1, group2], group_names=["A", "B"])
+        # Assert
         assert abs(results.iloc[0]["mean_diff"]) == pytest.approx(5, abs=1)
 
 
@@ -251,9 +409,10 @@ class TestOutputStructure:
 
     def test_dataframe_output_structure(self):
         """Test DataFrame output has all required fields."""
+        # Arrange
         groups = [np.random.normal(i, 1, 10) for i in range(3)]
+        # Act
         results = posthoc_tukey(groups)
-
         required_fields = [
             "group_i",
             "group_j",
@@ -272,15 +431,16 @@ class TestOutputStructure:
             "ci_upper",
             "alpha",
         ]
-
+        # Assert
         for field in required_fields:
             assert field in results.columns, f"Missing field: {field}"
 
     def test_dict_output_structure(self):
         """Test dict output has all required fields."""
+        # Arrange
         groups = [np.random.normal(i, 1, 10) for i in range(3)]
+        # Act
         results = posthoc_tukey(groups, return_as="dict")
-
         required_fields = [
             "group_i",
             "group_j",
@@ -291,22 +451,29 @@ class TestOutputStructure:
             "ci_lower",
             "ci_upper",
         ]
-
+        # Assert
         for result in results:
             for field in required_fields:
                 assert field in result, f"Missing field: {field}"
 
-    def test_pstars_format(self):
+    def test_pstars_format_columns_results(self):
         """Test p-value stars format."""
-        # Create groups with very different means for highly significant result
+        # Arrange
         group1 = np.array([0, 0, 0, 0, 0])
         group2 = np.array([10, 10, 10, 10, 10])
-
+        # Act
         results = posthoc_tukey([group1, group2])
-
-        # Should have pstars field
+        # Assert
         assert "pstars" in results.columns
-        # Should be a string
+
+    def test_pstars_format_str_iloc_results(self):
+        """Test p-value stars format."""
+        # Arrange
+        group1 = np.array([0, 0, 0, 0, 0])
+        group2 = np.array([10, 10, 10, 10, 10])
+        # Act
+        results = posthoc_tukey([group1, group2])
+        # Assert
         assert isinstance(results.iloc[0]["pstars"], str)
 
 
@@ -315,37 +482,45 @@ class TestRobustness:
 
     def test_small_sample_sizes(self):
         """Test with very small sample sizes."""
-        # Minimum viable sample size
+        # Arrange
         group1 = np.array([1, 2])
         group2 = np.array([3, 4])
         group3 = np.array([5, 6])
-
+        # Act
         results = posthoc_tukey([group1, group2, group3])
-
-        # Should run without error
+        # Assert
         assert len(results) == 3
 
     def test_large_number_of_groups(self):
         """Test with many groups."""
+        # Arrange
         np.random.seed(42)
         groups = [np.random.normal(i, 1, 10) for i in range(10)]
-
+        # Act
         results = posthoc_tukey(groups)
-
-        # 10 groups = 45 pairwise comparisons
+        # Assert
         assert len(results) == 45
 
-    def test_high_variance_data(self):
+    def test_high_variance_data_results(self):
         """Test with high variance data."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(10, 100, 20)  # Very high variance
         group2 = np.random.normal(12, 100, 20)
-
+        # Act
         results = posthoc_tukey([group1, group2])
-
-        # Should handle without error
+        # Assert
         assert len(results) == 1
-        # High variance should lead to non-significance
+
+    def test_high_variance_data_std_error_iloc_results(self):
+        """Test with high variance data."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 100, 20)  # Very high variance
+        group2 = np.random.normal(12, 100, 20)
+        # Act
+        results = posthoc_tukey([group1, group2])
+        # Assert
         assert results.iloc[0]["std_error"] > 10
 
 
@@ -354,43 +529,39 @@ class TestComparison:
 
     def test_multiple_alpha_levels(self):
         """Test behavior across different alpha levels."""
+        # Arrange
         np.random.seed(42)
         groups = [np.random.normal(10 + i * 0.5, 2, 20) for i in range(3)]
-
         alphas = [0.01, 0.05, 0.10]
         critical_values = []
-
+        # Act
         for alpha in alphas:
             results = posthoc_tukey(groups, alpha=alpha)
             critical_values.append(results.iloc[0]["q_critical"])
-
-        # More conservative alpha should have higher critical values
+        # Assert
         assert critical_values[0] > critical_values[1] > critical_values[2]
 
     def test_consistency_with_anova(self):
         """Test that Tukey identifies differences when ANOVA would."""
-        # Create groups with clear differences
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(10, 1, 30)
         group2 = np.random.normal(15, 1, 30)
         group3 = np.random.normal(20, 1, 30)
-
+        # Act
         results = posthoc_tukey([group1, group2, group3])
-
-        # All pairwise comparisons should be significant
+        # Assert
         assert all(results["significant"])
 
     def test_no_false_positives_null(self):
         """Test that identical groups don't show false positives."""
+        # Arrange
         np.random.seed(42)
-        # All groups from same distribution
         groups = [np.random.normal(10, 2, 50) for _ in range(5)]
-
         results = posthoc_tukey(groups, alpha=0.05)
-
-        # With alpha=0.05, we expect ~5% false positives
-        # With 10 comparisons, likely 0-1 false positives
+        # Act
         n_significant = sum(results["significant"])
+        # Assert
         assert n_significant <= 2  # Allow some random chance
 
 

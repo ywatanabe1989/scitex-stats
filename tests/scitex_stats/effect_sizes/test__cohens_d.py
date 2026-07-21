@@ -23,43 +23,74 @@ from scitex_stats.effect_sizes import cohens_d, interpret_cohens_d
 class TestBasicComputation:
     """Tests for basic Cohen's d computations."""
 
-    def test_independent_samples_basic(self):
+    def test_independent_samples_basic_float(self):
         """Test basic independent samples."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([2, 3, 4, 5, 6])
+        # Act
         d = cohens_d(x, y)
-
-        # Mean diff = -1, pooled std = 1.58..., d should be ~ -0.632
+        # Assert
         assert isinstance(d, float)
+
+    def test_independent_samples_basic_case_2(self):
+        """Test basic independent samples."""
+        # Arrange
+        x = np.array([1, 2, 3, 4, 5])
+        y = np.array([2, 3, 4, 5, 6])
+        # Act
+        d = cohens_d(x, y)
+        # Assert
         assert d < 0  # y has higher mean
+
+    def test_independent_samples_basic_case_3(self):
+        """Test basic independent samples."""
+        # Arrange
+        x = np.array([1, 2, 3, 4, 5])
+        y = np.array([2, 3, 4, 5, 6])
+        # Act
+        d = cohens_d(x, y)
+        # Assert
         assert -1.5 < d < 0
 
     def test_independent_samples_known_value(self):
         """Test with manually calculated known value."""
-        # Two groups with mean diff = 1, both std = 1
+        # Arrange
         x = np.array([0, 1, 2])  # mean=1, std=1
         y = np.array([1, 2, 3])  # mean=2, std=1
+        # Act
         d = cohens_d(x, y)
-
-        # Expected: d = (1-2) / pooled_std(1) = -1.0
+        # Assert
         assert abs(d - (-1.0)) < 0.01
 
     def test_one_sample_against_zero(self):
         """Test one-sample Cohen's d against zero."""
+        # Arrange
         x = np.array([2, 4, 6, 8, 10])  # mean=6, std=sqrt(10)
         d = cohens_d(x, y=None)
-
-        # d = mean / std
+        # Act
         expected_d = np.mean(x) / np.std(x, ddof=1)
+        # Assert
         assert abs(d - expected_d) < 0.001
 
-    def test_pandas_series_input(self):
+    def test_pandas_series_input_float(self):
         """Test that pandas Series work as input."""
+        # Arrange
         x = pd.Series([1, 2, 3, 4, 5])
         y = pd.Series([2, 3, 4, 5, 6])
+        # Act
         d = cohens_d(x, y)
-
+        # Assert
         assert isinstance(d, float)
+
+    def test_pandas_series_input_isnan(self):
+        """Test that pandas Series work as input."""
+        # Arrange
+        x = pd.Series([1, 2, 3, 4, 5])
+        y = pd.Series([2, 3, 4, 5, 6])
+        # Act
+        d = cohens_d(x, y)
+        # Assert
         assert not np.isnan(d)
 
 
@@ -68,80 +99,93 @@ class TestPairedSamples:
 
     def test_paired_samples_basic(self):
         """Test paired samples computation."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([2, 3, 4, 5, 6])
+        # Act
         d = cohens_d(x, y, paired=True)
-
-        # diff = x - y = [-1, -1, -1, -1, -1]
-        # mean_diff = -1, std_diff = 0
-        # Since std is 0, this will give inf or very large value
+        # Assert
         assert isinstance(d, float)
 
     def test_paired_different_lengths_raises_error(self):
         """Test that paired samples with different lengths raise error."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
+        # Act
         y = np.array([2, 3, 4])
-
+        # Assert
         with pytest.raises(ValueError, match="same length"):
             cohens_d(x, y, paired=True)
 
     def test_paired_vs_independent(self):
         """Test that paired gives different result than independent."""
+        # Arrange
         np.random.seed(42)
         baseline = np.random.normal(0, 1, 20)
         followup = baseline + 0.5 + np.random.normal(0, 0.3, 20)
-
         d_independent = cohens_d(baseline, followup, paired=False)
+        # Act
         d_paired = cohens_d(baseline, followup, paired=True)
-
-        # They should be different
+        # Assert
         assert abs(d_independent - d_paired) > 0.1
 
 
 class TestCorrections:
     """Tests for different correction methods."""
 
-    def test_no_correction(self):
+    def test_no_correction_float(self):
         """Test standard Cohen's d without correction."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([3, 4, 5, 6, 7])
+        # Act
         d = cohens_d(x, y, correction=None)
-
+        # Assert
         assert isinstance(d, float)
 
-    def test_hedges_correction(self):
+    def test_hedges_correction_abs_d_hedges_d_standard(self):
         """Test Hedges' g correction."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([3, 4, 5, 6, 7])
-
         d_standard = cohens_d(x, y, correction=None)
+        # Act
         d_hedges = cohens_d(x, y, correction="hedges")
-
-        # Hedges' g should be slightly smaller (correction factor < 1)
+        # Assert
         assert abs(d_hedges) < abs(d_standard)
+
+    def test_hedges_correction_abs_d_hedges_d_standard_2(self):
+        """Test Hedges' g correction."""
+        # Arrange
+        x = np.array([1, 2, 3, 4, 5])
+        y = np.array([3, 4, 5, 6, 7])
+        d_standard = cohens_d(x, y, correction=None)
+        # Act
+        d_hedges = cohens_d(x, y, correction="hedges")
+        # Assert
         assert abs(d_hedges / d_standard) > 0.9  # But close
 
-    def test_glass_correction(self):
+    def test_glass_correction_abs_d_glass(self):
         """Test Glass's delta (uses control group SD only)."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([3, 4, 5, 6, 7])
-
         d_glass = cohens_d(x, y, correction="glass")
-
-        # Glass's delta = mean_diff / std(y)
         mean_diff = np.mean(x) - np.mean(y)
+        # Act
         expected = mean_diff / np.std(y, ddof=1)
+        # Assert
         assert abs(d_glass - expected) < 0.001
 
     def test_hedges_small_sample(self):
         """Test that Hedges' correction matters for small samples."""
+        # Arrange
         x = np.array([1, 2, 3])
         y = np.array([4, 5, 6])
-
         d_standard = cohens_d(x, y, correction=None)
+        # Act
         d_hedges = cohens_d(x, y, correction="hedges")
-
-        # For small samples, difference should be more noticeable
+        # Assert
         assert abs(d_standard - d_hedges) > 0.01
 
 
@@ -150,29 +194,41 @@ class TestEdgeCases:
 
     def test_equal_means_zero_effect(self):
         """Test that equal means give d close to zero."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([1, 2, 3, 4, 5])
+        # Act
         d = cohens_d(x, y)
-
+        # Assert
         assert abs(d) < 0.01
 
-    def test_nan_handling(self):
+    def test_nan_handling_float(self):
         """Test that NaN values are properly removed."""
+        # Arrange
         x = np.array([1, 2, np.nan, 4, 5])
         y = np.array([2, np.nan, 4, 5, 6])
+        # Act
         d = cohens_d(x, y)
-
-        # Should compute without error
+        # Assert
         assert isinstance(d, float)
+
+    def test_nan_handling_isnan(self):
+        """Test that NaN values are properly removed."""
+        # Arrange
+        x = np.array([1, 2, np.nan, 4, 5])
+        y = np.array([2, np.nan, 4, 5, 6])
+        # Act
+        d = cohens_d(x, y)
+        # Assert
         assert not np.isnan(d)
 
     def test_all_nan_array(self):
         """Test behavior with all NaN values."""
+        # Arrange
         x = np.array([np.nan, np.nan])
+        # Act
         y = np.array([1, 2, 3])
-
-        # This should either handle gracefully or raise appropriate error
-        # Depending on implementation
+        # Assert
         try:
             d = cohens_d(x, y)
             # If it doesn't raise, check result
@@ -183,11 +239,12 @@ class TestEdgeCases:
 
     def test_single_value_arrays(self):
         """Test with single-value arrays (std = 0)."""
+        # Arrange
         x = np.array([5])
         y = np.array([10])
-
-        # Will have division by zero
+        # Act
         d = cohens_d(x, y)
+        # Assert
         assert np.isinf(d) or np.isnan(d)
 
 
@@ -196,95 +253,144 @@ class TestKnownValues:
 
     def test_textbook_example_1(self):
         """Test classic example: mean diff = 0.5, pooled std = 1."""
-        # Create data with controlled properties
+        # Arrange
         np.random.seed(42)
         n = 100
         x = np.random.normal(0, 1, n)
         y = np.random.normal(0.5, 1, n)
-
+        # Act
         d = cohens_d(x, y)
-
-        # Should be approximately -0.5
+        # Assert
         assert abs(d - (-0.5)) < 0.2  # Allow some random variation
 
     def test_textbook_example_2(self):
         """Test large effect size."""
+        # Arrange
         np.random.seed(42)
         n = 100
         x = np.random.normal(0, 1, n)
         y = np.random.normal(1.0, 1, n)
-
+        # Act
         d = cohens_d(x, y)
-
-        # Should be approximately -1.0 (large effect)
+        # Assert
         assert abs(d - (-1.0)) < 0.3  # Allow more variation for random data
 
 
 class TestMathematicalProperties:
     """Tests for mathematical properties of Cohen's d."""
 
-    def test_symmetry(self):
+    def test_symmetry_abs_d_xy_d_yx(self):
         """Test that swapping x and y flips the sign."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([3, 4, 5, 6, 7])
-
         d_xy = cohens_d(x, y)
+        # Act
         d_yx = cohens_d(y, x)
-
-        # Should be negatives of each other
+        # Assert
         assert abs(d_xy + d_yx) < 0.001
 
-    def test_scale_invariance(self):
+    def test_scale_invariance_abs_d1_d2(self):
         """Test that d is invariant to scaling both groups equally."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([3, 4, 5, 6, 7])
-
         d1 = cohens_d(x, y)
+        # Act
         d2 = cohens_d(x * 10, y * 10)
-
-        # Should be approximately equal (scale invariant)
+        # Assert
         assert abs(d1 - d2) < 0.001
 
-    def test_location_invariance(self):
+    def test_location_invariance_abs_d1_d2(self):
         """Test that d is invariant to shifting both groups equally."""
+        # Arrange
         x = np.array([1, 2, 3, 4, 5])
         y = np.array([3, 4, 5, 6, 7])
-
         d1 = cohens_d(x, y)
+        # Act
         d2 = cohens_d(x + 100, y + 100)
-
-        # Should be approximately equal (location invariant)
+        # Assert
         assert abs(d1 - d2) < 0.001
 
 
 class TestInterpretation:
     """Tests for effect size interpretation."""
 
-    def test_interpret_negligible(self):
+    def test_interpret_negligible_interpret_cohens_d(self):
         """Test negligible effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cohens_d(0.1) == "negligible"
+
+    def test_interpret_negligible_interpret_cohens_d_2(self):
+        """Test negligible effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cohens_d(-0.15) == "negligible"
 
-    def test_interpret_small(self):
+    def test_interpret_small_interpret_cohens_d(self):
         """Test small effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cohens_d(0.3) == "small"
+
+    def test_interpret_small_interpret_cohens_d_2(self):
+        """Test small effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cohens_d(-0.4) == "small"
 
-    def test_interpret_medium(self):
+    def test_interpret_medium_interpret_cohens_d(self):
         """Test medium effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cohens_d(0.6) == "medium"
+
+    def test_interpret_medium_interpret_cohens_d_2(self):
+        """Test medium effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cohens_d(-0.7) == "medium"
 
-    def test_interpret_large(self):
+    def test_interpret_large_interpret_cohens_d(self):
         """Test large effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cohens_d(0.9) == "large"
+
+    def test_interpret_large_interpret_cohens_d_2(self):
+        """Test large effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cohens_d(-1.2) == "large"
 
-    def test_interpret_boundaries(self):
+    def test_interpret_boundaries_small_interpret_cohens_d(self):
         """Test interpretation at boundaries."""
-        # Boundaries: 0.2 (small), 0.5 (medium), 0.8 (large)
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cohens_d(0.2) == "small"
+
+    def test_interpret_boundaries_medium_interpret_cohens_d(self):
+        """Test interpretation at boundaries."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cohens_d(0.5) == "medium"
+
+    def test_interpret_boundaries_large_interpret_cohens_d(self):
+        """Test interpretation at boundaries."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_cohens_d(0.8) == "large"
 
 

@@ -24,57 +24,75 @@ from scitex_stats.descriptive._real import (
 class TestMean:
     """Test mean function."""
 
-    def test_basic_mean(self):
+    def test_basic_mean_isclose_torch_tensor(self):
         """Test basic mean calculation."""
+        # Arrange
         x = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0])
+        # Act
         result = mean(x, dim=0)
-
+        # Assert
         assert torch.isclose(result, torch.tensor(3.0))
 
-    def test_2d_mean(self):
+    def test_2d_mean_shape(self):
         """Test mean on 2D tensor."""
+        # Arrange
         x = torch.randn(5, 10)
+        # Act
         result = mean(x, dim=1)
-
+        # Assert
         assert result.shape == (5,)
 
 
 class TestStd:
     """Test std function."""
 
-    def test_basic_std(self):
+    def test_basic_std_case(self):
         """Test basic std calculation."""
+        # Arrange
         x = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0])
+        # Act
         result = std(x, dim=0)
-
-        # Should be around 1.58
+        # Assert
         assert result > 0
 
-    def test_constant_std(self):
+    def test_constant_std_isclose_torch_tensor(self):
         """Test std of constant values."""
+        # Arrange
         x = torch.tensor([2.0, 2.0, 2.0, 2.0])
+        # Act
         result = std(x, dim=0)
-
+        # Assert
         assert torch.isclose(result, torch.tensor(0.0), atol=1e-6)
 
 
 class TestZscore:
     """Test zscore function."""
 
-    def test_basic_zscore(self):
+    def test_basic_zscore_isclose_torch_mean_tensor(self):
         """Test basic z-score calculation."""
+        # Arrange
         x = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0])
+        # Act
         result = zscore(x, dim=0, keepdims=False)
-
-        # Z-scores should have mean ~0 and std ~1
+        # Assert
         assert torch.isclose(result.mean(), torch.tensor(0.0), atol=1e-5)
+
+    def test_basic_zscore_isclose_torch_std_tensor(self):
+        """Test basic z-score calculation."""
+        # Arrange
+        x = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0])
+        # Act
+        result = zscore(x, dim=0, keepdims=False)
+        # Assert
         assert torch.isclose(result.std(), torch.tensor(1.0), atol=1e-1)
 
-    def test_zscore_keepdims(self):
+    def test_zscore_keepdims_shape(self):
         """Test z-score with keepdims."""
+        # Arrange
         x = torch.randn(5, 10)
+        # Act
         result = zscore(x, dim=1, keepdims=True)
-
+        # Assert
         assert result.shape == (5, 10)
 
 
@@ -83,69 +101,93 @@ class TestSkewnessKurtosis:
 
     def test_symmetric_zero_skewness(self):
         """Test that symmetric distribution has ~0 skewness."""
+        # Arrange
         torch.manual_seed(42)
         x = torch.randn(1000)
+        # Act
         result = skewness(x, dim=0)
-
-        # Should be close to 0 for normal distribution
+        # Assert
         assert abs(result) < 0.5
 
-    def test_kurtosis(self):
+    def test_kurtosis_abs_case(self):
         """Test kurtosis calculation."""
+        # Arrange
         torch.manual_seed(42)
         x = torch.randn(1000)
+        # Act
         result = kurtosis(x, dim=0)
-
-        # Excess kurtosis of normal is 0
+        # Assert
         assert abs(result) < 1.0
 
 
 class TestQuantiles:
     """Test quantile functions."""
 
-    def test_q50_median(self):
+    def test_q50_median_isclose_torch_tensor(self):
         """Test that q50 equals median."""
+        # Arrange
         x = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0])
+        # Act
         result = q50(x, dim=0)
-
+        # Assert
         assert torch.isclose(result, torch.tensor(3.0), atol=0.1)
 
-    def test_q25(self):
+    def test_q25_case_case(self):
         """Test 25th percentile."""
+        # Arrange
         x = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0])
+        # Act
         result = q25(x, dim=0)
-
-        # Should be around 2.0
+        # Assert
         assert 1.5 < result < 2.5
 
-    def test_q75(self):
+    def test_q75_case_case(self):
         """Test 75th percentile."""
+        # Arrange
         x = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0])
+        # Act
         result = q75(x, dim=0)
-
-        # Should be around 4.0
+        # Assert
         assert 3.5 < result < 4.5
 
 
 class TestNumpyInput:
     """Test with numpy inputs."""
 
-    def test_mean_numpy(self):
+    def test_mean_numpy_ndarray_floating(self):
         """Test mean with numpy input."""
+        # Arrange
         x = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+        # Act
         result = mean(x, dim=0)
-
-        # New behavior: numpy in -> numpy scalar/array out
+        # Assert
         assert isinstance(result, (np.ndarray, np.floating))
+
+    def test_mean_numpy_isclose(self):
+        """Test mean with numpy input."""
+        # Arrange
+        x = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+        # Act
+        result = mean(x, dim=0)
+        # Assert
         assert np.isclose(result, 3.0)
 
-    def test_mean_numpy_2d(self):
+    def test_mean_numpy_2d_ndarray(self):
         """Test mean with 2D numpy input."""
+        # Arrange
         x = np.random.randn(5, 10)
+        # Act
         result = mean(x, dim=1)
-
-        # New behavior: numpy in -> numpy out, preserves shape
+        # Assert
         assert isinstance(result, np.ndarray)
+
+    def test_mean_numpy_2d_shape(self):
+        """Test mean with 2D numpy input."""
+        # Arrange
+        x = np.random.randn(5, 10)
+        # Act
+        result = mean(x, dim=1)
+        # Assert
         assert result.shape == (5,)
 
 

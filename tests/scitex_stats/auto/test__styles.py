@@ -28,27 +28,78 @@ from scitex_stats.auto._styles import (
 class TestStatStyleDataclass:
     """Tests for StatStyle dataclass creation and defaults."""
 
-    def test_basic_creation(self):
+    def test_basic_creation_id_test_style(self):
         """Test creating a StatStyle with required fields."""
+        # Arrange
+        # Act
         style = StatStyle(
             id="test",
             label="Test Style",
             target="plain",
         )
+        # Assert
         assert style.id == "test"
+
+    def test_basic_creation_label_test_style(self):
+        """Test creating a StatStyle with required fields."""
+        # Arrange
+        # Act
+        style = StatStyle(
+            id="test",
+            label="Test Style",
+            target="plain",
+        )
+        # Assert
         assert style.label == "Test Style"
+
+    def test_basic_creation_target_plain_style(self):
+        """Test creating a StatStyle with required fields."""
+        # Arrange
+        # Act
+        style = StatStyle(
+            id="test",
+            label="Test Style",
+            target="plain",
+        )
+        # Assert
         assert style.target == "plain"
 
-    def test_default_values(self):
+    def test_default_values_decimal_places_p_style(self):
         """Test default values are set correctly."""
+        # Arrange
+        # Act
         style = StatStyle(id="test", label="Test", target="plain")
+        # Assert
         assert style.decimal_places_p == 3
+
+    def test_default_values_decimal_places_stat_style(self):
+        """Test default values are set correctly."""
+        # Arrange
+        # Act
+        style = StatStyle(id="test", label="Test", target="plain")
+        # Assert
         assert style.decimal_places_stat == 2
+
+    def test_default_values_decimal_places_effect_style(self):
+        """Test default values are set correctly."""
+        # Arrange
+        # Act
+        style = StatStyle(id="test", label="Test", target="plain")
+        # Assert
         assert style.decimal_places_effect == 2
+
+    def test_default_values_p_format_3f_style(self):
+        """Test default values are set correctly."""
+        # Arrange
+        # Act
+        style = StatStyle(id="test", label="Test", target="plain")
+        # Assert
         assert style.p_format == "p = {p:.3f}"
 
-    def test_custom_decimal_places(self):
+    def test_custom_decimal_places_decimal_places_p_style(self):
         """Test custom decimal places."""
+        # Arrange
+        # Act
         style = StatStyle(
             id="test",
             label="Test",
@@ -57,8 +108,37 @@ class TestStatStyleDataclass:
             decimal_places_stat=3,
             decimal_places_effect=3,
         )
+        # Assert
         assert style.decimal_places_p == 4
+
+    def test_custom_decimal_places_decimal_places_stat_style(self):
+        """Test custom decimal places."""
+        # Arrange
+        # Act
+        style = StatStyle(
+            id="test",
+            label="Test",
+            target="plain",
+            decimal_places_p=4,
+            decimal_places_stat=3,
+            decimal_places_effect=3,
+        )
+        # Assert
         assert style.decimal_places_stat == 3
+
+    def test_custom_decimal_places_decimal_places_effect_style(self):
+        """Test custom decimal places."""
+        # Arrange
+        # Act
+        style = StatStyle(
+            id="test",
+            label="Test",
+            target="plain",
+            decimal_places_p=4,
+            decimal_places_stat=3,
+            decimal_places_effect=3,
+        )
+        # Assert
         assert style.decimal_places_effect == 3
 
 
@@ -67,77 +147,121 @@ class TestFormatStat:
 
     def test_format_t_statistic_with_df(self):
         """Test formatting t-statistic with degrees of freedom."""
+        # Arrange
         style = StatStyle(
             id="test",
             label="Test",
             target="plain",
             stat_symbol_format={"t": "t"},
         )
+        # Act
         result = style.format_stat("t", 2.31, df=28)
+        # Assert
         assert result == "t(28.0) = 2.31"
 
     def test_format_t_statistic_without_df(self):
         """Test formatting t-statistic without degrees of freedom."""
+        # Arrange
         style = StatStyle(
             id="test",
             label="Test",
             target="plain",
             stat_symbol_format={"t": "t"},
         )
+        # Act
         result = style.format_stat("t", 2.31)
+        # Assert
         assert result == "t = 2.31"
 
-    def test_format_with_latex_symbol(self):
+    def test_format_with_latex_symbol_mathit(self):
         """Test formatting with LaTeX symbol."""
+        # Arrange
         style = StatStyle(
             id="test",
             label="Test",
             target="latex",
             stat_symbol_format={"t": "\\mathit{t}"},
         )
+        # Act
         result = style.format_stat("t", 2.31, df=28)
+        # Assert
         assert "\\mathit{t}" in result
+
+    def test_format_with_latex_symbol_case_2(self):
+        """Test formatting with LaTeX symbol."""
+        # Arrange
+        style = StatStyle(
+            id="test",
+            label="Test",
+            target="latex",
+            stat_symbol_format={"t": "\\mathit{t}"},
+        )
+        # Act
+        result = style.format_stat("t", 2.31, df=28)
+        # Assert
         assert "28.0" in result
 
     def test_format_unknown_symbol_uses_raw(self):
         """Test that unknown symbols are used as-is."""
+        # Arrange
         style = StatStyle(id="test", label="Test", target="plain")
+        # Act
         result = style.format_stat("Z", 1.96)
+        # Assert
         assert result == "Z = 1.96"
 
     def test_format_respects_decimal_places(self):
         """Test that decimal places are respected."""
+        # Arrange
         style = StatStyle(
             id="test",
             label="Test",
             target="plain",
             decimal_places_stat=4,
         )
+        # Act
         result = style.format_stat("t", 2.3456789)
+        # Assert
         assert "2.3457" in result
 
 
 class TestFormatP:
     """Tests for format_p method."""
 
-    def test_format_standard_p_value(self):
+    def test_format_standard_p_value_case_1(self):
         """Test formatting a standard p-value."""
+        # Arrange
         style = APA_LATEX_STYLE
+        # Act
         result = style.format_p(0.032)
+        # Assert
         assert "0.032" in result
+
+    def test_format_standard_p_value_mathit(self):
+        """Test formatting a standard p-value."""
+        # Arrange
+        style = APA_LATEX_STYLE
+        # Act
+        result = style.format_p(0.032)
+        # Assert
         assert "\\mathit{p}" in result
 
     def test_format_very_small_p_value(self):
         """Test formatting very small p-values."""
+        # Arrange
         style = APA_LATEX_STYLE
+        # Act
         result = style.format_p(0.0001)
-        # Should show as < 0.001 for very small values
+        # Assert
         assert "0.001" in result or "0.000" in result
 
     def test_format_p_html_style(self):
         """Test formatting p-value with HTML style."""
+        # Arrange
         style = APA_HTML_STYLE
+        # Act
         result = style.format_p(0.045)
+        # Assert
         assert "<i>p</i>" in result
 
 
@@ -146,82 +270,137 @@ class TestFormatEffect:
 
     def test_format_cohens_d(self):
         """Test formatting Cohen's d."""
+        # Arrange
         style = APA_LATEX_STYLE
+        # Act
         result = style.format_effect("cohens_d_ind", 0.72)
+        # Assert
         assert "0.72" in result
 
     def test_format_unknown_effect(self):
         """Test formatting unknown effect size uses raw name."""
+        # Arrange
         style = StatStyle(id="test", label="Test", target="plain")
+        # Act
         result = style.format_effect("custom_effect", 0.5)
+        # Assert
         assert "0.5" in result
 
 
 class TestFormatN:
     """Tests for format_n method."""
 
-    def test_format_n_with_group_name(self):
+    def test_format_n_with_group_name_case_1(self):
         """Test formatting sample size with group name."""
+        # Arrange
         style = APA_LATEX_STYLE
+        # Act
         result = style.format_n("A", 30)
+        # Assert
         assert "30" in result
+
+    def test_format_n_with_group_name_case_2(self):
+        """Test formatting sample size with group name."""
+        # Arrange
+        style = APA_LATEX_STYLE
+        # Act
+        result = style.format_n("A", 30)
+        # Assert
         assert "A" in result
 
-    def test_format_n_plain_style(self):
+    def test_format_n_plain_style_control(self):
         """Test formatting sample size with plain style."""
+        # Arrange
         style = PLAIN_STYLE
+        # Act
         result = style.format_n("Control", 25)
+        # Assert
         assert "Control" in result
+
+    def test_format_n_plain_style_case_2(self):
+        """Test formatting sample size with plain style."""
+        # Arrange
+        style = PLAIN_STYLE
+        # Act
+        result = style.format_n("Control", 25)
+        # Assert
         assert "25" in result
 
     def test_format_n_without_group_placeholder(self):
         """Test styles that don't include group name in format."""
+        # Arrange
         style = NATURE_LATEX_STYLE
+        # Act
         result = style.format_n("A", 30)
+        # Assert
         assert "30" in result
 
 
 class TestPToStars:
     """Tests for p_to_stars method."""
 
-    def test_highly_significant(self):
+    def test_highly_significant_p_to_stars_style(self):
         """Test p < 0.001 returns ***."""
+        # Arrange
         style = APA_LATEX_STYLE
+        # Act
+        # Assert
         assert style.p_to_stars(0.0001) == "***"
 
-    def test_very_significant(self):
+    def test_very_significant_p_to_stars_style(self):
         """Test p < 0.01 returns **."""
+        # Arrange
         style = APA_LATEX_STYLE
+        # Act
+        # Assert
         assert style.p_to_stars(0.005) == "**"
 
-    def test_significant(self):
+    def test_significant_p_to_stars_style(self):
         """Test p < 0.05 returns *."""
+        # Arrange
         style = APA_LATEX_STYLE
+        # Act
+        # Assert
         assert style.p_to_stars(0.03) == "*"
 
-    def test_not_significant(self):
+    def test_not_significant_ns_p_to_stars_style(self):
         """Test p >= 0.05 returns ns."""
+        # Arrange
         style = APA_LATEX_STYLE
+        # Act
+        # Assert
         assert style.p_to_stars(0.08) == "ns"
 
-    def test_boundary_001(self):
+    def test_boundary_001_p_to_stars_style(self):
         """Test exact boundary at 0.001."""
+        # Arrange
         style = APA_LATEX_STYLE
+        # Act
+        # Assert
         assert style.p_to_stars(0.001) == "**"
 
-    def test_boundary_01(self):
+    def test_boundary_01_p_to_stars_style(self):
         """Test exact boundary at 0.01."""
+        # Arrange
         style = APA_LATEX_STYLE
+        # Act
+        # Assert
         assert style.p_to_stars(0.01) == "*"
 
-    def test_boundary_05(self):
+    def test_boundary_05_ns_p_to_stars_style(self):
         """Test exact boundary at 0.05."""
+        # Arrange
         style = APA_LATEX_STYLE
+        # Act
+        # Assert
         assert style.p_to_stars(0.05) == "ns"
 
     def test_none_returns_ns(self):
         """Test None p-value returns ns."""
+        # Arrange
         style = APA_LATEX_STYLE
+        # Act
+        # Assert
         assert style.p_to_stars(None) == "ns"
 
 
@@ -230,14 +409,21 @@ class TestSTAT_STYLESRegistry:
 
     def test_registry_is_dict(self):
         """Test that STAT_STYLES is a dictionary."""
+        # Arrange
+        # Act
+        # Assert
         assert isinstance(STAT_STYLES, dict)
 
     def test_registry_not_empty(self):
         """Test that registry is not empty."""
+        # Arrange
+        # Act
+        # Assert
         assert len(STAT_STYLES) > 0
 
     def test_registry_has_expected_styles(self):
         """Test that registry contains expected style IDs."""
+        # Arrange
         expected_ids = [
             "apa_latex",
             "apa_html",
@@ -249,16 +435,24 @@ class TestSTAT_STYLESRegistry:
             "elsevier_html",
             "plain",
         ]
+        # Act
+        # Assert
         for style_id in expected_ids:
             assert style_id in STAT_STYLES, f"Missing style: {style_id}"
 
     def test_all_values_are_statstyle(self):
         """Test that all registry values are StatStyle instances."""
+        # Arrange
+        # Act
+        # Assert
         for style_id, style in STAT_STYLES.items():
             assert isinstance(style, StatStyle), f"{style_id} is not StatStyle"
 
     def test_all_ids_match_keys(self):
         """Test that style IDs match their registry keys."""
+        # Arrange
+        # Act
+        # Assert
         for key, style in STAT_STYLES.items():
             assert key == style.id, f"Key {key} != style.id {style.id}"
 
@@ -266,52 +460,97 @@ class TestSTAT_STYLESRegistry:
 class TestGetStatStyle:
     """Tests for get_stat_style function."""
 
-    def test_get_valid_style(self):
+    def test_get_valid_style_id_apa_latex(self):
         """Test getting a valid style by ID."""
+        # Arrange
+        # Act
         style = get_stat_style("apa_latex")
+        # Assert
         assert style.id == "apa_latex"
+
+    def test_get_valid_style_statstyle(self):
+        """Test getting a valid style by ID."""
+        # Arrange
+        # Act
+        style = get_stat_style("apa_latex")
+        # Assert
         assert isinstance(style, StatStyle)
 
     def test_get_plain_style(self):
         """Test getting plain style."""
+        # Arrange
+        # Act
         style = get_stat_style("plain")
+        # Assert
         assert style.target == "plain"
 
     def test_get_invalid_style_returns_fallback(self):
         """Test getting invalid style returns APA LaTeX as fallback."""
+        # Arrange
+        # Act
         style = get_stat_style("nonexistent_style")
+        # Assert
         assert style.id == "apa_latex"
 
 
 class TestListStyles:
     """Tests for list_styles function."""
 
-    def test_returns_list(self):
+    def test_returns_list_styles(self):
         """Test that list_styles returns a list."""
+        # Arrange
+        # Act
         styles = list_styles()
+        # Assert
         assert isinstance(styles, list)
 
-    def test_contains_expected_styles(self):
+    def test_contains_expected_styles_apa_latex(self):
         """Test that list contains expected style IDs."""
+        # Arrange
+        # Act
         styles = list_styles()
+        # Assert
         assert "apa_latex" in styles
+
+    def test_contains_expected_styles_nature_latex(self):
+        """Test that list contains expected style IDs."""
+        # Arrange
+        # Act
+        styles = list_styles()
+        # Assert
         assert "nature_latex" in styles
+
+    def test_contains_expected_styles_plain(self):
+        """Test that list contains expected style IDs."""
+        # Arrange
+        # Act
+        styles = list_styles()
+        # Assert
         assert "plain" in styles
 
     def test_count_matches_registry(self):
         """Test that count matches registry size."""
+        # Arrange
+        # Act
         styles = list_styles()
+        # Assert
         assert len(styles) == len(STAT_STYLES)
 
     def test_filter_by_latex_target(self):
         """Test filtering by LaTeX target."""
+        # Arrange
+        # Act
         latex_styles = list_styles(target="latex")
+        # Assert
         for style_id in latex_styles:
             assert STAT_STYLES[style_id].target == "latex"
 
     def test_filter_by_html_target(self):
         """Test filtering by HTML target."""
+        # Arrange
+        # Act
         html_styles = list_styles(target="html")
+        # Assert
         for style_id in html_styles:
             assert STAT_STYLES[style_id].target == "html"
 
@@ -319,76 +558,197 @@ class TestListStyles:
 class TestJournalStylePresets:
     """Tests for individual journal style presets."""
 
-    def test_apa_latex_style(self):
+    def test_apa_latex_style_id_apa_latex_style(self):
         """Test APA LaTeX style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert APA_LATEX_STYLE.id == "apa_latex"
+
+    def test_apa_latex_style_target_apa_latex_style(self):
+        """Test APA LaTeX style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert APA_LATEX_STYLE.target == "latex"
+
+    def test_apa_latex_style_mathit_get_stat_symbol_format_apa_latex_style(self):
+        """Test APA LaTeX style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert "\\mathit{t}" in APA_LATEX_STYLE.stat_symbol_format.get("t", "")
+
+    def test_apa_latex_style_mathit_get_stat_symbol_format_apa_latex_style_2(self):
+        """Test APA LaTeX style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert "\\mathit{p}" in APA_LATEX_STYLE.stat_symbol_format.get("p", "")
 
-    def test_apa_html_style(self):
+    def test_apa_html_style_id_apa_html_style(self):
         """Test APA HTML style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert APA_HTML_STYLE.id == "apa_html"
+
+    def test_apa_html_style_target_apa_html_style(self):
+        """Test APA HTML style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert APA_HTML_STYLE.target == "html"
+
+    def test_apa_html_style_get_stat_symbol_format_apa_html_style(self):
+        """Test APA HTML style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert "<i>t</i>" in APA_HTML_STYLE.stat_symbol_format.get("t", "")
 
-    def test_nature_latex_style(self):
+    def test_nature_latex_style_id_nature_latex_style(self):
         """Test Nature LaTeX style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert NATURE_LATEX_STYLE.id == "nature_latex"
+
+    def test_nature_latex_style_target_nature_latex_style(self):
+        """Test Nature LaTeX style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert NATURE_LATEX_STYLE.target == "latex"
 
-    def test_nature_html_style(self):
+    def test_nature_html_style_id_nature_html_style(self):
         """Test Nature HTML style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert NATURE_HTML_STYLE.id == "nature_html"
+
+    def test_nature_html_style_target_nature_html_style(self):
+        """Test Nature HTML style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert NATURE_HTML_STYLE.target == "html"
 
-    def test_cell_latex_style(self):
+    def test_cell_latex_style_id_cell_latex_style(self):
         """Test Cell LaTeX style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert CELL_LATEX_STYLE.id == "cell_latex"
+
+    def test_cell_latex_style_target_cell_latex_style(self):
+        """Test Cell LaTeX style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert CELL_LATEX_STYLE.target == "latex"
 
-    def test_cell_html_style(self):
+    def test_cell_html_style_id_cell_html_style(self):
         """Test Cell HTML style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert CELL_HTML_STYLE.id == "cell_html"
+
+    def test_cell_html_style_target_cell_html_style(self):
+        """Test Cell HTML style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert CELL_HTML_STYLE.target == "html"
 
-    def test_elsevier_latex_style(self):
+    def test_elsevier_latex_style_id_elsevier_latex_style(self):
         """Test Elsevier LaTeX style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert ELSEVIER_LATEX_STYLE.id == "elsevier_latex"
+
+    def test_elsevier_latex_style_target_elsevier_latex_style(self):
+        """Test Elsevier LaTeX style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert ELSEVIER_LATEX_STYLE.target == "latex"
 
-    def test_elsevier_html_style(self):
+    def test_elsevier_html_style_id_elsevier_html_style(self):
         """Test Elsevier HTML style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert ELSEVIER_HTML_STYLE.id == "elsevier_html"
+
+    def test_elsevier_html_style_target_elsevier_html_style(self):
+        """Test Elsevier HTML style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert ELSEVIER_HTML_STYLE.target == "html"
 
-    def test_plain_style(self):
+    def test_plain_style_id_plain_style(self):
         """Test plain style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert PLAIN_STYLE.id == "plain"
+
+    def test_plain_style_target_plain_style(self):
+        """Test plain style properties."""
+        # Arrange
+        # Act
+        # Assert
         assert PLAIN_STYLE.target == "plain"
 
 
 class TestAlphaThresholds:
     """Tests for alpha threshold configurations."""
 
-    def test_apa_has_standard_thresholds(self):
+    def test_apa_has_standard_thresholds_case_1(self):
         """Test APA has standard 0.001, 0.01, 0.05 thresholds."""
+        # Arrange
         thresholds = [t[0] for t in APA_LATEX_STYLE.alpha_thresholds]
+        # Act
+        # Assert
         assert 0.001 in thresholds
+
+    def test_apa_has_standard_thresholds_case_2(self):
+        """Test APA has standard 0.001, 0.01, 0.05 thresholds."""
+        # Arrange
+        thresholds = [t[0] for t in APA_LATEX_STYLE.alpha_thresholds]
+        # Act
+        # Assert
         assert 0.01 in thresholds
+
+    def test_apa_has_standard_thresholds_case_3(self):
+        """Test APA has standard 0.001, 0.01, 0.05 thresholds."""
+        # Arrange
+        thresholds = [t[0] for t in APA_LATEX_STYLE.alpha_thresholds]
+        # Act
+        # Assert
         assert 0.05 in thresholds
 
     def test_thresholds_in_ascending_order(self):
         """Test that thresholds are in ascending order."""
+        # Arrange
+        # Act
+        # Assert
         for style in STAT_STYLES.values():
             thresholds = [t[0] for t in style.alpha_thresholds]
             assert thresholds == sorted(thresholds)
 
     def test_stars_decrease_with_threshold(self):
         """Test that star count decreases with increasing threshold."""
+        # Arrange
         thresholds = APA_LATEX_STYLE.alpha_thresholds
+        # Act
         star_counts = [len(t[1].replace("ns", "")) for t in thresholds]
-        # Stars should decrease (or stay same) as p increases
+        # Assert
         for i in range(len(star_counts) - 1):
             assert star_counts[i] >= star_counts[i + 1]
 
@@ -398,13 +758,19 @@ class TestOutputTargets:
 
     def test_latex_styles_have_latex_target(self):
         """Test all latex styles have latex target."""
+        # Arrange
+        # Act
         latex_styles = [s for s in STAT_STYLES.values() if "latex" in s.id]
+        # Assert
         for style in latex_styles:
             assert style.target == "latex"
 
     def test_html_styles_have_html_target(self):
         """Test all HTML styles have HTML target."""
+        # Arrange
+        # Act
         html_styles = [s for s in STAT_STYLES.values() if "html" in s.id]
+        # Assert
         for style in html_styles:
             assert style.target == "html"
 

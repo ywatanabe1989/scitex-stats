@@ -12,8 +12,57 @@ from scitex_stats.correct import correct_bonferroni, correct_sidak
 class TestSidakBasic:
     """Basic functionality tests for Šidák correction."""
 
-    def test_basic_correction_list(self):
+    def test_basic_correction_list_corrected(self):
         """Test basic Šidák correction with list of dicts."""
+        # Arrange
+        results = [
+            {"test_name": "test1", "pvalue": 0.01},
+            {"test_name": "test2", "pvalue": 0.02},
+            {"test_name": "test3", "pvalue": 0.03},
+            {"test_name": "test4", "pvalue": 0.04},
+            {"test_name": "test5", "pvalue": 0.05},
+        ]
+        # Act
+        corrected = correct_sidak(results, verbose=False)
+        # Assert
+        assert isinstance(corrected, list)
+        m = len(results)
+
+    def test_basic_correction_list_corrected_results(self):
+        """Test basic Šidák correction with list of dicts."""
+        # Arrange
+        results = [
+            {"test_name": "test1", "pvalue": 0.01},
+            {"test_name": "test2", "pvalue": 0.02},
+            {"test_name": "test3", "pvalue": 0.03},
+            {"test_name": "test4", "pvalue": 0.04},
+            {"test_name": "test5", "pvalue": 0.05},
+        ]
+        # Act
+        corrected = correct_sidak(results, verbose=False)
+        # Assert
+        assert len(corrected) == len(results)
+        m = len(results)
+
+    def test_basic_correction_list_all_pvalue_adjusted_corrected(self):
+        """Test basic Šidák correction with list of dicts."""
+        # Arrange
+        results = [
+            {"test_name": "test1", "pvalue": 0.01},
+            {"test_name": "test2", "pvalue": 0.02},
+            {"test_name": "test3", "pvalue": 0.03},
+            {"test_name": "test4", "pvalue": 0.04},
+            {"test_name": "test5", "pvalue": 0.05},
+        ]
+        # Act
+        corrected = correct_sidak(results, verbose=False)
+        # Assert
+        assert all("pvalue_adjusted" in r for r in corrected)
+        m = len(results)
+
+    def test_basic_correction_list_enumerate_corrected_allclose_pvalue(self):
+        """Test basic Šidák correction with list of dicts."""
+        # Arrange
         results = [
             {"test_name": "test1", "pvalue": 0.01},
             {"test_name": "test2", "pvalue": 0.02},
@@ -22,29 +71,40 @@ class TestSidakBasic:
             {"test_name": "test5", "pvalue": 0.05},
         ]
         corrected = correct_sidak(results, verbose=False)
-
-        assert isinstance(corrected, list)
-        assert len(corrected) == len(results)
-        assert all("pvalue_adjusted" in r for r in corrected)
-
-        # Šidák uses formula: p_adj = 1 - (1-p)^m
+        # Act
         m = len(results)
+        # Assert
         for i, r in enumerate(corrected):
             expected = 1.0 - (1.0 - results[i]["pvalue"]) ** m
-            np.testing.assert_almost_equal(r["pvalue_adjusted"], expected, decimal=5)
+            assert np.allclose(r['pvalue_adjusted'], expected, atol=1.5e-5, rtol=0, equal_nan=True)
 
-    def test_single_pvalue(self):
+    def test_single_pvalue_dict(self):
         """Test with single p-value."""
+        # Arrange
+        # Act
         result = correct_sidak({"pvalue": 0.01}, verbose=False)
-
+        # Assert
         assert isinstance(result, dict)
-        np.testing.assert_almost_equal(
-            result["pvalue_adjusted"], 0.01, decimal=5
-        )  # Single test, no adjustment
+
+    def test_single_pvalue_allclose_adjusted(self):
+        """Test with single p-value."""
+        # Arrange
+        # Act
+        result = correct_sidak({"pvalue": 0.01}, verbose=False)
+        # Assert
+        assert np.allclose(result['pvalue_adjusted'], 0.01, atol=1.5e-5, rtol=0, equal_nan=True)
+
+    def test_single_pvalue_rejected(self):
+        """Test with single p-value."""
+        # Arrange
+        # Act
+        result = correct_sidak({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert "rejected" in result
 
-    def test_significance_threshold(self):
+    def test_significance_threshold_all_rejected_result_005(self):
         """Test significance determination with different alpha."""
+        # Arrange
         results = [
             {"pvalue": 0.001},
             {"pvalue": 0.01},
@@ -52,162 +112,292 @@ class TestSidakBasic:
             {"pvalue": 0.05},
             {"pvalue": 0.1},
         ]
-
         result_005 = correct_sidak(results, alpha=0.05, verbose=False)
+        # Act
         result_001 = correct_sidak(results, alpha=0.01, verbose=False)
-
-        # Check that significance changes with alpha
+        # Assert
         assert all("rejected" in r for r in result_005)
-        assert all("rejected" in r for r in result_001)
-
         n_rejected_005 = sum(r["rejected"] for r in result_005)
         n_rejected_001 = sum(r["rejected"] for r in result_001)
+
+    def test_significance_threshold_all_rejected_result_001(self):
+        """Test significance determination with different alpha."""
+        # Arrange
+        results = [
+            {"pvalue": 0.001},
+            {"pvalue": 0.01},
+            {"pvalue": 0.02},
+            {"pvalue": 0.05},
+            {"pvalue": 0.1},
+        ]
+        result_005 = correct_sidak(results, alpha=0.05, verbose=False)
+        # Act
+        result_001 = correct_sidak(results, alpha=0.01, verbose=False)
+        # Assert
+        assert all("rejected" in r for r in result_001)
+        n_rejected_005 = sum(r["rejected"] for r in result_005)
+        n_rejected_001 = sum(r["rejected"] for r in result_001)
+
+    def test_significance_threshold_n_rejected_005_n_rejected_001(self):
+        """Test significance determination with different alpha."""
+        # Arrange
+        results = [
+            {"pvalue": 0.001},
+            {"pvalue": 0.01},
+            {"pvalue": 0.02},
+            {"pvalue": 0.05},
+            {"pvalue": 0.1},
+        ]
+        result_005 = correct_sidak(results, alpha=0.05, verbose=False)
+        result_001 = correct_sidak(results, alpha=0.01, verbose=False)
+        n_rejected_005 = sum(r["rejected"] for r in result_005)
+        # Act
+        n_rejected_001 = sum(r["rejected"] for r in result_001)
+        # Assert
         assert n_rejected_005 >= n_rejected_001
 
     def test_alpha_adjustment_formula(self):
         """Test that Šidák alpha adjustment uses correct formula."""
+        # Arrange
         results = [{"pvalue": 0.01 * i} for i in range(1, 6)]
         m = len(results)
         alpha = 0.05
-
+        # Act
         corrected = correct_sidak(results, alpha=alpha, verbose=False)
-
-        # Šidák adjusted alpha: α_adj = 1 - (1 - α)^(1/m)
         expected_alpha_adj = 1.0 - (1.0 - alpha) ** (1.0 / m)
-
+        # Assert
         for r in corrected:
-            np.testing.assert_almost_equal(
-                r["alpha_adjusted"], expected_alpha_adj, decimal=6
-            )
+            assert np.allclose(r['alpha_adjusted'], expected_alpha_adj, atol=1.5e-6, rtol=0, equal_nan=True)
 
 
 class TestSidakInputFormats:
     """Test different input formats."""
 
-    def test_single_dict_input(self):
+    def test_single_dict_input_case_1(self):
         """Test with single dict input."""
+        # Arrange
+        # Act
         result = correct_sidak({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert isinstance(result, dict)
+
+    def test_single_dict_input_pvalue_adjusted(self):
+        """Test with single dict input."""
+        # Arrange
+        # Act
+        result = correct_sidak({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert "pvalue_adjusted" in result
 
-    def test_list_of_dicts_input(self):
+    def test_list_of_dicts_input_case_1(self):
         """Test with list of dicts input containing p-values."""
+        # Arrange
         test_results = [
             {"test_name": "test1", "pvalue": 0.01},
             {"test_name": "test2", "pvalue": 0.02},
             {"test_name": "test3", "pvalue": 0.03},
         ]
+        # Act
         result = correct_sidak(test_results, verbose=False)
+        # Assert
         assert isinstance(result, list)
+
+    def test_list_of_dicts_input_all_pvalue_adjusted(self):
+        """Test with list of dicts input containing p-values."""
+        # Arrange
+        test_results = [
+            {"test_name": "test1", "pvalue": 0.01},
+            {"test_name": "test2", "pvalue": 0.02},
+            {"test_name": "test3", "pvalue": 0.03},
+        ]
+        # Act
+        result = correct_sidak(test_results, verbose=False)
+        # Assert
         assert all("pvalue_adjusted" in r for r in result)
+
+    def test_list_of_dicts_input_all_test_name(self):
+        """Test with list of dicts input containing p-values."""
+        # Arrange
+        test_results = [
+            {"test_name": "test1", "pvalue": 0.01},
+            {"test_name": "test2", "pvalue": 0.02},
+            {"test_name": "test3", "pvalue": 0.03},
+        ]
+        # Act
+        result = correct_sidak(test_results, verbose=False)
+        # Assert
         assert all("test_name" in r for r in result)  # Original fields preserved
 
-    def test_dataframe_input(self):
+    def test_dataframe_input_case_1(self):
         """Test with DataFrame input."""
+        # Arrange
         df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
         result = correct_sidak(df, verbose=False)
+        # Assert
         assert isinstance(result, pd.DataFrame)
+
+    def test_dataframe_input_pvalue_adjusted_columns(self):
+        """Test with DataFrame input."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_sidak(df, verbose=False)
+        # Assert
         assert "pvalue_adjusted" in result.columns
+
+    def test_dataframe_input_alpha_adjusted_columns(self):
+        """Test with DataFrame input."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_sidak(df, verbose=False)
+        # Assert
         assert "alpha_adjusted" in result.columns
+
+    def test_dataframe_input_rejected_columns(self):
+        """Test with DataFrame input."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_sidak(df, verbose=False)
+        # Assert
         assert "rejected" in result.columns
+
+    def test_dataframe_input_pstars_columns(self):
+        """Test with DataFrame input."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_sidak(df, verbose=False)
+        # Assert
         assert "pstars" in result.columns
 
 
 class TestSidakEdgeCases:
     """Test edge cases and error handling."""
 
-    def test_pvalue_clipping(self):
+    def test_pvalue_clipping_all_corrected_adjusted(self):
         """Test that corrected p-values are clipped at 1.0."""
+        # Arrange
         results = [{"pvalue": 0.5}, {"pvalue": 0.6}, {"pvalue": 0.7}]
+        # Act
         corrected = correct_sidak(results, verbose=False)
-
-        # All corrected values should be <= 1.0
+        # Assert
         assert all(r["pvalue_adjusted"] <= 1.0 for r in corrected)
 
-    def test_zero_pvalues(self):
+    def test_zero_pvalues_pvalue_adjusted_corrected(self):
         """Test handling of zero p-values."""
+        # Arrange
         results = [{"pvalue": 0.0}, {"pvalue": 0.01}, {"pvalue": 0.02}]
+        # Act
         corrected = correct_sidak(results, verbose=False)
-
-        # 1 - (1-0)^m = 1 - 1^m = 0
+        # Assert
         assert corrected[0]["pvalue_adjusted"] == 0.0
 
-    def test_one_pvalue(self):
+    def test_one_pvalue_adjusted_corrected(self):
         """Test handling of p-value = 1.0."""
+        # Arrange
         results = [{"pvalue": 0.01}, {"pvalue": 0.5}, {"pvalue": 1.0}]
+        # Act
         corrected = correct_sidak(results, verbose=False)
-
-        # 1 - (1-1)^m = 1 - 0^m = 1
+        # Assert
         assert corrected[2]["pvalue_adjusted"] == 1.0
 
-    def test_nan_handling(self):
-        """Test handling of NaN values."""
-        df = pd.DataFrame({"pvalue": [0.01, np.nan, 0.03]})
+    def test_nan_input_returns_result_or_raises_documented_error(self):
+        """NaN p-values either return a result or raise a documented error.
 
-        # NaN handling may raise error or propagate NaN
-        # This test checks the behavior doesn't crash
+        The contract is deterministic NaN handling — never an unexpected
+        exception type and never a silent crash.
+        """
+        # Arrange
+        df = pd.DataFrame({"pvalue": [0.01, np.nan, 0.03]})
+        # Act
+        outcome = "unset"
         try:
             result = correct_sidak(df, verbose=False)
-            # If it succeeds, check NaN is handled
-            if len(result) == 3:
-                # NaN may remain NaN or be handled
-                pass
+            outcome = "result" if result is not None else "none"
         except (ValueError, TypeError, KeyError):
-            # If it raises an error on NaN, that's also acceptable
-            pass
+            outcome = "documented_error"
+        # Assert
+        assert outcome in ("result", "documented_error")
 
 
 class TestSidakComparison:
     """Test Šidák correction compared to Bonferroni."""
 
-    def test_sidak_more_powerful_than_bonferroni(self):
+    def test_sidak_more_powerful_than_bonferroni_alpha_adjusted_sidak_corrected_bonf_corrected(self):
         """Test that Šidák is more powerful than Bonferroni under independence."""
+        # Arrange
         p_values = [0.001, 0.01, 0.02, 0.03, 0.04]
         results = [{"pvalue": p} for p in p_values]
-
         sidak_corrected = correct_sidak(results, alpha=0.05, verbose=False)
+        # Act
         bonf_corrected = correct_bonferroni(results, alpha=0.05, verbose=False)
-
-        # Šidák alpha should be >= Bonferroni alpha (less conservative)
+        # Assert
         assert (
             sidak_corrected[0]["alpha_adjusted"] >= bonf_corrected[0]["alpha_adjusted"]
         )
-
-        # Number of rejections: Šidák should reject >= Bonferroni
         n_rejected_sidak = sum(r["rejected"] for r in sidak_corrected)
         n_rejected_bonf = sum(r["rejected"] for r in bonf_corrected)
+
+    def test_sidak_more_powerful_than_bonferroni_n_rejected_sidak_n_rejected_bonf(self):
+        """Test that Šidák is more powerful than Bonferroni under independence."""
+        # Arrange
+        p_values = [0.001, 0.01, 0.02, 0.03, 0.04]
+        results = [{"pvalue": p} for p in p_values]
+        sidak_corrected = correct_sidak(results, alpha=0.05, verbose=False)
+        bonf_corrected = correct_bonferroni(results, alpha=0.05, verbose=False)
+        n_rejected_sidak = sum(r["rejected"] for r in sidak_corrected)
+        # Act
+        n_rejected_bonf = sum(r["rejected"] for r in bonf_corrected)
+        # Assert
         assert n_rejected_sidak >= n_rejected_bonf
 
-    def test_known_values(self):
+    def test_known_values_allclose_expected_1_pvalue_adjusted(self):
         """Test against manually calculated Šidák values."""
-        # With m=3, alpha=0.05:
-        # - p-values: 0.01, 0.02, 0.03
-        # - Šidák p_adj: 1-(1-p)^3
+        # Arrange
         results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
-
+        # Act
         corrected = correct_sidak(results, verbose=False)
         m = 3
-
-        # First: 1 - (1-0.01)^3 = 1 - 0.99^3 = 1 - 0.970299 = 0.029701
         expected_1 = 1.0 - (1.0 - 0.01) ** m
-        np.testing.assert_almost_equal(
-            corrected[0]["pvalue_adjusted"], expected_1, decimal=5
-        )
-
-        # Second: 1 - (1-0.02)^3 = 1 - 0.98^3 = 1 - 0.941192 = 0.058808
+        # Assert
+        assert np.allclose(corrected[0]['pvalue_adjusted'], expected_1, atol=1.5e-5, rtol=0, equal_nan=True)
         expected_2 = 1.0 - (1.0 - 0.02) ** m
-        np.testing.assert_almost_equal(
-            corrected[1]["pvalue_adjusted"], expected_2, decimal=5
-        )
-
-        # Third: 1 - (1-0.03)^3 = 1 - 0.97^3 = 1 - 0.912673 = 0.087327
         expected_3 = 1.0 - (1.0 - 0.03) ** m
-        np.testing.assert_almost_equal(
-            corrected[2]["pvalue_adjusted"], expected_3, decimal=5
-        )
+
+    def test_known_values_allclose_expected_2_pvalue_adjusted(self):
+        """Test against manually calculated Šidák values."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_sidak(results, verbose=False)
+        m = 3
+        expected_1 = 1.0 - (1.0 - 0.01) ** m
+        expected_2 = 1.0 - (1.0 - 0.02) ** m
+        # Assert
+        assert np.allclose(corrected[1]['pvalue_adjusted'], expected_2, atol=1.5e-5, rtol=0, equal_nan=True)
+        expected_3 = 1.0 - (1.0 - 0.03) ** m
+
+    def test_known_values_allclose_expected_3_pvalue_adjusted(self):
+        """Test against manually calculated Šidák values."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_sidak(results, verbose=False)
+        m = 3
+        expected_1 = 1.0 - (1.0 - 0.01) ** m
+        expected_2 = 1.0 - (1.0 - 0.02) ** m
+        expected_3 = 1.0 - (1.0 - 0.03) ** m
+        # Assert
+        assert np.allclose(corrected[2]['pvalue_adjusted'], expected_3, atol=1.5e-5, rtol=0, equal_nan=True)
 
     def test_alpha_comparison_with_bonferroni(self):
         """Test that Šidák adjusted alpha is always >= Bonferroni adjusted alpha."""
+        # Arrange
+        # Act
+        # Assert
         for m in [2, 5, 10, 20, 50]:
             results = [{"pvalue": 0.01 * i} for i in range(1, m + 1)]
             alpha = 0.05
@@ -215,52 +405,116 @@ class TestSidakComparison:
             sidak = correct_sidak(results, alpha=alpha, verbose=False)
             bonf = correct_bonferroni(results, alpha=alpha, verbose=False)
 
-            # Šidák: α_adj = 1 - (1 - α)^(1/m)
-            # Bonferroni: α_adj = α/m
-            # Šidák should always be >= Bonferroni (more powerful)
+            # Šidák: α_adj = 1 - (1 - α)^(1/m); Bonferroni: α_adj = α/m.
+            # Šidák should always be >= Bonferroni (more powerful) — which is
+            # exactly the ratio sidak/bonf >= 1.0 since both are positive.
             assert sidak[0]["alpha_adjusted"] >= bonf[0]["alpha_adjusted"]
-
-            # For large m, the difference becomes more significant
-            ratio = sidak[0]["alpha_adjusted"] / bonf[0]["alpha_adjusted"]
-            assert ratio >= 1.0
 
 
 class TestSidakOutput:
     """Test output structure and format."""
 
-    def test_dict_output_keys(self):
+    def test_dict_output_keys_pvalue_adjusted(self):
         """Test that single dict input returns expected keys."""
+        # Arrange
+        # Act
         result = correct_sidak({"pvalue": 0.01}, verbose=False)
-
+        # Assert
         assert "pvalue_adjusted" in result
+
+    def test_dict_output_keys_alpha_adjusted(self):
+        """Test that single dict input returns expected keys."""
+        # Arrange
+        # Act
+        result = correct_sidak({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert "alpha_adjusted" in result
+
+    def test_dict_output_keys_rejected(self):
+        """Test that single dict input returns expected keys."""
+        # Arrange
+        # Act
+        result = correct_sidak({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert "rejected" in result
+
+    def test_dict_output_keys_pstars(self):
+        """Test that single dict input returns expected keys."""
+        # Arrange
+        # Act
+        result = correct_sidak({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert "pstars" in result
 
-    def test_list_output_keys(self):
+    def test_list_output_keys_corrected(self):
         """Test that list input returns list with expected keys."""
+        # Arrange
         results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
         corrected = correct_sidak(results, verbose=False)
-
+        # Assert
         assert isinstance(corrected, list)
+
+    def test_list_output_keys_all_pvalue_adjusted_corrected(self):
+        """Test that list input returns list with expected keys."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_sidak(results, verbose=False)
+        # Assert
         assert all("pvalue_adjusted" in r for r in corrected)
+
+    def test_list_output_keys_all_alpha_adjusted_corrected(self):
+        """Test that list input returns list with expected keys."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_sidak(results, verbose=False)
+        # Assert
         assert all("alpha_adjusted" in r for r in corrected)
+
+    def test_list_output_keys_all_rejected_corrected(self):
+        """Test that list input returns list with expected keys."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_sidak(results, verbose=False)
+        # Assert
         assert all("rejected" in r for r in corrected)
+
+    def test_list_output_keys_all_pstars_corrected(self):
+        """Test that list input returns list with expected keys."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_sidak(results, verbose=False)
+        # Assert
         assert all("pstars" in r for r in corrected)
 
-    def test_stars_annotation(self):
+    def test_stars_annotation_all_pstars(self):
         """Test significance stars are added."""
+        # Arrange
         test_results = [
             {"test_name": "test1", "pvalue": 0.001},
             {"test_name": "test2", "pvalue": 0.01},
             {"test_name": "test3", "pvalue": 0.05},
         ]
+        # Act
         result = correct_sidak(test_results, verbose=False)
-
-        # Check stars are added (field is 'pstars')
+        # Assert
         assert all("pstars" in r for r in result)
-        # Very small adjusted p-values should have stars
-        # Note: stars are based on adjusted p-values
+
+    def test_stars_annotation_str_pstars(self):
+        """Test significance stars are added."""
+        # Arrange
+        test_results = [
+            {"test_name": "test1", "pvalue": 0.001},
+            {"test_name": "test2", "pvalue": 0.01},
+            {"test_name": "test3", "pvalue": 0.05},
+        ]
+        # Act
+        result = correct_sidak(test_results, verbose=False)
+        # Assert
         for r in result:
             assert isinstance(r["pstars"], str)
 
@@ -268,45 +522,40 @@ class TestSidakOutput:
 class TestSidakMathematicalProperties:
     """Test mathematical properties of Šidák correction."""
 
-    def test_exponential_formula(self):
+    def test_exponential_formula_enumerate_corrected_allclose_pvalue(self):
         """Test that Šidák uses exponential formula correctly."""
+        # Arrange
         p_values = [0.01, 0.02, 0.03, 0.04, 0.05]
         m = len(p_values)
         results = [{"pvalue": p} for p in p_values]
-
+        # Act
         corrected = correct_sidak(results, verbose=False)
-
+        # Assert
         for i, r in enumerate(corrected):
             # p_adj = 1 - (1 - p)^m
             expected = 1.0 - (1.0 - p_values[i]) ** m
-            np.testing.assert_almost_equal(r["pvalue_adjusted"], expected, decimal=6)
+            assert np.allclose(r['pvalue_adjusted'], expected, atol=1.5e-6, rtol=0, equal_nan=True)
 
-    def test_independence_assumption(self):
+    def test_independence_assumption_allclose_left_side_right_side(self):
         """Test properties that rely on independence assumption."""
-        # Under independence, Šidák controls FWER exactly at alpha
-        # With m tests and Šidák adjustment:
-        # P(at least one false positive) = 1 - P(no false positives)
-        # = 1 - (1 - α_adj)^m = 1 - (1 - (1 - (1-α)^(1/m)))^m
-        # which simplifies to approximately α
-
+        # Arrange
         results = [{"pvalue": 0.01 * i} for i in range(1, 11)]
         m = len(results)
         alpha = 0.05
-
+        # Act
         corrected = correct_sidak(results, alpha=alpha, verbose=False)
-
         alpha_adj = corrected[0]["alpha_adjusted"]
-
-        # Verify: (1 - alpha_adj)^m ≈ (1 - alpha)
         left_side = (1.0 - alpha_adj) ** m
         right_side = 1.0 - alpha
+        # Assert
+        assert np.allclose(left_side, right_side, atol=1.5e-6, rtol=0, equal_nan=True)
 
-        np.testing.assert_almost_equal(left_side, right_side, decimal=6)
-
-    def test_monotonic_increase_with_m(self):
+    def test_monotonic_increase_with_m_results_corrected_p_adj_correct_sidak(self):
         """Test that adjusted p-values increase with more tests."""
+        # Arrange
         p = 0.01
-
+        # Act
+        # Assert
         for m in [1, 2, 5, 10, 20]:
             results = [{"pvalue": p}] * m
             corrected = correct_sidak(results, verbose=False)
@@ -314,74 +563,95 @@ class TestSidakMathematicalProperties:
             # p_adj = 1 - (1-p)^m increases with m
             p_adj = corrected[0]["pvalue_adjusted"]
             expected = 1.0 - (1.0 - p) ** m
-            np.testing.assert_almost_equal(p_adj, expected, decimal=6)
-
-        # Check monotonicity
+            assert np.allclose(p_adj, expected, atol=1.5e-6, rtol=0, equal_nan=True)
         p_adj_values = []
         for m in [1, 2, 5, 10, 20]:
             results = [{"pvalue": p}] * m
             corrected = correct_sidak(results, verbose=False)
             p_adj_values.append(corrected[0]["pvalue_adjusted"])
 
-        # Should be increasing
+    def test_monotonic_increase_with_m_range_p_adj_values(self):
+        """Test that adjusted p-values increase with more tests."""
+        # Arrange
+        p = 0.01
+        p_adj_values = []
+        # Act
+        for m in [1, 2, 5, 10, 20]:
+            results = [{"pvalue": p}] * m
+            corrected = correct_sidak(results, verbose=False)
+            p_adj_values.append(corrected[0]["pvalue_adjusted"])
+        # Assert
         for i in range(len(p_adj_values) - 1):
             assert p_adj_values[i] <= p_adj_values[i + 1]
 
-    def test_limiting_behavior(self):
+    def test_limiting_behavior_difference(self):
         """Test limiting behavior as m approaches infinity."""
-        # For small p and large m: 1 - (1-p)^m ≈ 1 - e^(-mp) ≈ mp (for small mp)
-        # This is close to Bonferroni for large m
+        # Arrange
         p = 0.001
         m = 100
-
         results = [{"pvalue": p}] * m
         corrected = correct_sidak(results, verbose=False)
-
         sidak_adj = corrected[0]["pvalue_adjusted"]
         bonferroni_adj = min(p * m, 1.0)
-
-        # For large m and small p, Šidák should approach Bonferroni
-        # The difference should be relatively small
+        # Act
         difference = abs(sidak_adj - bonferroni_adj)
+        # Assert
         assert difference < 0.01  # Allow small difference
 
 
 class TestSidakSpecialCases:
     """Test special cases specific to Šidák."""
 
-    def test_two_tests(self):
+    def test_two_tests_allclose_expected_alpha_alpha_adjusted(self):
         """Test the simple case of two tests."""
+        # Arrange
         results = [{"pvalue": 0.01}, {"pvalue": 0.02}]
         alpha = 0.05
+        # Act
         corrected = correct_sidak(results, alpha=alpha, verbose=False)
-
-        # For m=2:
-        # α_adj = 1 - (1-0.05)^(1/2) = 1 - 0.95^0.5 ≈ 0.0253
         expected_alpha = 1.0 - (1.0 - alpha) ** 0.5
-        np.testing.assert_almost_equal(
-            corrected[0]["alpha_adjusted"], expected_alpha, decimal=4
-        )
-
-        # p_adj = 1 - (1-p)^2
+        # Assert
+        assert np.allclose(corrected[0]['alpha_adjusted'], expected_alpha, atol=1.5e-4, rtol=0, equal_nan=True)
         expected_p1 = 1.0 - (1.0 - 0.01) ** 2
         expected_p2 = 1.0 - (1.0 - 0.02) ** 2
-        np.testing.assert_almost_equal(
-            corrected[0]["pvalue_adjusted"], expected_p1, decimal=5
-        )
-        np.testing.assert_almost_equal(
-            corrected[1]["pvalue_adjusted"], expected_p2, decimal=5
-        )
+
+    def test_two_tests_allclose_expected_p1_pvalue_adjusted(self):
+        """Test the simple case of two tests."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}]
+        alpha = 0.05
+        # Act
+        corrected = correct_sidak(results, alpha=alpha, verbose=False)
+        expected_alpha = 1.0 - (1.0 - alpha) ** 0.5
+        expected_p1 = 1.0 - (1.0 - 0.01) ** 2
+        expected_p2 = 1.0 - (1.0 - 0.02) ** 2
+        # Assert
+        assert np.allclose(corrected[0]['pvalue_adjusted'], expected_p1, atol=1.5e-5, rtol=0, equal_nan=True)
+
+    def test_two_tests_allclose_expected_p2_pvalue_adjusted(self):
+        """Test the simple case of two tests."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}]
+        alpha = 0.05
+        # Act
+        corrected = correct_sidak(results, alpha=alpha, verbose=False)
+        expected_alpha = 1.0 - (1.0 - alpha) ** 0.5
+        expected_p1 = 1.0 - (1.0 - 0.01) ** 2
+        expected_p2 = 1.0 - (1.0 - 0.02) ** 2
+        # Assert
+        assert np.allclose(corrected[1]['pvalue_adjusted'], expected_p2, atol=1.5e-5, rtol=0, equal_nan=True)
 
     def test_very_small_pvalues(self):
         """Test behavior with very small p-values."""
+        # Arrange
         results = [{"pvalue": 1e-10}, {"pvalue": 1e-9}, {"pvalue": 1e-8}]
+        # Act
         corrected = correct_sidak(results, verbose=False)
-
-        # Even with small p-values, adjustment should work correctly
         m = 3
+        # Assert
         for i, r in enumerate(corrected):
             expected = 1.0 - (1.0 - results[i]["pvalue"]) ** m
-            np.testing.assert_almost_equal(r["pvalue_adjusted"], expected, decimal=10)
+            assert np.allclose(r['pvalue_adjusted'], expected, atol=1.5e-10, rtol=0, equal_nan=True)
 
 
 if __name__ == "__main__":
