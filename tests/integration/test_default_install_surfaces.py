@@ -29,7 +29,9 @@ def _scitex_stats_exe():
     local = os.path.join(os.path.dirname(sys.executable), "scitex-stats")
     if os.path.exists(local):
         return local
-    return _scitex_stats_exe()
+    # Fall back to PATH (was a self-recursion — infinite loop whenever the
+    # console script is not co-located with the running interpreter).
+    return shutil.which("scitex-stats")
 
 
 # ----- Surface 1: Python API -------------------------------------------------
