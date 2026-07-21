@@ -22,37 +22,81 @@ from scitex_stats.effect_sizes import epsilon_squared, interpret_epsilon_squared
 class TestBasicComputation:
     """Tests for basic epsilon-squared computations."""
 
-    def test_two_groups_basic(self):
+    def test_two_groups_basic_eps2_float(self):
         """Test basic two-group comparison."""
+        # Arrange
         group1 = np.array([1, 2, 3, 4, 5])
         group2 = np.array([3, 4, 5, 6, 7])
+        # Act
         eps2 = epsilon_squared([group1, group2])
-
+        # Assert
         assert isinstance(eps2, float)
+
+    def test_two_groups_basic_eps2(self):
+        """Test basic two-group comparison."""
+        # Arrange
+        group1 = np.array([1, 2, 3, 4, 5])
+        group2 = np.array([3, 4, 5, 6, 7])
+        # Act
+        eps2 = epsilon_squared([group1, group2])
+        # Assert
         assert 0 <= eps2 <= 1
 
-    def test_three_groups_basic(self):
+    def test_three_groups_basic_eps2_float(self):
         """Test three-group comparison."""
+        # Arrange
         group1 = np.array([1, 2, 3, 4, 5])
         group2 = np.array([3, 4, 5, 6, 7])
         group3 = np.array([5, 6, 7, 8, 9])
+        # Act
         eps2 = epsilon_squared([group1, group2, group3])
-
+        # Assert
         assert isinstance(eps2, float)
+
+    def test_three_groups_basic_eps2(self):
+        """Test three-group comparison."""
+        # Arrange
+        group1 = np.array([1, 2, 3, 4, 5])
+        group2 = np.array([3, 4, 5, 6, 7])
+        group3 = np.array([5, 6, 7, 8, 9])
+        # Act
+        eps2 = epsilon_squared([group1, group2, group3])
+        # Assert
         assert 0 <= eps2 <= 1
-        # Should be high due to clear separation
+
+    def test_three_groups_basic_eps2_2(self):
+        """Test three-group comparison."""
+        # Arrange
+        group1 = np.array([1, 2, 3, 4, 5])
+        group2 = np.array([3, 4, 5, 6, 7])
+        group3 = np.array([5, 6, 7, 8, 9])
+        # Act
+        eps2 = epsilon_squared([group1, group2, group3])
+        # Assert
         assert eps2 > 0.5
 
-    def test_skewed_distributions(self):
+    def test_skewed_distributions_eps2_float(self):
         """Test with non-normal (skewed) distributions."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.exponential(1, 30)
         group2 = np.random.exponential(2, 30)
         group3 = np.random.exponential(3, 30)
-
+        # Act
         eps2 = epsilon_squared([group1, group2, group3])
-
+        # Assert
         assert isinstance(eps2, float)
+
+    def test_skewed_distributions_eps2(self):
+        """Test with non-normal (skewed) distributions."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.exponential(1, 30)
+        group2 = np.random.exponential(2, 30)
+        group3 = np.random.exponential(3, 30)
+        # Act
+        eps2 = epsilon_squared([group1, group2, group3])
+        # Assert
         assert 0 <= eps2 <= 1
 
 
@@ -61,68 +105,88 @@ class TestEdgeCases:
 
     def test_no_effect_identical_groups(self):
         """Test that identical groups give ε² close to 0."""
+        # Arrange
         group1 = np.array([1, 2, 3, 4, 5])
         group2 = np.array([1, 2, 3, 4, 5])
+        # Act
         eps2 = epsilon_squared([group1, group2])
-
-        # Should be very small (near 0)
-        # Note: Due to ties, might not be exactly 0
+        # Assert
         assert eps2 < 0.1
 
-    def test_perfect_separation(self):
+    def test_perfect_separation_eps2(self):
         """Test that perfect separation gives ε² close to 1."""
+        # Arrange
         group1 = np.array([1, 1, 1, 1, 1])
         group2 = np.array([10, 10, 10, 10, 10])
+        # Act
         eps2 = epsilon_squared([group1, group2])
-
+        # Assert
         assert eps2 > 0.8  # Should be high
 
-    def test_nan_handling(self):
+    def test_nan_handling_eps2_float(self):
         """Test that NaN values are properly removed."""
+        # Arrange
         group1 = np.array([1, 2, np.nan, 4, 5])
         group2 = np.array([3, np.nan, 5, 6, 7])
+        # Act
         eps2 = epsilon_squared([group1, group2])
-
+        # Assert
         assert isinstance(eps2, float)
+
+    def test_nan_handling_isnan_eps2(self):
+        """Test that NaN values are properly removed."""
+        # Arrange
+        group1 = np.array([1, 2, np.nan, 4, 5])
+        group2 = np.array([3, np.nan, 5, 6, 7])
+        # Act
+        eps2 = epsilon_squared([group1, group2])
+        # Assert
         assert not np.isnan(eps2)
 
-    def test_ties_handling(self):
+    def test_ties_handling_eps2(self):
         """Test handling of tied values."""
+        # Arrange
         group1 = np.array([1, 1, 1, 2, 2])
         group2 = np.array([2, 2, 3, 3, 3])
+        # Act
         eps2 = epsilon_squared([group1, group2])
-
+        # Assert
         assert 0 <= eps2 <= 1
 
 
 class TestKnownValues:
     """Tests with manually calculated or known values."""
 
-    def test_complete_separation(self):
+    def test_complete_separation_eps2(self):
         """Test with completely separated groups."""
+        # Arrange
         group1 = np.array([1, 2, 3])
         group2 = np.array([10, 11, 12])
+        # Act
         eps2 = epsilon_squared([group1, group2])
-
-        # Should be high (substantial effect)
+        # Assert
         assert eps2 > 0.7  # Reasonable threshold for complete separation
 
-    def test_overlapping_groups(self):
+    def test_overlapping_groups_eps2(self):
         """Test with overlapping groups."""
+        # Arrange
         group1 = np.array([1, 2, 3, 4, 5, 6, 7])
         group2 = np.array([4, 5, 6, 7, 8, 9, 10])
+        # Act
         eps2 = epsilon_squared([group1, group2])
-
-        # Should show moderate effect
+        # Assert
         assert 0.1 < eps2 < 0.8
 
 
 class TestMathematicalProperties:
     """Tests for mathematical properties of epsilon-squared."""
 
-    def test_range_constraint(self):
+    def test_range_constraint_n_groups_groups_eps2_randint(self):
         """Test that ε² is always between 0 and 1."""
+        # Arrange
+        # Act
         np.random.seed(42)
+        # Assert
         for _ in range(10):
             n_groups = np.random.randint(2, 6)
             groups = [np.random.exponential(i + 1, 20) for i in range(n_groups)]
@@ -132,28 +196,26 @@ class TestMathematicalProperties:
 
     def test_monotone_transformation_invariance(self):
         """Test that ε² is invariant to monotone transformations (rank-based)."""
+        # Arrange
         group1 = np.array([1, 2, 3, 4, 5])
         group2 = np.array([6, 7, 8, 9, 10])
-
         eps2_original = epsilon_squared([group1, group2])
-
-        # Apply monotone transformation (square)
+        # Act
         eps2_transformed = epsilon_squared([group1**2, group2**2])
-
-        # Should be identical (rank-based, so monotone invariant)
+        # Assert
         assert abs(eps2_original - eps2_transformed) < 0.01
 
     def test_increases_with_separation(self):
         """Test that ε² increases with group separation."""
+        # Arrange
         np.random.seed(42)
-
         eps2_values = []
+        # Act
         for scale in [1.0, 1.5, 2.0, 3.0]:
             g1 = np.random.exponential(1, 30)
             g2 = np.random.exponential(scale, 30)
             eps2_values.append(epsilon_squared([g1, g2]))
-
-        # Should generally increase
+        # Assert
         assert eps2_values[-1] > eps2_values[0]
 
 
@@ -162,109 +224,171 @@ class TestComparisonWithEtaSquared:
 
     def test_similar_for_normal_data(self):
         """Test that ε² and η² are similar for normal data."""
+        # Arrange
         from scitex_stats.effect_sizes import eta_squared
-
         np.random.seed(42)
         group1 = np.random.normal(0, 1, 40)
         group2 = np.random.normal(0.8, 1, 40)
         group3 = np.random.normal(1.5, 1, 40)
-
         eps2 = epsilon_squared([group1, group2, group3])
+        # Act
         eta2 = eta_squared([group1, group2, group3])
-
-        # Should be reasonably similar for normal data
+        # Assert
         assert abs(eps2 - eta2) < 0.3
 
     def test_robust_to_outliers(self):
         """Test that ε² is more robust to outliers than η²."""
+        # Arrange
         from scitex_stats.effect_sizes import eta_squared
-
-        # Normal groups
         group1_normal = np.array([1, 2, 3, 4, 5])
         group2_normal = np.array([6, 7, 8, 9, 10])
-
         eps2_normal = epsilon_squared([group1_normal, group2_normal])
         eta2_normal = eta_squared([group1_normal, group2_normal])
-
-        # With outlier
         group1_outlier = np.array([1, 2, 3, 4, 5])
         group2_outlier = np.array([6, 7, 8, 9, 100])  # Extreme outlier
-
         eps2_outlier = epsilon_squared([group1_outlier, group2_outlier])
         eta2_outlier = eta_squared([group1_outlier, group2_outlier])
-
-        # ε² should be more stable (smaller change)
         eps_change = abs(eps2_normal - eps2_outlier)
+        # Act
         eta_change = abs(eta2_normal - eta2_outlier)
-
-        # Epsilon should be less affected
+        # Assert
         assert eps_change < eta_change
 
     def test_preferred_for_skewed_data(self):
         """Test that ε² works well with skewed distributions."""
+        # Arrange
         np.random.seed(42)
-        # Highly skewed data
         group1 = np.random.exponential(1, 40)
         group2 = np.random.exponential(2, 40)
         group3 = np.random.exponential(3, 40)
-
+        # Act
         eps2 = epsilon_squared([group1, group2, group3])
-
-        # Should detect the difference
+        # Assert
         assert eps2 > 0.1
 
 
 class TestInterpretation:
     """Tests for effect size interpretation."""
 
-    def test_interpret_negligible(self):
+    def test_interpret_negligible_interpret_epsilon_squared(self):
         """Test negligible effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_epsilon_squared(0.005) == "negligible"
+
+    def test_interpret_negligible_interpret_epsilon_squared_2(self):
+        """Test negligible effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_epsilon_squared(0.009) == "negligible"
 
-    def test_interpret_small(self):
+    def test_interpret_small_interpret_epsilon_squared(self):
         """Test small effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_epsilon_squared(0.03) == "small"
+
+    def test_interpret_small_interpret_epsilon_squared_2(self):
+        """Test small effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_epsilon_squared(0.05) == "small"
 
-    def test_interpret_medium(self):
+    def test_interpret_medium_interpret_epsilon_squared(self):
         """Test medium effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_epsilon_squared(0.10) == "medium"
+
+    def test_interpret_medium_interpret_epsilon_squared_2(self):
+        """Test medium effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_epsilon_squared(0.12) == "medium"
 
-    def test_interpret_large(self):
+    def test_interpret_large_interpret_epsilon_squared(self):
         """Test large effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_epsilon_squared(0.20) == "large"
+
+    def test_interpret_large_interpret_epsilon_squared_2(self):
+        """Test large effect interpretation."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_epsilon_squared(0.50) == "large"
 
-    def test_interpret_boundaries(self):
+    def test_interpret_boundaries_small_interpret_epsilon_squared(self):
         """Test interpretation at boundaries."""
-        # Boundaries: 0.01 (small), 0.06 (medium), 0.14 (large)
+        # Arrange
+        # Act
+        # Assert
         assert interpret_epsilon_squared(0.01) == "small"
+
+    def test_interpret_boundaries_medium_interpret_epsilon_squared(self):
+        """Test interpretation at boundaries."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_epsilon_squared(0.06) == "medium"
+
+    def test_interpret_boundaries_large_interpret_epsilon_squared(self):
+        """Test interpretation at boundaries."""
+        # Arrange
+        # Act
+        # Assert
         assert interpret_epsilon_squared(0.14) == "large"
 
 
 class TestSpecialCases:
     """Tests for special scenarios."""
 
-    def test_ordinal_data(self):
+    def test_ordinal_data_eps2(self):
         """Test with ordinal data (Likert scales)."""
-        # Simulated Likert scale responses (1-5)
+        # Arrange
         group1 = np.array([1, 1, 2, 2, 2, 3, 3])
         group2 = np.array([3, 3, 4, 4, 4, 5, 5])
+        # Act
         eps2 = epsilon_squared([group1, group2])
-
+        # Assert
         assert 0 <= eps2 <= 1
+
+    def test_ordinal_data_eps2_2(self):
+        """Test with ordinal data (Likert scales)."""
+        # Arrange
+        group1 = np.array([1, 1, 2, 2, 2, 3, 3])
+        group2 = np.array([3, 3, 4, 4, 4, 5, 5])
+        # Act
+        eps2 = epsilon_squared([group1, group2])
+        # Assert
         assert eps2 > 0.3  # Should show effect
 
-    def test_unbalanced_groups(self):
+    def test_unbalanced_groups_eps2(self):
         """Test with very unbalanced group sizes."""
+        # Arrange
         group1 = np.array([1, 2, 3])
         group2 = np.array([10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
+        # Act
         eps2 = epsilon_squared([group1, group2])
-
+        # Assert
         assert 0 <= eps2 <= 1
+
+    def test_unbalanced_groups_eps2_2(self):
+        """Test with very unbalanced group sizes."""
+        # Arrange
+        group1 = np.array([1, 2, 3])
+        group2 = np.array([10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
+        # Act
+        eps2 = epsilon_squared([group1, group2])
+        # Assert
         assert eps2 > 0.4  # Should show substantial separation
 
 

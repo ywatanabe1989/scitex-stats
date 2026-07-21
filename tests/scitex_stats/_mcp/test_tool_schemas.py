@@ -27,40 +27,56 @@ EXPECTED_TOOLS = {
 }
 
 
-def test_get_tool_schemas_returns_list_of_tools():
+def test_get_tool_schemas_returns_list_of_tools_case_1():
+    # Arrange
+    # Act
     tools = get_tool_schemas()
+    # Assert
     assert isinstance(tools, list) and tools
+
+def test_get_tool_schemas_returns_list_of_tools_all_mcp_types():
+    # Arrange
+    # Act
+    tools = get_tool_schemas()
+    # Assert
     assert all(isinstance(t, mcp_types.Tool) for t in tools)
 
 
 def test_get_tool_schemas_covers_every_expected_tool():
+    # Arrange
+    # Act
     tools = get_tool_schemas()
     names = {t.name for t in tools}
     missing = EXPECTED_TOOLS - names
+    # Assert
     assert not missing, f"missing tool schemas: {missing}"
 
 
-def test_each_schema_has_description_and_input_schema():
-    for t in get_tool_schemas():
-        assert t.description and isinstance(t.description, str), (
-            f"{t.name} has no description"
+def test_each_schema_has_description_and_object_input_schema_with_properties():
+    # Arrange
+    # Act
+    schemas = get_tool_schemas()
+    # Assert
+    for t in schemas:
+        # Each tool must carry a non-empty str description and an object
+        # inputSchema (dict, type=="object") that declares properties.
+        well_formed = (
+            isinstance(t.description, str)
+            and bool(t.description)
+            and isinstance(t.inputSchema, dict)
+            and t.inputSchema.get("type") == "object"
+            and "properties" in t.inputSchema
         )
-        assert t.inputSchema and isinstance(t.inputSchema, dict), (
-            f"{t.name} has no inputSchema"
-        )
-        # Every Tool's inputSchema is an object schema with properties
-        assert t.inputSchema.get("type") == "object", (
-            f"{t.name} inputSchema is not an object"
-        )
-        assert "properties" in t.inputSchema, f"{t.name} inputSchema lacks properties"
+        assert well_formed, f"{t.name} has a malformed schema: {t.inputSchema!r}"
 
 
 def test_run_test_schema_lists_all_23_tests():
     """The `run_test` schema's `test_name` enum is the source of truth
     for which tests the MCP surface accepts. Catch additions / removals
     early."""
+    # Arrange
+    # Act
     schema = next(t for t in get_tool_schemas() if t.name == "run_test").inputSchema
     enum_vals = schema["properties"]["test_name"]["enum"]
-    # Currently 23 tests across parametric / nonparametric / correlation /
-    # categorical / normality categories.
+    # Assert
     assert len(enum_vals) == 23, f"expected 23 tests, got {len(enum_vals)}"

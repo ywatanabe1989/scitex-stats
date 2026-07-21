@@ -12,8 +12,9 @@ from scitex_stats.correct import correct_bonferroni
 class TestBonferroniBasic:
     """Basic functionality tests for Bonferroni correction."""
 
-    def test_basic_correction_list(self):
+    def test_basic_correction_list_corrected(self):
         """Test basic Bonferroni correction with list of dicts."""
+        # Arrange
         results = [
             {"test_name": "test1", "pvalue": 0.01},
             {"test_name": "test2", "pvalue": 0.02},
@@ -21,27 +22,85 @@ class TestBonferroniBasic:
             {"test_name": "test4", "pvalue": 0.04},
             {"test_name": "test5", "pvalue": 0.05},
         ]
+        # Act
         corrected = correct_bonferroni(results, verbose=False)
-
+        # Assert
         assert isinstance(corrected, list)
+
+    def test_basic_correction_list_corrected_results(self):
+        """Test basic Bonferroni correction with list of dicts."""
+        # Arrange
+        results = [
+            {"test_name": "test1", "pvalue": 0.01},
+            {"test_name": "test2", "pvalue": 0.02},
+            {"test_name": "test3", "pvalue": 0.03},
+            {"test_name": "test4", "pvalue": 0.04},
+            {"test_name": "test5", "pvalue": 0.05},
+        ]
+        # Act
+        corrected = correct_bonferroni(results, verbose=False)
+        # Assert
         assert len(corrected) == len(results)
+
+    def test_basic_correction_list_all_pvalue_adjusted_corrected(self):
+        """Test basic Bonferroni correction with list of dicts."""
+        # Arrange
+        results = [
+            {"test_name": "test1", "pvalue": 0.01},
+            {"test_name": "test2", "pvalue": 0.02},
+            {"test_name": "test3", "pvalue": 0.03},
+            {"test_name": "test4", "pvalue": 0.04},
+            {"test_name": "test5", "pvalue": 0.05},
+        ]
+        # Act
+        corrected = correct_bonferroni(results, verbose=False)
+        # Assert
         assert all("pvalue_adjusted" in r for r in corrected)
 
-        # Bonferroni multiplies by number of tests
+    def test_basic_correction_list_enumerate_corrected_min_allclose(self):
+        """Test basic Bonferroni correction with list of dicts."""
+        # Arrange
+        results = [
+            {"test_name": "test1", "pvalue": 0.01},
+            {"test_name": "test2", "pvalue": 0.02},
+            {"test_name": "test3", "pvalue": 0.03},
+            {"test_name": "test4", "pvalue": 0.04},
+            {"test_name": "test5", "pvalue": 0.05},
+        ]
+        # Act
+        corrected = correct_bonferroni(results, verbose=False)
+        # Assert
         for i, r in enumerate(corrected):
             expected = min(results[i]["pvalue"] * len(results), 1.0)
-            np.testing.assert_almost_equal(r["pvalue_adjusted"], expected)
+            assert np.allclose(r['pvalue_adjusted'], expected, atol=1.5e-7, rtol=0, equal_nan=True)
 
-    def test_single_pvalue(self):
+    def test_single_pvalue_dict(self):
         """Test with single p-value."""
+        # Arrange
+        # Act
         result = correct_bonferroni({"pvalue": 0.01}, verbose=False)
-
+        # Assert
         assert isinstance(result, dict)
+
+    def test_single_pvalue_adjusted(self):
+        """Test with single p-value."""
+        # Arrange
+        # Act
+        result = correct_bonferroni({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert result["pvalue_adjusted"] == 0.01  # Single test, no adjustment
+
+    def test_single_pvalue_rejected(self):
+        """Test with single p-value."""
+        # Arrange
+        # Act
+        result = correct_bonferroni({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert "rejected" in result
 
-    def test_significance_threshold(self):
+    def test_significance_threshold_all_rejected_result_005(self):
         """Test significance determination with different alpha."""
+        # Arrange
         results = [
             {"pvalue": 0.001},
             {"pvalue": 0.01},
@@ -49,106 +108,240 @@ class TestBonferroniBasic:
             {"pvalue": 0.05},
             {"pvalue": 0.1},
         ]
-
         result_005 = correct_bonferroni(results, alpha=0.05, verbose=False)
+        # Act
         result_001 = correct_bonferroni(results, alpha=0.01, verbose=False)
-
-        # Check that significance changes with alpha
+        # Assert
         assert all("rejected" in r for r in result_005)
-        assert all("rejected" in r for r in result_001)
-
         n_rejected_005 = sum(r["rejected"] for r in result_005)
         n_rejected_001 = sum(r["rejected"] for r in result_001)
+
+    def test_significance_threshold_all_rejected_result_001(self):
+        """Test significance determination with different alpha."""
+        # Arrange
+        results = [
+            {"pvalue": 0.001},
+            {"pvalue": 0.01},
+            {"pvalue": 0.02},
+            {"pvalue": 0.05},
+            {"pvalue": 0.1},
+        ]
+        result_005 = correct_bonferroni(results, alpha=0.05, verbose=False)
+        # Act
+        result_001 = correct_bonferroni(results, alpha=0.01, verbose=False)
+        # Assert
+        assert all("rejected" in r for r in result_001)
+        n_rejected_005 = sum(r["rejected"] for r in result_005)
+        n_rejected_001 = sum(r["rejected"] for r in result_001)
+
+    def test_significance_threshold_n_rejected_005_n_rejected_001(self):
+        """Test significance determination with different alpha."""
+        # Arrange
+        results = [
+            {"pvalue": 0.001},
+            {"pvalue": 0.01},
+            {"pvalue": 0.02},
+            {"pvalue": 0.05},
+            {"pvalue": 0.1},
+        ]
+        result_005 = correct_bonferroni(results, alpha=0.05, verbose=False)
+        result_001 = correct_bonferroni(results, alpha=0.01, verbose=False)
+        n_rejected_005 = sum(r["rejected"] for r in result_005)
+        # Act
+        n_rejected_001 = sum(r["rejected"] for r in result_001)
+        # Assert
         assert n_rejected_005 >= n_rejected_001
 
 
 class TestBonferroniInputFormats:
     """Test different input formats."""
 
-    def test_single_dict_input(self):
+    def test_single_dict_input_case_1(self):
         """Test with single dict input."""
+        # Arrange
+        # Act
         result = correct_bonferroni({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert isinstance(result, dict)
+
+    def test_single_dict_input_pvalue_adjusted(self):
+        """Test with single dict input."""
+        # Arrange
+        # Act
+        result = correct_bonferroni({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert "pvalue_adjusted" in result
 
-    def test_list_of_dicts_input(self):
+    def test_list_of_dicts_input_case_1(self):
         """Test with list of dicts input containing p-values."""
+        # Arrange
         test_results = [
             {"test_name": "test1", "pvalue": 0.01},
             {"test_name": "test2", "pvalue": 0.02},
             {"test_name": "test3", "pvalue": 0.03},
         ]
+        # Act
         result = correct_bonferroni(test_results, verbose=False)
+        # Assert
         assert isinstance(result, list)
+
+    def test_list_of_dicts_input_all_pvalue_adjusted(self):
+        """Test with list of dicts input containing p-values."""
+        # Arrange
+        test_results = [
+            {"test_name": "test1", "pvalue": 0.01},
+            {"test_name": "test2", "pvalue": 0.02},
+            {"test_name": "test3", "pvalue": 0.03},
+        ]
+        # Act
+        result = correct_bonferroni(test_results, verbose=False)
+        # Assert
         assert all("pvalue_adjusted" in r for r in result)
+
+    def test_list_of_dicts_input_all_test_name(self):
+        """Test with list of dicts input containing p-values."""
+        # Arrange
+        test_results = [
+            {"test_name": "test1", "pvalue": 0.01},
+            {"test_name": "test2", "pvalue": 0.02},
+            {"test_name": "test3", "pvalue": 0.03},
+        ]
+        # Act
+        result = correct_bonferroni(test_results, verbose=False)
+        # Assert
         assert all("test_name" in r for r in result)  # Original fields preserved
 
-    def test_dataframe_input(self):
+    def test_dataframe_input_case_1(self):
         """Test with DataFrame input."""
+        # Arrange
         df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
         result = correct_bonferroni(df, verbose=False)
+        # Assert
         assert isinstance(result, pd.DataFrame)
+
+    def test_dataframe_input_pvalue_adjusted_columns(self):
+        """Test with DataFrame input."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_bonferroni(df, verbose=False)
+        # Assert
         assert "pvalue_adjusted" in result.columns
+
+    def test_dataframe_input_alpha_adjusted_columns(self):
+        """Test with DataFrame input."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_bonferroni(df, verbose=False)
+        # Assert
         assert "alpha_adjusted" in result.columns
+
+    def test_dataframe_input_rejected_columns(self):
+        """Test with DataFrame input."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_bonferroni(df, verbose=False)
+        # Assert
         assert "rejected" in result.columns
+
+    def test_dataframe_input_pstars_columns(self):
+        """Test with DataFrame input."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_bonferroni(df, verbose=False)
+        # Assert
         assert "pstars" in result.columns
 
 
 class TestBonferroniEdgeCases:
     """Test edge cases and error handling."""
 
-    def test_pvalue_clipping(self):
+    def test_pvalue_clipping_all_corrected_adjusted(self):
         """Test that corrected p-values are clipped at 1.0."""
+        # Arrange
         results = [{"pvalue": 0.5}, {"pvalue": 0.6}, {"pvalue": 0.7}]
+        # Act
         corrected = correct_bonferroni(results, verbose=False)
-
-        # All corrected values should be <= 1.0
+        # Assert
         assert all(r["pvalue_adjusted"] <= 1.0 for r in corrected)
-        # With 3 tests, 0.5*3=1.5 should be clipped to 1.0
+
+    def test_pvalue_clipping_adjusted_corrected(self):
+        """Test that corrected p-values are clipped at 1.0."""
+        # Arrange
+        results = [{"pvalue": 0.5}, {"pvalue": 0.6}, {"pvalue": 0.7}]
+        # Act
+        corrected = correct_bonferroni(results, verbose=False)
+        # Assert
         assert corrected[0]["pvalue_adjusted"] == 1.0
+
+    def test_pvalue_clipping_adjusted_corrected_2(self):
+        """Test that corrected p-values are clipped at 1.0."""
+        # Arrange
+        results = [{"pvalue": 0.5}, {"pvalue": 0.6}, {"pvalue": 0.7}]
+        # Act
+        corrected = correct_bonferroni(results, verbose=False)
+        # Assert
         assert corrected[1]["pvalue_adjusted"] == 1.0
+
+    def test_pvalue_clipping_adjusted_corrected_3(self):
+        """Test that corrected p-values are clipped at 1.0."""
+        # Arrange
+        results = [{"pvalue": 0.5}, {"pvalue": 0.6}, {"pvalue": 0.7}]
+        # Act
+        corrected = correct_bonferroni(results, verbose=False)
+        # Assert
         assert corrected[2]["pvalue_adjusted"] == 1.0
 
-    def test_zero_pvalues(self):
+    def test_zero_pvalues_pvalue_adjusted_corrected(self):
         """Test handling of zero p-values."""
+        # Arrange
         results = [{"pvalue": 0.0}, {"pvalue": 0.01}, {"pvalue": 0.02}]
+        # Act
         corrected = correct_bonferroni(results, verbose=False)
-
+        # Assert
         assert corrected[0]["pvalue_adjusted"] == 0.0
 
-    def test_one_pvalue(self):
+    def test_one_pvalue_adjusted_corrected(self):
         """Test handling of p-value = 1.0."""
+        # Arrange
         results = [{"pvalue": 0.01}, {"pvalue": 0.5}, {"pvalue": 1.0}]
+        # Act
         corrected = correct_bonferroni(results, verbose=False)
-
+        # Assert
         assert corrected[2]["pvalue_adjusted"] == 1.0
 
-    def test_nan_handling(self):
+    def test_nan_handling_isna_iloc_pvalue_adjusted(self):
         """Test handling of NaN values."""
+        # Arrange
         df = pd.DataFrame({"pvalue": [0.01, np.nan, 0.03]})
+        # Act
         result = correct_bonferroni(df, verbose=False)
-
-        # NaN should remain NaN
+        # Assert
         assert pd.isna(result["pvalue_adjusted"].iloc[1])
 
 
 class TestBonferroniComparison:
     """Test Bonferroni correction against known values."""
 
-    def test_known_values(self):
+    def test_known_values_enumerate_corrected_allclose_pvalue(self):
         """Test against manually calculated values."""
+        # Arrange
         p_values = [0.01, 0.02, 0.03, 0.04, 0.05]
         results = [{"pvalue": p} for p in p_values]
-
         expected = [min(p * 5, 1.0) for p in p_values]  # Bonferroni multiplies by n
-
+        # Act
         corrected = correct_bonferroni(results, verbose=False)
-
+        # Assert
         for i, r in enumerate(corrected):
-            np.testing.assert_almost_equal(r["pvalue_adjusted"], expected[i])
+            assert np.allclose(r['pvalue_adjusted'], expected[i], atol=1.5e-7, rtol=0, equal_nan=True)
 
-    def test_rejection_count(self):
+    def test_rejection_count_n_rejected(self):
         """Test number of rejections at different alpha levels."""
+        # Arrange
         results = [
             {"pvalue": 0.001},
             {"pvalue": 0.005},
@@ -156,52 +349,117 @@ class TestBonferroniComparison:
             {"pvalue": 0.02},
             {"pvalue": 0.05},
         ]
-
         corrected = correct_bonferroni(results, alpha=0.05, verbose=False)
+        # Act
         n_rejected = sum(r["rejected"] for r in corrected)
-
-        # At alpha=0.05, adjusted alpha = 0.05/5 = 0.01
-        # Adjusted p-values: 0.005, 0.025, 0.05, 0.1, 0.25
-        # Should reject p_adjusted < alpha_adjusted = 0.01
-        # So only 0.005 should be rejected
+        # Assert
         assert n_rejected == 1
 
 
 class TestBonferroniOutput:
     """Test output structure and format."""
 
-    def test_dict_output_keys(self):
+    def test_dict_output_keys_pvalue_adjusted(self):
         """Test that single dict input returns expected keys."""
+        # Arrange
+        # Act
         result = correct_bonferroni({"pvalue": 0.01}, verbose=False)
-
+        # Assert
         assert "pvalue_adjusted" in result
+
+    def test_dict_output_keys_alpha_adjusted(self):
+        """Test that single dict input returns expected keys."""
+        # Arrange
+        # Act
+        result = correct_bonferroni({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert "alpha_adjusted" in result
+
+    def test_dict_output_keys_rejected(self):
+        """Test that single dict input returns expected keys."""
+        # Arrange
+        # Act
+        result = correct_bonferroni({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert "rejected" in result
+
+    def test_dict_output_keys_pstars(self):
+        """Test that single dict input returns expected keys."""
+        # Arrange
+        # Act
+        result = correct_bonferroni({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert "pstars" in result
 
-    def test_list_output_keys(self):
+    def test_list_output_keys_corrected(self):
         """Test that list input returns list with expected keys."""
+        # Arrange
         results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
         corrected = correct_bonferroni(results, verbose=False)
-
+        # Assert
         assert isinstance(corrected, list)
+
+    def test_list_output_keys_all_pvalue_adjusted_corrected(self):
+        """Test that list input returns list with expected keys."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_bonferroni(results, verbose=False)
+        # Assert
         assert all("pvalue_adjusted" in r for r in corrected)
+
+    def test_list_output_keys_all_alpha_adjusted_corrected(self):
+        """Test that list input returns list with expected keys."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_bonferroni(results, verbose=False)
+        # Assert
         assert all("alpha_adjusted" in r for r in corrected)
+
+    def test_list_output_keys_all_rejected_corrected(self):
+        """Test that list input returns list with expected keys."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_bonferroni(results, verbose=False)
+        # Assert
         assert all("rejected" in r for r in corrected)
+
+    def test_list_output_keys_all_pstars_corrected(self):
+        """Test that list input returns list with expected keys."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_bonferroni(results, verbose=False)
+        # Assert
         assert all("pstars" in r for r in corrected)
 
-    def test_stars_annotation(self):
+    def test_stars_annotation_all_pstars(self):
         """Test significance stars are added."""
+        # Arrange
         test_results = [
             {"test_name": "test1", "pvalue": 0.001},
             {"test_name": "test2", "pvalue": 0.01},
             {"test_name": "test3", "pvalue": 0.05},
         ]
+        # Act
         result = correct_bonferroni(test_results, verbose=False)
-
-        # Check stars are added (field is 'pstars')
+        # Assert
         assert all("pstars" in r for r in result)
-        # Very small p-values should have stars
+
+    def test_stars_annotation_pstars(self):
+        """Test significance stars are added."""
+        # Arrange
+        test_results = [
+            {"test_name": "test1", "pvalue": 0.001},
+            {"test_name": "test2", "pvalue": 0.01},
+            {"test_name": "test3", "pvalue": 0.05},
+        ]
+        # Act
+        result = correct_bonferroni(test_results, verbose=False)
+        # Assert
         assert result[0]["pstars"] in ["***", "**", "*"]
 
 

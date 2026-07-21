@@ -43,10 +43,11 @@ _RESULTS = [
 )
 def test_correct_with_plot_creates_axes(fn):
     """Driving `plot=True` exercises the sibling `_plot_*` helper."""
+    # Arrange
     fig, ax = plt.subplots()
+    # Act
     fn(_RESULTS.copy(), alpha=0.05, plot=True, ax=ax, verbose=False)
-    # Each plot helper draws scatter + threshold axhlines and sets a
-    # title — at least one line and one collection should be present.
+    # Assert
     assert ax.get_title()
     plt.close(fig)
 
@@ -58,7 +59,9 @@ def test_correct_with_plot_creates_axes(fn):
 )
 def test_correct_with_plot_no_ax_creates_figure(fn):
     """Without `ax=`, the helper should create its own figure."""
+    # Arrange
+    # Act
     fn(_RESULTS.copy(), alpha=0.05, plot=True, verbose=False)
-    # Just confirm no exception and a figure landed in pyplot state.
+    # Assert
     assert plt.get_fignums(), f"{fn.__name__} did not create a figure"
     plt.close("all")

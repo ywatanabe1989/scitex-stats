@@ -12,22 +12,17 @@ from scitex_stats.posthoc import posthoc_games_howell, posthoc_tukey
 class TestBasicComputations:
     """Test basic Games-Howell computations."""
 
-    def test_three_groups_basic(self):
+    def test_three_groups_basic_results_dataframe(self):
         """Test basic three-group comparison."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(10, 1, 20)
         group2 = np.random.normal(12, 2, 20)
         group3 = np.random.normal(14, 3, 20)
-
+        # Act
         results = posthoc_games_howell([group1, group2, group3])
-
-        # Should return DataFrame by default
+        # Assert
         assert isinstance(results, pd.DataFrame)
-
-        # Should have 3 comparisons (3 choose 2)
-        assert len(results) == 3
-
-        # Check required columns
         required_cols = [
             "group_i",
             "group_j",
@@ -39,41 +34,117 @@ class TestBasicComputations:
             "ci_lower",
             "ci_upper",
         ]
+
+    def test_three_groups_basic_results(self):
+        """Test basic three-group comparison."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 1, 20)
+        group2 = np.random.normal(12, 2, 20)
+        group3 = np.random.normal(14, 3, 20)
+        # Act
+        results = posthoc_games_howell([group1, group2, group3])
+        # Assert
+        assert len(results) == 3
+        required_cols = [
+            "group_i",
+            "group_j",
+            "mean_diff",
+            "pvalue",
+            "significant",
+            "t_statistic",
+            "df",
+            "ci_lower",
+            "ci_upper",
+        ]
+
+    def test_three_groups_basic_col_required_cols_columns_results(self):
+        """Test basic three-group comparison."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 1, 20)
+        group2 = np.random.normal(12, 2, 20)
+        group3 = np.random.normal(14, 3, 20)
+        # Act
+        results = posthoc_games_howell([group1, group2, group3])
+        required_cols = [
+            "group_i",
+            "group_j",
+            "mean_diff",
+            "pvalue",
+            "significant",
+            "t_statistic",
+            "df",
+            "ci_lower",
+            "ci_upper",
+        ]
+        # Assert
         for col in required_cols:
             assert col in results.columns
 
-    def test_unequal_variances_main_use_case(self):
+    def test_unequal_variances_main_use_case_var_columns_results(self):
         """Test with unequal variances (main use case for Games-Howell)."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(10, 1, 20)  # Small variance
         group2 = np.random.normal(12, 5, 25)  # Large variance
         group3 = np.random.normal(11, 2, 15)  # Medium variance
-
+        # Act
         results = posthoc_games_howell([group1, group2, group3])
-
-        # Should have variance information
+        # Assert
         assert "var_i" in results.columns
-        assert "var_j" in results.columns
-
-        # Variances should differ across comparisons
         variances = set(results["var_i"].tolist() + results["var_j"].tolist())
+
+    def test_unequal_variances_main_use_case_var_columns_results_2(self):
+        """Test with unequal variances (main use case for Games-Howell)."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 1, 20)  # Small variance
+        group2 = np.random.normal(12, 5, 25)  # Large variance
+        group3 = np.random.normal(11, 2, 15)  # Medium variance
+        # Act
+        results = posthoc_games_howell([group1, group2, group3])
+        # Assert
+        assert "var_j" in results.columns
+        variances = set(results["var_i"].tolist() + results["var_j"].tolist())
+
+    def test_unequal_variances_main_use_case_case_3(self):
+        """Test with unequal variances (main use case for Games-Howell)."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 1, 20)  # Small variance
+        group2 = np.random.normal(12, 5, 25)  # Large variance
+        group3 = np.random.normal(11, 2, 15)  # Medium variance
+        results = posthoc_games_howell([group1, group2, group3])
+        # Act
+        variances = set(results["var_i"].tolist() + results["var_j"].tolist())
+        # Assert
         assert len(variances) > 1
 
-    def test_welch_satterthwaite_df(self):
+    def test_welch_satterthwaite_df_welch_df_pooled_df(self):
         """Test Welch-Satterthwaite degrees of freedom calculation."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(10, 1, 20)
         group2 = np.random.normal(12, 5, 25)
-
+        # Act
         results = posthoc_games_howell([group1, group2])
-
-        # df should not equal n1 + n2 - 2 (pooled df)
-        # Welch df is typically smaller and non-integer
         pooled_df = 20 + 25 - 2
         welch_df = results.iloc[0]["df"]
-
+        # Assert
         assert welch_df != pooled_df
-        # Welch df should be between min(n1-1, n2-1) and n1+n2-2
+
+    def test_welch_satterthwaite_df_welch_df_pooled_df_2(self):
+        """Test Welch-Satterthwaite degrees of freedom calculation."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 1, 20)
+        group2 = np.random.normal(12, 5, 25)
+        # Act
+        results = posthoc_games_howell([group1, group2])
+        pooled_df = 20 + 25 - 2
+        welch_df = results.iloc[0]["df"]
+        # Assert
         assert 19 <= welch_df <= pooled_df
 
 
@@ -82,34 +153,76 @@ class TestInputFormats:
 
     def test_list_of_arrays(self):
         """Test with list of numpy arrays."""
+        # Arrange
         groups = [np.array([1, 2, 3]), np.array([4, 5, 6]), np.array([7, 8, 9])]
+        # Act
         results = posthoc_games_howell(groups)
+        # Assert
         assert len(results) == 3
 
-    def test_pandas_series(self):
+    def test_pandas_series_results(self):
         """Test with pandas Series."""
+        # Arrange
         groups = [pd.Series([1, 2, 3]), pd.Series([4, 5, 6]), pd.Series([7, 8, 9])]
+        # Act
         results = posthoc_games_howell(groups)
+        # Assert
         assert len(results) == 3
 
-    def test_custom_group_names(self):
+    def test_custom_group_names_low_var_iloc_results(self):
         """Test with custom group names."""
+        # Arrange
         groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
         group_names = ["Low Var", "High Var"]
-
+        # Act
         results = posthoc_games_howell(groups, group_names=group_names)
-
+        # Assert
         assert results.iloc[0]["group_i"] == "Low Var"
+
+    def test_custom_group_names_high_var_iloc_results(self):
+        """Test with custom group names."""
+        # Arrange
+        groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
+        group_names = ["Low Var", "High Var"]
+        # Act
+        results = posthoc_games_howell(groups, group_names=group_names)
+        # Assert
         assert results.iloc[0]["group_j"] == "High Var"
 
-    def test_return_dict_format(self):
+    def test_return_dict_format_results_list(self):
         """Test return_as='dict' option."""
+        # Arrange
         groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
+        # Act
         results = posthoc_games_howell(groups, return_as="dict")
-
+        # Assert
         assert isinstance(results, list)
+
+    def test_return_dict_format_results(self):
+        """Test return_as='dict' option."""
+        # Arrange
+        groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
+        # Act
+        results = posthoc_games_howell(groups, return_as="dict")
+        # Assert
         assert isinstance(results[0], dict)
+
+    def test_return_dict_format_mean_diff_results(self):
+        """Test return_as='dict' option."""
+        # Arrange
+        groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
+        # Act
+        results = posthoc_games_howell(groups, return_as="dict")
+        # Assert
         assert "mean_diff" in results[0]
+
+    def test_return_dict_format_df_results(self):
+        """Test return_as='dict' option."""
+        # Arrange
+        groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
+        # Act
+        results = posthoc_games_howell(groups, return_as="dict")
+        # Assert
         assert "df" in results[0]
 
 
@@ -118,66 +231,88 @@ class TestEdgeCases:
 
     def test_two_groups_minimum(self):
         """Test with minimum of two groups."""
+        # Arrange
         group1 = np.random.normal(10, 1, 10)
         group2 = np.random.normal(12, 2, 15)
-
+        # Act
         results = posthoc_games_howell([group1, group2])
-
-        # Should have exactly 1 comparison
+        # Assert
         assert len(results) == 1
 
     def test_single_group_raises_error(self):
         """Test that single group raises ValueError."""
+        # Arrange
+        # Act
         group = np.array([1, 2, 3, 4, 5])
-
+        # Assert
         with pytest.raises(ValueError, match="Need at least 2 groups"):
             posthoc_games_howell([group])
 
-    def test_extreme_variance_ratio(self):
+    def test_extreme_variance_ratio_results(self):
         """Test with extreme variance heterogeneity."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(50, 0.1, 20)  # Very small variance
         group2 = np.random.normal(55, 10, 20)  # Very large variance
-
+        # Act
         results = posthoc_games_howell([group1, group2])
-
-        # Should handle extreme variance ratios without error
+        # Assert
         assert len(results) == 1
-
-        # Variance ratio should be very large
         var_ratio = results.iloc[0]["var_j"] / results.iloc[0]["var_i"]
+
+    def test_extreme_variance_ratio_var_ratio(self):
+        """Test with extreme variance heterogeneity."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(50, 0.1, 20)  # Very small variance
+        group2 = np.random.normal(55, 10, 20)  # Very large variance
+        # Act
+        results = posthoc_games_howell([group1, group2])
+        var_ratio = results.iloc[0]["var_j"] / results.iloc[0]["var_i"]
+        # Assert
         assert var_ratio > 100 or var_ratio < 0.01
 
-    def test_unequal_sample_sizes_with_unequal_variances(self):
+    def test_unequal_sample_sizes_with_unequal_variances_results(self):
         """Test with both unequal n and unequal variances."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(10, 1, 10)  # Small n, small var
         group2 = np.random.normal(12, 5, 30)  # Large n, large var
         group3 = np.random.normal(14, 2, 20)  # Medium n, medium var
-
+        # Act
         results = posthoc_games_howell([group1, group2, group3])
-
-        # Should handle unequal sizes without error
+        # Assert
         assert len(results) == 3
 
-        # Sample sizes should vary
+    def test_unequal_sample_sizes_with_unequal_variances_iloc_results(self):
+        """Test with both unequal n and unequal variances."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 1, 10)  # Small n, small var
+        group2 = np.random.normal(12, 5, 30)  # Large n, large var
+        group3 = np.random.normal(14, 2, 20)  # Medium n, medium var
+        # Act
+        results = posthoc_games_howell([group1, group2, group3])
+        # Assert
         assert results.iloc[0]["n_i"] != results.iloc[0]["n_j"]
 
     def test_zero_variance_group(self):
         """Test with group having zero variance."""
+        # Arrange
         group1 = np.array([5, 5, 5, 5, 5])  # Zero variance
         group2 = np.random.normal(10, 2, 5)
-
+        # Act
         results = posthoc_games_howell([group1, group2])
-
-        # Should handle without error
+        # Assert
         assert len(results) == 1
 
     def test_mismatched_group_names_length(self):
         """Test error when group_names length doesn't match."""
+        # Arrange
+        # Act
         groups = [np.array([1, 2, 3]), np.array([4, 5, 6])]
         group_names = ["Group1"]  # Only 1 name for 2 groups
-
+        # Assert
         with pytest.raises(ValueError, match="Expected 2 group names"):
             posthoc_games_howell(groups, group_names=group_names)
 
@@ -187,16 +322,15 @@ class TestComparisonWithTukey:
 
     def test_similar_results_equal_variances(self):
         """Test that Games-Howell and Tukey give similar results with equal variances."""
+        # Arrange
         np.random.seed(42)
-        # Equal variances and sample sizes
         group1 = np.random.normal(10, 2, 30)
         group2 = np.random.normal(12, 2, 30)
         group3 = np.random.normal(14, 2, 30)
-
         results_gh = posthoc_games_howell([group1, group2, group3])
+        # Act
         results_tukey = posthoc_tukey([group1, group2, group3])
-
-        # P-values should be reasonably close
+        # Assert
         for i in range(len(results_gh)):
             assert (
                 abs(results_gh.iloc[i]["pvalue"] - results_tukey.iloc[i]["pvalue"])
@@ -205,103 +339,148 @@ class TestComparisonWithTukey:
 
     def test_different_results_unequal_variances(self):
         """Test that Games-Howell differs from Tukey with unequal variances."""
+        # Arrange
         np.random.seed(42)
-        # Very different variances
         group1 = np.random.normal(10, 0.5, 20)  # Small variance
         group2 = np.random.normal(12, 5, 20)  # Large variance
         group3 = np.random.normal(11, 10, 20)  # Very large variance
-
         results_gh = posthoc_games_howell([group1, group2, group3])
         results_tukey = posthoc_tukey([group1, group2, group3])
-
-        # Results should differ meaningfully
-        # At least one comparison should show different significance
         diff_found = False
+        # Act
         for i in range(len(results_gh)):
             gh_sig = results_gh.iloc[i]["significant"]
             tukey_sig = results_tukey.iloc[i]["significant"]
             if gh_sig != tukey_sig:
                 diff_found = True
                 break
-
-        # Due to random nature, we just check that both methods ran
+        # Assert
         assert len(results_gh) == len(results_tukey)
 
-    def test_games_howell_more_conservative_unequal_var(self):
+    def test_games_howell_more_conservative_unequal_var_results_gh(self):
         """Games-Howell should handle unequal variances better."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(10, 1, 20)
         group2 = np.random.normal(12, 10, 20)
-
         results_gh = posthoc_games_howell([group1, group2])
+        # Act
         results_tukey = posthoc_tukey([group1, group2])
-
-        # Both should detect difference, but may have different p-values
+        # Assert
         assert len(results_gh) == 1
+
+    def test_games_howell_more_conservative_unequal_var_results_tukey(self):
+        """Games-Howell should handle unequal variances better."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 1, 20)
+        group2 = np.random.normal(12, 10, 20)
+        results_gh = posthoc_games_howell([group1, group2])
+        # Act
+        results_tukey = posthoc_tukey([group1, group2])
+        # Assert
         assert len(results_tukey) == 1
 
 
 class TestStatisticalProperties:
     """Test statistical properties of results."""
 
-    def test_alpha_level_respected(self):
+    def test_alpha_level_respected_iloc_results_001(self):
         """Test that alpha level affects significance."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(10, 1, 20)
         group2 = np.random.normal(11, 2, 20)
-
         results_005 = posthoc_games_howell([group1, group2], alpha=0.05)
+        # Act
         results_001 = posthoc_games_howell([group1, group2], alpha=0.01)
-
-        # More conservative alpha recorded
+        # Assert
         assert results_001.iloc[0]["alpha"] == 0.01
+
+    def test_alpha_level_respected_iloc_results_005(self):
+        """Test that alpha level affects significance."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 1, 20)
+        group2 = np.random.normal(11, 2, 20)
+        results_005 = posthoc_games_howell([group1, group2], alpha=0.05)
+        # Act
+        results_001 = posthoc_games_howell([group1, group2], alpha=0.01)
+        # Assert
         assert results_005.iloc[0]["alpha"] == 0.05
 
-    def test_confidence_intervals(self):
+    def test_confidence_intervals_row_iterrows_results_ci(self):
         """Test confidence interval properties."""
+        # Arrange
         np.random.seed(42)
         groups = [np.random.normal(10 + i, i + 1, 20) for i in range(3)]
-
+        # Act
         results = posthoc_games_howell(groups)
-
+        # Assert
         for _, row in results.iterrows():
-            # CI should contain the mean difference
-            assert row["ci_lower"] <= row["mean_diff"] <= row["ci_upper"]
+            # CI must contain the mean difference AND have positive width
+            # (a strict lower < upper makes the containment non-degenerate).
+            assert (
+                row["ci_lower"] <= row["mean_diff"] <= row["ci_upper"]
+                and row["ci_upper"] > row["ci_lower"]
+            )
 
-            # CI width should be positive
-            assert row["ci_upper"] > row["ci_lower"]
-
-    def test_t_statistic_calculation(self):
+    def test_t_statistic_calculation_abs_iloc_results(self):
         """Test t-statistic calculation."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(10, 1, 20)
         group2 = np.random.normal(15, 2, 20)
-
+        # Act
         results = posthoc_games_howell([group1, group2])
-
-        # t_statistic should be large for well-separated groups
+        # Assert
         assert abs(results.iloc[0]["t_statistic"]) > 2
 
-        # Standard error should be positive
+    def test_t_statistic_calculation_std_error_iloc_results(self):
+        """Test t-statistic calculation."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 1, 20)
+        group2 = np.random.normal(15, 2, 20)
+        # Act
+        results = posthoc_games_howell([group1, group2])
+        # Assert
         assert results.iloc[0]["std_error"] > 0
 
-    def test_degrees_of_freedom_properties(self):
+    def test_degrees_of_freedom_properties_case_1(self):
         """Test properties of Welch-Satterthwaite df."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(10, 1, 20)
         group2 = np.random.normal(12, 5, 30)
-
+        # Act
         results = posthoc_games_howell([group1, group2])
-
         df = results.iloc[0]["df"]
-
-        # df should be positive
+        # Assert
         assert df > 0
 
-        # df should be less than or equal to n1 + n2 - 2
+    def test_degrees_of_freedom_properties_case_2(self):
+        """Test properties of Welch-Satterthwaite df."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 1, 20)
+        group2 = np.random.normal(12, 5, 30)
+        # Act
+        results = posthoc_games_howell([group1, group2])
+        df = results.iloc[0]["df"]
+        # Assert
         assert df <= (20 + 30 - 2)
 
-        # df should be greater than or equal to smaller group size - 1
+    def test_degrees_of_freedom_properties_min(self):
+        """Test properties of Welch-Satterthwaite df."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 1, 20)
+        group2 = np.random.normal(12, 5, 30)
+        # Act
+        results = posthoc_games_howell([group1, group2])
+        df = results.iloc[0]["df"]
+        # Assert
         assert df >= min(20, 30) - 1
 
 
@@ -310,9 +489,10 @@ class TestOutputStructure:
 
     def test_dataframe_output_structure(self):
         """Test DataFrame output has all required fields."""
+        # Arrange
         groups = [np.random.normal(i, i + 1, 10) for i in range(3)]
+        # Act
         results = posthoc_games_howell(groups)
-
         required_fields = [
             "group_i",
             "group_j",
@@ -333,15 +513,16 @@ class TestOutputStructure:
             "ci_upper",
             "alpha",
         ]
-
+        # Assert
         for field in required_fields:
             assert field in results.columns, f"Missing field: {field}"
 
     def test_dict_output_structure(self):
         """Test dict output has all required fields."""
+        # Arrange
         groups = [np.random.normal(i, i + 1, 10) for i in range(3)]
+        # Act
         results = posthoc_games_howell(groups, return_as="dict")
-
         required_fields = [
             "group_i",
             "group_j",
@@ -353,25 +534,53 @@ class TestOutputStructure:
             "var_i",
             "var_j",
         ]
-
+        # Assert
         for result in results:
             for field in required_fields:
                 assert field in result, f"Missing field: {field}"
 
-    def test_variance_information_included(self):
+    def test_variance_information_included_var_columns_results(self):
         """Test that variance information is included in output."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(10, 1, 20)
         group2 = np.random.normal(12, 5, 20)
-
+        # Act
         results = posthoc_games_howell([group1, group2])
-
-        # Should have variance columns
+        # Assert
         assert "var_i" in results.columns
+
+    def test_variance_information_included_var_columns_results_2(self):
+        """Test that variance information is included in output."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 1, 20)
+        group2 = np.random.normal(12, 5, 20)
+        # Act
+        results = posthoc_games_howell([group1, group2])
+        # Assert
         assert "var_j" in results.columns
 
-        # Variances should be positive
+    def test_variance_information_included_var_iloc_results(self):
+        """Test that variance information is included in output."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 1, 20)
+        group2 = np.random.normal(12, 5, 20)
+        # Act
+        results = posthoc_games_howell([group1, group2])
+        # Assert
         assert results.iloc[0]["var_i"] > 0
+
+    def test_variance_information_included_var_iloc_results_2(self):
+        """Test that variance information is included in output."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 1, 20)
+        group2 = np.random.normal(12, 5, 20)
+        # Act
+        results = posthoc_games_howell([group1, group2])
+        # Assert
         assert results.iloc[0]["var_j"] > 0
 
 
@@ -380,82 +589,106 @@ class TestRobustness:
 
     def test_small_sample_sizes(self):
         """Test with very small sample sizes."""
+        # Arrange
         group1 = np.array([1, 2])
         group2 = np.array([3, 4, 5])
         group3 = np.array([6, 7])
-
+        # Act
         results = posthoc_games_howell([group1, group2, group3])
-
-        # Should run without error
+        # Assert
         assert len(results) == 3
 
     def test_large_number_of_groups(self):
         """Test with many groups."""
+        # Arrange
         np.random.seed(42)
         groups = [np.random.normal(i, i * 0.5 + 1, 10) for i in range(8)]
-
+        # Act
         results = posthoc_games_howell(groups)
-
-        # 8 groups = 28 pairwise comparisons
+        # Assert
         assert len(results) == 28
 
-    def test_extreme_mean_differences(self):
+    def test_extreme_mean_differences_significant_iloc_results(self):
         """Test with extreme mean differences."""
+        # Arrange
         group1 = np.random.normal(0, 1, 20)
         group2 = np.random.normal(1000, 1, 20)
-
+        # Act
         results = posthoc_games_howell([group1, group2])
-
-        # Should be highly significant
+        # Assert
         assert results.iloc[0]["significant"]
+
+    def test_extreme_mean_differences_pvalue_iloc_results(self):
+        """Test with extreme mean differences."""
+        # Arrange
+        group1 = np.random.normal(0, 1, 20)
+        group2 = np.random.normal(1000, 1, 20)
+        # Act
+        results = posthoc_games_howell([group1, group2])
+        # Assert
         assert results.iloc[0]["pvalue"] < 0.001
 
-    def test_high_variance_groups(self):
+    def test_high_variance_groups_results(self):
         """Test with very high variance."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(10, 100, 30)
         group2 = np.random.normal(12, 100, 30)
-
+        # Act
         results = posthoc_games_howell([group1, group2])
-
-        # Should handle without error
+        # Assert
         assert len(results) == 1
-        # High variance should increase standard error
+
+    def test_high_variance_groups_std_error_iloc_results(self):
+        """Test with very high variance."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 100, 30)
+        group2 = np.random.normal(12, 100, 30)
+        # Act
+        results = posthoc_games_howell([group1, group2])
+        # Assert
         assert results.iloc[0]["std_error"] > 10
 
 
 class TestSpecialCases:
     """Test special cases specific to Games-Howell."""
 
-    def test_heteroscedastic_data(self):
+    def test_heteroscedastic_data_row1_var(self):
         """Test with clearly heteroscedastic data."""
+        # Arrange
         np.random.seed(42)
-        # Create groups with progressively increasing variance
         group1 = np.random.normal(10, 1, 25)
         group2 = np.random.normal(10, 3, 25)
         group3 = np.random.normal(10, 5, 25)
-
+        # Act
         results = posthoc_games_howell([group1, group2, group3])
-
-        # Variances should increase
         row1 = results[
             (results["group_i"] == "Group 1") & (results["group_j"] == "Group 2")
         ].iloc[0]
-
+        # Assert
         assert row1["var_i"] < row1["var_j"]
 
-    def test_equal_means_different_variances(self):
+    def test_equal_means_different_variances_significant_iloc_results(self):
         """Test groups with equal means but different variances."""
+        # Arrange
         np.random.seed(42)
         group1 = np.random.normal(10, 1, 30)
         group2 = np.random.normal(10, 5, 30)
-
+        # Act
         results = posthoc_games_howell([group1, group2])
-
-        # Should not be significant (equal means)
+        # Assert
         assert not results.iloc[0]["significant"]
 
-        # But variances should differ
+    def test_equal_means_different_variances_abs_var_iloc_results(self):
+        """Test groups with equal means but different variances."""
+        # Arrange
+        np.random.seed(42)
+        group1 = np.random.normal(10, 1, 30)
+        group2 = np.random.normal(10, 5, 30)
+        # Act
+        results = posthoc_games_howell([group1, group2])
+        # Assert
         assert abs(results.iloc[0]["var_i"] - results.iloc[0]["var_j"]) > 1
 
 

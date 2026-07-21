@@ -12,43 +12,114 @@ from scitex_stats.correct import correct_fdr
 class TestFDRBasic:
     """Basic functionality tests for FDR correction."""
 
-    def test_basic_correction_bh(self):
+    def test_basic_correction_bh_corrected_list(self):
         """Test basic FDR correction with Benjamini-Hochberg method."""
+        # Arrange
         results = [
             {"test_name": "test1", "pvalue": 0.001},
             {"test_name": "test2", "pvalue": 0.010},
             {"test_name": "test3", "pvalue": 0.050},
             {"test_name": "test4", "pvalue": 0.100},
         ]
+        # Act
         corrected = correct_fdr(results, method="bh", verbose=False)
-
+        # Assert
         assert isinstance(corrected, list)
+
+    def test_basic_correction_bh_corrected_results(self):
+        """Test basic FDR correction with Benjamini-Hochberg method."""
+        # Arrange
+        results = [
+            {"test_name": "test1", "pvalue": 0.001},
+            {"test_name": "test2", "pvalue": 0.010},
+            {"test_name": "test3", "pvalue": 0.050},
+            {"test_name": "test4", "pvalue": 0.100},
+        ]
+        # Act
+        corrected = correct_fdr(results, method="bh", verbose=False)
+        # Assert
         assert len(corrected) == len(results)
+
+    def test_basic_correction_bh_all_pvalue_adjusted_corrected(self):
+        """Test basic FDR correction with Benjamini-Hochberg method."""
+        # Arrange
+        results = [
+            {"test_name": "test1", "pvalue": 0.001},
+            {"test_name": "test2", "pvalue": 0.010},
+            {"test_name": "test3", "pvalue": 0.050},
+            {"test_name": "test4", "pvalue": 0.100},
+        ]
+        # Act
+        corrected = correct_fdr(results, method="bh", verbose=False)
+        # Assert
         assert all("pvalue_adjusted" in r for r in corrected)
 
-    def test_basic_correction_by(self):
+    def test_basic_correction_by_corrected_list(self):
         """Test basic FDR correction with Benjamini-Yekutieli method."""
+        # Arrange
         results = [
             {"pvalue": 0.001},
             {"pvalue": 0.010},
             {"pvalue": 0.050},
         ]
+        # Act
         corrected = correct_fdr(results, method="by", verbose=False)
-
+        # Assert
         assert isinstance(corrected, list)
+
+    def test_basic_correction_by_corrected_results(self):
+        """Test basic FDR correction with Benjamini-Yekutieli method."""
+        # Arrange
+        results = [
+            {"pvalue": 0.001},
+            {"pvalue": 0.010},
+            {"pvalue": 0.050},
+        ]
+        # Act
+        corrected = correct_fdr(results, method="by", verbose=False)
+        # Assert
         assert len(corrected) == len(results)
+
+    def test_basic_correction_by_all_pvalue_adjusted_corrected(self):
+        """Test basic FDR correction with Benjamini-Yekutieli method."""
+        # Arrange
+        results = [
+            {"pvalue": 0.001},
+            {"pvalue": 0.010},
+            {"pvalue": 0.050},
+        ]
+        # Act
+        corrected = correct_fdr(results, method="by", verbose=False)
+        # Assert
         assert all("pvalue_adjusted" in r for r in corrected)
 
-    def test_single_pvalue(self):
+    def test_single_pvalue_dict(self):
         """Test with single p-value."""
+        # Arrange
+        # Act
         result = correct_fdr({"pvalue": 0.01}, verbose=False)
-
+        # Assert
         assert isinstance(result, dict)
+
+    def test_single_pvalue_adjusted(self):
+        """Test with single p-value."""
+        # Arrange
+        # Act
+        result = correct_fdr({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert result["pvalue_adjusted"] == 0.01  # Single test, no adjustment
+
+    def test_single_pvalue_rejected(self):
+        """Test with single p-value."""
+        # Arrange
+        # Act
+        result = correct_fdr({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert "rejected" in result
 
-    def test_significance_threshold(self):
+    def test_significance_threshold_n_rejected_005_n_rejected_001(self):
         """Test significance determination with different alpha."""
+        # Arrange
         results = [
             {"pvalue": 0.001},
             {"pvalue": 0.01},
@@ -56,85 +127,166 @@ class TestFDRBasic:
             {"pvalue": 0.05},
             {"pvalue": 0.1},
         ]
-
         result_005 = correct_fdr(results, alpha=0.05, verbose=False)
         result_001 = correct_fdr(results, alpha=0.01, verbose=False)
-
-        # Check that significance changes with alpha
         n_rejected_005 = sum(r["rejected"] for r in result_005)
+        # Act
         n_rejected_001 = sum(r["rejected"] for r in result_001)
+        # Assert
         assert n_rejected_005 >= n_rejected_001
 
 
 class TestFDRInputFormats:
     """Test different input formats."""
 
-    def test_single_dict_input(self):
+    def test_single_dict_input_case_1(self):
         """Test with single dict input."""
+        # Arrange
+        # Act
         result = correct_fdr({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert isinstance(result, dict)
+
+    def test_single_dict_input_pvalue_adjusted(self):
+        """Test with single dict input."""
+        # Arrange
+        # Act
+        result = correct_fdr({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert "pvalue_adjusted" in result
 
-    def test_list_of_dicts_input(self):
+    def test_list_of_dicts_input_case_1(self):
         """Test with list of dicts input containing p-values."""
+        # Arrange
         test_results = [
             {"test_name": "test1", "pvalue": 0.01},
             {"test_name": "test2", "pvalue": 0.02},
             {"test_name": "test3", "pvalue": 0.03},
         ]
+        # Act
         result = correct_fdr(test_results, verbose=False)
+        # Assert
         assert isinstance(result, list)
+
+    def test_list_of_dicts_input_all_pvalue_adjusted(self):
+        """Test with list of dicts input containing p-values."""
+        # Arrange
+        test_results = [
+            {"test_name": "test1", "pvalue": 0.01},
+            {"test_name": "test2", "pvalue": 0.02},
+            {"test_name": "test3", "pvalue": 0.03},
+        ]
+        # Act
+        result = correct_fdr(test_results, verbose=False)
+        # Assert
         assert all("pvalue_adjusted" in r for r in result)
+
+    def test_list_of_dicts_input_all_test_name(self):
+        """Test with list of dicts input containing p-values."""
+        # Arrange
+        test_results = [
+            {"test_name": "test1", "pvalue": 0.01},
+            {"test_name": "test2", "pvalue": 0.02},
+            {"test_name": "test3", "pvalue": 0.03},
+        ]
+        # Act
+        result = correct_fdr(test_results, verbose=False)
+        # Assert
         assert all("test_name" in r for r in result)
 
-    def test_dataframe_input(self):
+    def test_dataframe_input_case_1(self):
         """Test with DataFrame input."""
+        # Arrange
         df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
         result = correct_fdr(df, verbose=False)
+        # Assert
         assert isinstance(result, pd.DataFrame)
+
+    def test_dataframe_input_pvalue_adjusted_columns(self):
+        """Test with DataFrame input."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_fdr(df, verbose=False)
+        # Assert
         assert "pvalue_adjusted" in result.columns
+
+    def test_dataframe_input_alpha_adjusted_columns(self):
+        """Test with DataFrame input."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_fdr(df, verbose=False)
+        # Assert
         assert "alpha_adjusted" in result.columns
+
+    def test_dataframe_input_rejected_columns(self):
+        """Test with DataFrame input."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_fdr(df, verbose=False)
+        # Assert
         assert "rejected" in result.columns
+
+    def test_dataframe_input_pstars_columns(self):
+        """Test with DataFrame input."""
+        # Arrange
+        df = pd.DataFrame({"test": ["t1", "t2", "t3"], "pvalue": [0.01, 0.02, 0.03]})
+        # Act
+        result = correct_fdr(df, verbose=False)
+        # Assert
         assert "pstars" in result.columns
 
 
 class TestFDREdgeCases:
     """Test edge cases and error handling."""
 
-    def test_pvalue_clipping(self):
+    def test_pvalue_clipping_all_corrected_adjusted(self):
         """Test that corrected p-values are clipped at 1.0."""
+        # Arrange
         results = [{"pvalue": 0.8}, {"pvalue": 0.9}, {"pvalue": 0.95}]
+        # Act
         corrected = correct_fdr(results, verbose=False)
-
+        # Assert
         assert all(r["pvalue_adjusted"] <= 1.0 for r in corrected)
 
-    def test_zero_pvalues(self):
+    def test_zero_pvalues_pvalue_adjusted_corrected(self):
         """Test handling of zero p-values."""
+        # Arrange
         results = [{"pvalue": 0.0}, {"pvalue": 0.01}, {"pvalue": 0.02}]
+        # Act
         corrected = correct_fdr(results, verbose=False)
-
+        # Assert
         assert corrected[0]["pvalue_adjusted"] == 0.0
 
-    def test_one_pvalue(self):
+    def test_one_pvalue_adjusted_corrected(self):
         """Test handling of p-value = 1.0."""
+        # Arrange
         results = [{"pvalue": 0.01}, {"pvalue": 0.5}, {"pvalue": 1.0}]
+        # Act
         corrected = correct_fdr(results, verbose=False)
-
+        # Assert
         assert corrected[2]["pvalue_adjusted"] == 1.0
 
-    def test_nan_handling(self):
+    def test_nan_handling_isna_iloc_pvalue_adjusted(self):
         """Test handling of NaN values."""
+        # Arrange
         df = pd.DataFrame({"pvalue": [0.01, np.nan, 0.03]})
+        # Act
         result = correct_fdr(df, verbose=False)
-
+        # Assert
         assert pd.isna(result["pvalue_adjusted"].iloc[1])
 
-    def test_identical_pvalues(self):
+    def test_identical_pvalues_set_p_adjs(self):
         """Test handling of identical p-values."""
+        # Arrange
         results = [{"pvalue": 0.05}, {"pvalue": 0.05}, {"pvalue": 0.05}]
+        # Act
         corrected = correct_fdr(results, verbose=False)
-
         p_adjs = [r["pvalue_adjusted"] for r in corrected]
+        # Assert
         assert len(set(p_adjs)) == 1
 
 
@@ -143,11 +295,12 @@ class TestFDRComparison:
 
     def test_bh_vs_by(self):
         """Test that BY is more conservative than BH."""
+        # Arrange
         results = [{"pvalue": 0.001}, {"pvalue": 0.01}, {"pvalue": 0.05}]
-
         corrected_bh = correct_fdr(results, method="bh", verbose=False)
+        # Act
         corrected_by = correct_fdr(results, method="by", verbose=False)
-
+        # Assert
         for i in range(len(results)):
             assert (
                 corrected_by[i]["pvalue_adjusted"] >= corrected_bh[i]["pvalue_adjusted"]
@@ -155,25 +308,25 @@ class TestFDRComparison:
 
     def test_fdr_less_conservative_than_bonferroni(self):
         """Test that FDR is generally less conservative than Bonferroni."""
+        # Arrange
         from scitex_stats.correct import correct_bonferroni
-
         results = [
             {"pvalue": 0.001},
             {"pvalue": 0.01},
             {"pvalue": 0.02},
             {"pvalue": 0.05},
         ]
-
         corrected_fdr = correct_fdr(results, verbose=False)
         corrected_bonf = correct_bonferroni(results, verbose=False)
-
         n_rejected_fdr = sum(r["rejected"] for r in corrected_fdr)
+        # Act
         n_rejected_bonf = sum(r["rejected"] for r in corrected_bonf)
-
+        # Assert
         assert n_rejected_fdr >= n_rejected_bonf
 
-    def test_rejection_count(self):
+    def test_rejection_count_n_rejected(self):
         """Test number of rejections at different alpha levels."""
+        # Arrange
         results = [
             {"pvalue": 0.001},
             {"pvalue": 0.005},
@@ -181,59 +334,156 @@ class TestFDRComparison:
             {"pvalue": 0.02},
             {"pvalue": 0.05},
         ]
-
         corrected = correct_fdr(results, alpha=0.05, verbose=False)
+        # Act
         n_rejected = sum(r["rejected"] for r in corrected)
-
+        # Assert
         assert n_rejected >= 1
 
 
 class TestFDROutput:
     """Test output structure and format."""
 
-    def test_dict_output_keys(self):
+    def test_dict_output_keys_pvalue_adjusted(self):
         """Test that single dict input returns expected keys."""
+        # Arrange
+        # Act
         result = correct_fdr({"pvalue": 0.01}, verbose=False)
-
+        # Assert
         assert "pvalue_adjusted" in result
+
+    def test_dict_output_keys_alpha_adjusted(self):
+        """Test that single dict input returns expected keys."""
+        # Arrange
+        # Act
+        result = correct_fdr({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert "alpha_adjusted" in result
+
+    def test_dict_output_keys_rejected(self):
+        """Test that single dict input returns expected keys."""
+        # Arrange
+        # Act
+        result = correct_fdr({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert "rejected" in result
+
+    def test_dict_output_keys_pstars(self):
+        """Test that single dict input returns expected keys."""
+        # Arrange
+        # Act
+        result = correct_fdr({"pvalue": 0.01}, verbose=False)
+        # Assert
         assert "pstars" in result
 
-    def test_list_output_keys(self):
+    def test_list_output_keys_corrected(self):
         """Test that list input returns list with expected keys."""
+        # Arrange
         results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
         corrected = correct_fdr(results, verbose=False)
-
+        # Assert
         assert isinstance(corrected, list)
+
+    def test_list_output_keys_all_pvalue_adjusted_corrected(self):
+        """Test that list input returns list with expected keys."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_fdr(results, verbose=False)
+        # Assert
         assert all("pvalue_adjusted" in r for r in corrected)
+
+    def test_list_output_keys_all_alpha_adjusted_corrected(self):
+        """Test that list input returns list with expected keys."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_fdr(results, verbose=False)
+        # Assert
         assert all("alpha_adjusted" in r for r in corrected)
+
+    def test_list_output_keys_all_rejected_corrected(self):
+        """Test that list input returns list with expected keys."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_fdr(results, verbose=False)
+        # Assert
         assert all("rejected" in r for r in corrected)
+
+    def test_list_output_keys_all_pstars_corrected(self):
+        """Test that list input returns list with expected keys."""
+        # Arrange
+        results = [{"pvalue": 0.01}, {"pvalue": 0.02}, {"pvalue": 0.03}]
+        # Act
+        corrected = correct_fdr(results, verbose=False)
+        # Assert
         assert all("pstars" in r for r in corrected)
 
-    def test_stars_annotation(self):
+    def test_stars_annotation_all_pstars(self):
         """Test significance stars are added."""
+        # Arrange
         test_results = [
             {"test_name": "test1", "pvalue": 0.001},
             {"test_name": "test2", "pvalue": 0.01},
             {"test_name": "test3", "pvalue": 0.05},
         ]
+        # Act
         result = correct_fdr(test_results, verbose=False)
-
+        # Assert
         assert all("pstars" in r for r in result)
+
+    def test_stars_annotation_pstars(self):
+        """Test significance stars are added."""
+        # Arrange
+        test_results = [
+            {"test_name": "test1", "pvalue": 0.001},
+            {"test_name": "test2", "pvalue": 0.01},
+            {"test_name": "test3", "pvalue": 0.05},
+        ]
+        # Act
+        result = correct_fdr(test_results, verbose=False)
+        # Assert
         assert result[0]["pstars"] in ["***", "**", "*"]
 
-    def test_original_order_preserved(self):
+    def test_original_order_preserved_test3_test_name_corrected(self):
         """Test that original order of tests is preserved."""
+        # Arrange
         results = [
             {"test_name": "test3", "pvalue": 0.05},
             {"test_name": "test1", "pvalue": 0.001},
             {"test_name": "test2", "pvalue": 0.01},
         ]
+        # Act
         corrected = correct_fdr(results, verbose=False)
-
+        # Assert
         assert corrected[0]["test_name"] == "test3"
+
+    def test_original_order_preserved_test1_test_name_corrected(self):
+        """Test that original order of tests is preserved."""
+        # Arrange
+        results = [
+            {"test_name": "test3", "pvalue": 0.05},
+            {"test_name": "test1", "pvalue": 0.001},
+            {"test_name": "test2", "pvalue": 0.01},
+        ]
+        # Act
+        corrected = correct_fdr(results, verbose=False)
+        # Assert
         assert corrected[1]["test_name"] == "test1"
+
+    def test_original_order_preserved_test2_test_name_corrected(self):
+        """Test that original order of tests is preserved."""
+        # Arrange
+        results = [
+            {"test_name": "test3", "pvalue": 0.05},
+            {"test_name": "test1", "pvalue": 0.001},
+            {"test_name": "test2", "pvalue": 0.01},
+        ]
+        # Act
+        corrected = correct_fdr(results, verbose=False)
+        # Assert
         assert corrected[2]["test_name"] == "test2"
 
 

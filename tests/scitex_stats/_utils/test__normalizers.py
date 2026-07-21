@@ -21,172 +21,314 @@ from scitex_stats._utils._normalizers import (
 class TestForceDataframe:
     """Test force_dataframe function."""
 
-    def test_dict_to_dataframe(self):
+    def test_dict_to_dataframe_case_1(self):
         """Test converting dict to DataFrame."""
+        # Arrange
         result = {"var_x": "A", "pvalue": 0.01, "statistic": 2.5}
+        # Act
         df = force_dataframe(result)
-
+        # Assert
         assert isinstance(df, pd.DataFrame)
+
+    def test_dict_to_dataframe_case_2(self):
+        """Test converting dict to DataFrame."""
+        # Arrange
+        result = {"var_x": "A", "pvalue": 0.01, "statistic": 2.5}
+        # Act
+        df = force_dataframe(result)
+        # Assert
         assert len(df) == 1
+
+    def test_dict_to_dataframe_pvalue_columns(self):
+        """Test converting dict to DataFrame."""
+        # Arrange
+        result = {"var_x": "A", "pvalue": 0.01, "statistic": 2.5}
+        # Act
+        df = force_dataframe(result)
+        # Assert
         assert "pvalue" in df.columns
 
-    def test_list_of_dicts(self):
+    def test_list_of_dicts_case_1(self):
         """Test converting list of dicts."""
+        # Arrange
         results = [{"var_x": "A", "pvalue": 0.01}, {"var_x": "B", "pvalue": 0.05}]
+        # Act
         df = force_dataframe(results)
-
+        # Assert
         assert len(df) == 2
+
+    def test_list_of_dicts_tolist_var(self):
+        """Test converting list of dicts."""
+        # Arrange
+        results = [{"var_x": "A", "pvalue": 0.01}, {"var_x": "B", "pvalue": 0.05}]
+        # Act
+        df = force_dataframe(results)
+        # Assert
         assert df["var_x"].tolist() == ["A", "B"]
 
-    def test_dataframe_passthrough(self):
+    def test_dataframe_passthrough_df_out(self):
         """Test DataFrame passthrough."""
+        # Arrange
         df_in = pd.DataFrame({"pvalue": [0.01, 0.05]})
+        # Act
         df_out = force_dataframe(df_in)
-
+        # Assert
         assert isinstance(df_out, pd.DataFrame)
+
+    def test_dataframe_passthrough_df_out_2(self):
+        """Test DataFrame passthrough."""
+        # Arrange
+        df_in = pd.DataFrame({"pvalue": [0.01, 0.05]})
+        # Act
+        df_out = force_dataframe(df_in)
+        # Assert
         assert len(df_out) == 2
 
-    def test_fill_missing_columns(self):
+    def test_fill_missing_columns_pstars(self):
         """Test filling missing standard columns."""
+        # Arrange
         result = {"pvalue": 0.01}
+        # Act
         df = force_dataframe(result)
-
-        # Should have standard defaults
+        # Assert
         assert "pstars" in df.columns
+
+    def test_fill_missing_columns_rejected(self):
+        """Test filling missing standard columns."""
+        # Arrange
+        result = {"pvalue": 0.01}
+        # Act
+        df = force_dataframe(result)
+        # Assert
         assert "rejected" in df.columns
+
+    def test_fill_missing_columns_alpha(self):
+        """Test filling missing standard columns."""
+        # Arrange
+        result = {"pvalue": 0.01}
+        # Act
+        df = force_dataframe(result)
+        # Assert
         assert "alpha" in df.columns
 
-    def test_custom_columns(self):
+    def test_custom_columns_effect_size(self):
         """Test specifying required columns."""
+        # Arrange
         result = {"pvalue": 0.01}
+        # Act
         df = force_dataframe(result, columns=["pvalue", "effect_size", "power"])
-
+        # Assert
         assert "effect_size" in df.columns
+
+    def test_custom_columns_power(self):
+        """Test specifying required columns."""
+        # Arrange
+        result = {"pvalue": 0.01}
+        # Act
+        df = force_dataframe(result, columns=["pvalue", "effect_size", "power"])
+        # Assert
         assert "power" in df.columns
 
-    def test_custom_defaults(self):
+    def test_custom_defaults_iloc_effect_size(self):
         """Test custom default values."""
+        # Arrange
         result = {"pvalue": 0.01}
-        # Must specify columns to ensure effect_size is added
+        # Act
         df = force_dataframe(
             result, columns=["pvalue", "effect_size"], defaults={"effect_size": 0.5}
         )
-
+        # Assert
         assert df["effect_size"].iloc[0] == 0.5
 
 
 class TestToDict:
     """Test to_dict function."""
 
-    def test_basic_to_dict(self):
+    def test_basic_to_dict_case_1(self):
         """Test basic DataFrame to dict conversion."""
+        # Arrange
         df = pd.DataFrame({"pvalue": [0.01, 0.05], "var_x": ["A", "B"]})
+        # Act
         result = to_dict(df, row=0)
-
+        # Assert
         assert isinstance(result, dict)
+
+    def test_basic_to_dict_pvalue(self):
+        """Test basic DataFrame to dict conversion."""
+        # Arrange
+        df = pd.DataFrame({"pvalue": [0.01, 0.05], "var_x": ["A", "B"]})
+        # Act
+        result = to_dict(df, row=0)
+        # Assert
         assert result["pvalue"] == 0.01
+
+    def test_basic_to_dict_var(self):
+        """Test basic DataFrame to dict conversion."""
+        # Arrange
+        df = pd.DataFrame({"pvalue": [0.01, 0.05], "var_x": ["A", "B"]})
+        # Act
+        result = to_dict(df, row=0)
+        # Assert
         assert result["var_x"] == "A"
 
-    def test_second_row(self):
+    def test_second_row_pvalue(self):
         """Test converting second row."""
+        # Arrange
         df = pd.DataFrame({"pvalue": [0.01, 0.05], "var_x": ["A", "B"]})
+        # Act
         result = to_dict(df, row=1)
-
+        # Assert
         assert result["pvalue"] == 0.05
+
+    def test_second_row_var(self):
+        """Test converting second row."""
+        # Arrange
+        df = pd.DataFrame({"pvalue": [0.01, 0.05], "var_x": ["A", "B"]})
+        # Act
+        result = to_dict(df, row=1)
+        # Assert
         assert result["var_x"] == "B"
 
 
 class TestToDataframe:
     """Test to_dataframe function."""
 
-    def test_single_dict(self):
+    def test_single_dict_dataframe(self):
         """Test converting single dict."""
+        # Arrange
         result = {"var_x": "A", "pvalue": 0.01}
+        # Act
         df = to_dataframe(result)
-
+        # Assert
         assert isinstance(df, pd.DataFrame)
+
+    def test_single_dict_case_2(self):
+        """Test converting single dict."""
+        # Arrange
+        result = {"var_x": "A", "pvalue": 0.01}
+        # Act
+        df = to_dataframe(result)
+        # Assert
         assert len(df) == 1
 
     def test_list_of_dicts(self):
         """Test converting list of dicts."""
+        # Arrange
         results = [{"var_x": "A", "pvalue": 0.01}, {"var_x": "B", "pvalue": 0.05}]
+        # Act
         df = to_dataframe(results)
-
+        # Assert
         assert len(df) == 2
 
-    def test_normalize_true(self):
+    def test_normalize_true_pstars_columns(self):
         """Test with normalization."""
+        # Arrange
         result = {"pvalue": 0.01}
+        # Act
         df = to_dataframe(result, normalize=True)
-
-        # Should add standard columns
+        # Assert
         assert "pstars" in df.columns
 
 
 class TestNormalizeResult:
     """Test normalize_result function."""
 
-    def test_basic_normalization(self):
+    def test_basic_normalization_pstars_normalized(self):
         """Test basic result normalization."""
+        # Arrange
         result = {"pvalue": 0.023, "statistic": 2.45}
+        # Act
         normalized = normalize_result(result)
-
+        # Assert
         assert "pstars" in normalized
+
+    def test_basic_normalization_normalized_pstars(self):
+        """Test basic result normalization."""
+        # Arrange
+        result = {"pvalue": 0.023, "statistic": 2.45}
+        # Act
+        normalized = normalize_result(result)
+        # Assert
         assert normalized["pstars"] == "*"
 
-    def test_rejected_flag(self):
+    def test_rejected_flag_normalized_sig(self):
         """Test rejected flag computation."""
+        # Arrange
         result_sig = {"pvalue": 0.01, "alpha": 0.05}
+        # Act
         normalized_sig = normalize_result(result_sig)
+        # Assert
         assert normalized_sig["rejected"] is True
-
         result_ns = {"pvalue": 0.08, "alpha": 0.05}
         normalized_ns = normalize_result(result_ns)
+
+    def test_rejected_flag_normalized_ns(self):
+        """Test rejected flag computation."""
+        # Arrange
+        result_sig = {"pvalue": 0.01, "alpha": 0.05}
+        normalized_sig = normalize_result(result_sig)
+        result_ns = {"pvalue": 0.08, "alpha": 0.05}
+        # Act
+        normalized_ns = normalize_result(result_ns)
+        # Assert
         assert normalized_ns["rejected"] is False
 
-    def test_adjusted_pvalue(self):
+    def test_adjusted_pvalue_normalized_rejected(self):
         """Test using adjusted p-value for decisions."""
+        # Arrange
         result = {
             "pvalue": 0.01,
             "pvalue_adjusted": 0.06,
             "alpha": 0.05,
             "alpha_adjusted": 0.05,
         }
+        # Act
         normalized = normalize_result(result)
-
-        # Should use adjusted values
+        # Assert
         assert normalized["rejected"] is False  # 0.06 > 0.05
 
 
 class TestCombineResults:
     """Test combine_results function."""
 
-    def test_combine_dicts(self):
+    def test_combine_dicts_case_1(self):
         """Test combining dict results."""
+        # Arrange
         r1 = {"var_x": "A", "pvalue": 0.01}
         r2 = {"var_x": "B", "pvalue": 0.05}
-
+        # Act
         df = combine_results([r1, r2])
-
+        # Assert
         assert len(df) == 2
+
+    def test_combine_dicts_dataframe(self):
+        """Test combining dict results."""
+        # Arrange
+        r1 = {"var_x": "A", "pvalue": 0.01}
+        r2 = {"var_x": "B", "pvalue": 0.05}
+        # Act
+        df = combine_results([r1, r2])
+        # Assert
         assert isinstance(df, pd.DataFrame)
 
-    def test_combine_dataframes(self):
+    def test_combine_dataframes_case(self):
         """Test combining DataFrame results."""
+        # Arrange
         df1 = pd.DataFrame({"pvalue": [0.01]})
         df2 = pd.DataFrame({"pvalue": [0.05]})
-
+        # Act
         df = combine_results([df1, df2])
-
+        # Assert
         assert len(df) == 2
 
-    def test_combine_mixed(self):
+    def test_combine_mixed_case(self):
         """Test combining mixed types."""
+        # Arrange
         r1 = {"pvalue": 0.01}
         df2 = pd.DataFrame({"pvalue": [0.05]})
-
+        # Act
         df = combine_results([r1, df2])
-
+        # Assert
         assert len(df) == 2
 
 
@@ -195,44 +337,81 @@ class TestConvertResults:
 
     def test_convert_to_dict(self):
         """Test converting to dict."""
+        # Arrange
         result = {"pvalue": 0.01}
+        # Act
         output = convert_results(result, return_as="dict")
-
+        # Assert
         assert isinstance(output, dict)
 
     def test_convert_to_dataframe(self):
         """Test converting to DataFrame."""
+        # Arrange
         result = {"pvalue": 0.01}
+        # Act
         output = convert_results(result, return_as="dataframe")
-
+        # Assert
         assert isinstance(output, pd.DataFrame)
 
-    def test_convert_to_markdown(self):
+    def test_convert_to_markdown_output_str(self):
         """Test converting to Markdown."""
+        # Arrange
         result = {"pvalue": 0.01, "var_x": "A"}
+        # Act
         output = convert_results(result, return_as="markdown")
-
+        # Assert
         assert isinstance(output, str)
+
+    def test_convert_to_markdown_output(self):
+        """Test converting to Markdown."""
+        # Arrange
+        result = {"pvalue": 0.01, "var_x": "A"}
+        # Act
+        output = convert_results(result, return_as="markdown")
+        # Assert
         assert "|" in output  # Markdown table syntax
 
-    def test_convert_to_json(self):
+    def test_convert_to_json_output_str(self):
         """Test converting to JSON."""
+        # Arrange
         result = {"pvalue": 0.01}
+        # Act
         output = convert_results(result, return_as="json")
-
+        # Assert
         assert isinstance(output, str)
+
+    def test_convert_to_json_output(self):
+        """Test converting to JSON."""
+        # Arrange
+        result = {"pvalue": 0.01}
+        # Act
+        output = convert_results(result, return_as="json")
+        # Assert
         assert "{" in output
 
-    def test_convert_to_latex(self):
+    def test_convert_to_latex_output_str(self):
         """Test converting to LaTeX."""
+        # Arrange
         result = {"pvalue": 0.01}
+        # Act
         output = convert_results(result, return_as="latex")
-
+        # Assert
         assert isinstance(output, str)
+
+    def test_convert_to_latex_output(self):
+        """Test converting to LaTeX."""
+        # Arrange
+        result = {"pvalue": 0.01}
+        # Act
+        output = convert_results(result, return_as="latex")
+        # Assert
         assert "\\" in output  # LaTeX table syntax
 
-    def test_invalid_format(self):
+    def test_invalid_format_raises_valueerror_convert_results_pytest(self):
         """Test error on invalid format."""
+        # Arrange
+        # Act
+        # Assert
         with pytest.raises(ValueError, match="Unknown return_as format"):
             convert_results({}, return_as="invalid")
 
@@ -1190,78 +1369,114 @@ _R2 = {"var_x": "A", "var_y": "C", "pvalue": 0.20, "effect_size": 0.3}
 
 
 def test_export_results_csv(tmp_path):
+    # Arrange
     out = _nrm.export_results([_R1, _R2], str(tmp_path / "r.csv"))
+    # Act
     text = (tmp_path / "r.csv").read_text()
+    # Assert
     assert out.endswith(".csv") and "var_x" in text
 
 
 def test_export_results_tsv(tmp_path):
+    # Arrange
     _nrm.export_results([_R1, _R2], str(tmp_path / "r.tsv"), format="tsv")
+    # Act
     text = (tmp_path / "r.tsv").read_text()
+    # Assert
     assert "\t" in text
 
 
 def test_export_results_json(tmp_path):
+    # Arrange
     _nrm.export_results([_R1, _R2], str(tmp_path / "r.json"))
+    # Act
     payload = _json.loads((tmp_path / "r.json").read_text())
+    # Assert
     assert "data" in payload and "metadata" in payload
 
 
 def test_export_results_xlsx(tmp_path):
+    # Arrange
+    # Act
     _nrm.export_results([_R1, _R2], str(tmp_path / "r.xlsx"))
+    # Assert
     assert (tmp_path / "r.xlsx").is_file()
 
 
 def test_export_results_latex(tmp_path):
+    # Arrange
     _nrm.export_results([_R1, _R2], str(tmp_path / "r.tex"), format="latex")
+    # Act
     text = (tmp_path / "r.tex").read_text()
+    # Assert
     assert "\\" in text
 
 
 def test_export_results_unsupported_format_raises(tmp_path):
+    # Arrange
+    # Act
+    # Assert
     with pytest.raises(ValueError, match="Unsupported format"):
         _nrm.export_results([_R1], str(tmp_path / "r.bogus"), format="bogus")
 
 
 def test_export_results_accepts_dataframe(tmp_path):
+    # Arrange
     df = _nrm.force_dataframe([_R1, _R2])
+    # Act
     _nrm.export_results(df, str(tmp_path / "r.csv"))
+    # Assert
     assert (tmp_path / "r.csv").is_file()
 
 
 def test_export_summary_default_columns(tmp_path):
+    # Arrange
     _nrm.export_summary([_R1, _R2], str(tmp_path / "summary.csv"))
+    # Act
     text = (tmp_path / "summary.csv").read_text()
+    # Assert
     assert "var_x" in text and "pvalue" in text
 
 
 def test_export_summary_custom_columns(tmp_path):
+    # Arrange
     _nrm.export_summary(
         [_R1, _R2], str(tmp_path / "summary.csv"), columns=["var_x", "pvalue"]
     )
+    # Act
     header = (tmp_path / "summary.csv").read_text().splitlines()[0]
+    # Assert
     assert header == "var_x,pvalue"
 
 
 def test_export_report_markdown(tmp_path):
+    # Arrange
     _nrm.export_report(
         [_R1, _R2], str(tmp_path / "report.md"), title="Demo Report"
     )
+    # Act
     text = (tmp_path / "report.md").read_text()
+    # Assert
     assert "Demo Report" in text
 
 
 def test_export_report_html(tmp_path):
+    # Arrange
     _nrm.export_report(
         [_R1, _R2], str(tmp_path / "report.html"), title="HTML Report"
     )
+    # Act
     text = (tmp_path / "report.html").read_text()
+    # Assert
     assert "HTML Report" in text or "<html" in text.lower()
 
 
 def test_export_report_text(tmp_path):
+    # Arrange
     _nrm.export_report(
         [_R1, _R2], str(tmp_path / "report.txt"), title="Text Report"
     )
+    # Act
     text = (tmp_path / "report.txt").read_text()
+    # Assert
     assert "Text Report" in text
