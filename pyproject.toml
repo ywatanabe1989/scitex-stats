@@ -65,7 +65,14 @@ dependencies = [
 # Convenience meta-extra: cross-package integrations + alt-backend tests
 # - figrecipe: lazy-imported plot helpers + scitex_stats↔figrecipe integration
 # - torch:     tensor-preserving descriptive stats (numpy fallback if absent)
+# PS-221 [all]-closure: every PUBLIC extra must be a subset of `all`, so the
+# self-reference below folds bundle/dev/docs in. They stay PUBLIC (not
+# `_`-renamed) because CI installs them by name: the org reusable workflows
+# (scitex-ai/.github) run `pip install -e ".[docs]"` (rtd-sphinx-build) and
+# `".[all,dev]"` (pytest-matrix, quality-audit), and README/CONTRIBUTING
+# document `.[dev]` for contributors.
 all = [
+    "scitex-stats[bundle,dev,docs]",
     "figrecipe>=0.28.0",
     "torch>=2.0",
 ]
