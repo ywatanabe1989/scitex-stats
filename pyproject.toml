@@ -68,6 +68,11 @@ dependencies = [
 all = [
     "figrecipe>=0.28.0",
     "torch>=2.0",
+    # PS-221 closure: every public extra is a subset of `all`, so
+    # `pip install scitex-stats[all]` pulls everything public.
+    "scitex-stats[bundle]",
+    "scitex-stats[dev]",
+    "scitex-stats[docs]",
 ]
 # Stats ↔ SciTeX bundle I/O: test_result_to_stats / save_stats / load_stats
 # in scitex_stats._bundle_io require scitex-io's bundle subpackage. scitex-io
